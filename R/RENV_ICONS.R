@@ -9,9 +9,6 @@
 #' (a.k.a. "SEAFO").
 #'
 #'
-#' @section CONSTANTS
-#'
-#'
 #' @returns
 #' This R Object returns an R Environment-Locked List of Text Icons, in unicode form, used widely
 #' throughout the "MFMR Suite of R Packages" (a.k.a. "SEAFO").

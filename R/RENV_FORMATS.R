@@ -9,9 +9,6 @@
 #' Date Formats to support the "MFMR Suite of R Functions" (a.k.a. "SuiteMFMR").
 #'
 #'
-#' @section CONSTANTS
-#'
-#'
 #' @returns
 #' This R Object returns an R Environment-Locked List of
 #'

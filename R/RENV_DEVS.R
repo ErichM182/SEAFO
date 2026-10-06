@@ -10,9 +10,6 @@
 #' values required by multiple "SEAFO" functions.
 #'
 #'
-#' @section CONSTANTS
-#'
-#'
 #' @returns
 #' This R Object returns an R Environment-Locked List of CONSTANTS (encapsulating character, numeric
 #' and other R Objects <values>) used extensively throughout the "SEAFO" R Project.

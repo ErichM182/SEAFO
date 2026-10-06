@@ -14,10 +14,6 @@ both foreground and background R Console \if{html}{\out{<visual>}} Layers and Te
 A collection of frequently used ANSI (American National Standards Institute) Colours to support
 the "MFMR Suite of R Functions" (a.k.a. "SuiteMFMR").
 }
-\section{CONSTANTS}{
-
-}
-
 \examples{
 ### Load the required R Library ...
 library(SEAFO)   # <- Loads library (if already installed locally) !!!

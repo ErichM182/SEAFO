@@ -13,10 +13,6 @@ This R Object returns an R Environment-Locked List of
 A collection of frequently used ANSI (American National Standards Institute)
 Text Font Formats to support the "MFMR Suite of R Functions" (aka "SEAFO").
 }
-\section{CONSTANTS}{
-
-}
-
 \examples{
 ### Install the required R Library ...
 require(SEAFO)   # <- Ensures the "SEAFO" library is installed locally !!!

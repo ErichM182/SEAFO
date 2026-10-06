@@ -14,10 +14,6 @@ throughout the "MFMR Suite of R Packages" (a.k.a. "SEAFO").
 A collection of text icons (in unicode format) meant to support the "MFMR Suite of R Functions"
 (a.k.a. "SEAFO").
 }
-\section{CONSTANTS}{
-
-}
-
 \examples{
 ### Load the required R Library ...
 library(SEAFO)   # <- Loads library (if already installed locally) !!!

@@ -1,7 +1,7 @@
 Package: SEAFO
 Type: Package
 Title: All-Inclusive SEAFO Scientific Committee R Package
-Version: 0.0.1.06
+Version: 0.0.1.11
 License: MIT + file LICENSE
 BugReports: https://github.com/ErichM182/SEAFO/issues
 Description: A collection of user-friendly R functions that assist with the routine data analysis 

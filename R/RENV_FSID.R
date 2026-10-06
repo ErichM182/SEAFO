@@ -9,9 +9,6 @@
 #' Text Font Formats to support the "MFMR Suite of R Functions" (aka "SEAFO").
 #'
 #'
-#' @section CONSTANTS
-#'
-#'
 #' @returns
 #' This R Object returns an R Environment-Locked List of
 #'

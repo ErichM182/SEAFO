@@ -9,9 +9,6 @@
 #' the "MFMR Suite of R Functions" (a.k.a. "SuiteMFMR").
 #'
 #'
-#' @section CONSTANTS
-#'
-#'
 #' @returns
 #' This R Object returns an R Environment-Locked List of ANSI Colour Codes that may be applied to
 #' both foreground and background R Console <visual> Layers and Texts.

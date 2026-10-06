@@ -15,10 +15,6 @@ A collection of useful CONSTANTS that are utilized throughout the "MFMR Suite of
 (i.e. "SEAFO"). This Environment-LOCKED R List standardizes and improves the use of key
 values required by multiple "SEAFO" functions.
 }
-\section{CONSTANTS}{
-
-}
-
 \examples{
 ### Install the required R Library ...
 require(SEAFO)   # <- Ensures the "SEAFO" library is installed locally !!!
