@@ -1,0 +1,26 @@
+Package: SEAFO
+Type: Package
+Title: All-Inclusive SEAFO Scientific Committee R Package
+Version: 0.1.0.01
+License: MIT + file LICENSE
+BugReports: https://github.com/ErichM182/SEAFO/issues
+Description: A collection of user-friendly R functions that assist with the routine data analysis 
+             work conducted by the Scientific Committee (SC) of the South East Atlantic Fisheries 
+             Organisation (SEAFO).
+Authors@R: c(
+    person(
+      role  = c("aut", "cre"),
+      email = "esmaletzky@gmail.com",
+      given = "Erich", family = "MALETZKY"
+    )
+  )
+LazyData: true
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0
+Imports:
+    beepr,
+    desc,
+    devtools,
+    jsonlite,
+    stringr
