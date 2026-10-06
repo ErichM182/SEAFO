@@ -7,9 +7,9 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  06 Oct 2026 @ 14:57:06.804 CAT
-> Code Push PRODUCTION VERSION #  ==>  ..     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  ...  (devs-release)
+> Code Push TIME  ==>  06 Oct 2026 @ 17:43:06.919 CAT
+> Code Push PRODUCTION VERSION #  ==>  0.0.1     (prod-release)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.06  (devs-release)
 
 
 
@@ -25,12 +25,13 @@
 
 
 
--> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: 5 ] ...
+-> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: 6 ] ...
 > beepr v2.0
 > desc v1.4.3
 > devtools v2.5.2
 > jsonlite v2.0.0
 > stringr v1.6.0
+> usethis v3.2.2
 
 
 

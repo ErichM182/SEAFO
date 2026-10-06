@@ -104,9 +104,9 @@
   RCT_TAG_R_FUNC_ID_SHORT_ <- "Ret.RENV.List";           # <- Function ID - SHORT !!!
   RCT_TAG_R_FUNC_ID_LONG_  <- "CODE.Return.RENV.List";   # <- Function ID - LONG !!!
 
-  RCT_INT_CELN_START_ <- 93L;    # <- The Code Editor Line Number (CELN) at which the function
+  RCT_INT_CELN_START_ <- 95L;    # <- The Code Editor Line Number (CELN) at which the function
                                  #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 280L;   # <- The Code Editor Line Number (CELN) at which the function
+  RCT_INT_CELN_STOP_  <- 282L;   # <- The Code Editor Line Number (CELN) at which the function
                                  #    CLOSING <curly> brace/bracket "}" is located !!!
 
 

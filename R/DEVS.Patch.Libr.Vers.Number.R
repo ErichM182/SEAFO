@@ -34,10 +34,10 @@
 #' @keywords internal
 #' @noRd
 #? ### ### ###
-"devs.patch.libr.vers.number" <- function(rvsVersNumVect=c("0", "0", "0", "01")) {
+"devs.patch.libr.vers.number" <- function(vsVersNumVect=c("0", "0", "0", "01")) {
 
   ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
-  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";                     # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";                         # <- R Library Identifier !!!
   RCT_TAG_FUNC_ID_SHRT_ <- "Patch.Libr.Vers";               # <- Function ID - SHORT !!!
   RCT_TAG_FUNC_ID_FULL_ <- "DEVS.Patch.Libr.Vers.Number";   # <- Function ID - LONG !!!
 
@@ -53,7 +53,7 @@
 
 
   ####   STEP 03 - Internalize Function Arguments   ####
-  rvsVersNumVect_ <- rvsVersNumVect;
+  rvsVersNumVect_ <- vsVersNumVect;
 
 
   ####   STEP 04 - Initialize NB Variables & Constants   ####

@@ -80,6 +80,7 @@ devs.check.code.specs(sbCheckDocs = TRUE, sbCheckCRAN = TRUE)
 }
 \seealso{
 Other SEAFO DevTools:
+\code{\link[=devs.find.code.instances]{devs.find.code.instances()}},
 \code{\link[=devs.patch.code.dev.trckr.file]{devs.patch.code.dev.trckr.file()}},
 \code{\link[=devs.pull.libr.info]{devs.pull.libr.info()}}
 }

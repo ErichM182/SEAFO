@@ -40,6 +40,7 @@ rlsLibINFO[["VERSION"]]   # -> Returns 'Package Version' value <result> ...
 \seealso{
 Other SEAFO DevTools:
 \code{\link[=devs.check.code.specs]{devs.check.code.specs()}},
+\code{\link[=devs.find.code.instances]{devs.find.code.instances()}},
 \code{\link[=devs.patch.code.dev.trckr.file]{devs.patch.code.dev.trckr.file()}}
 }
 \concept{SEAFO DevTools}

@@ -91,8 +91,8 @@
 
   `%??%`                  <- SEAFO::`%??%`;                       # <- VERY COOL Alias <NCO> !!!
   rasMfmrDEVS             <- SEAFO::RENV_DEVS;
-  rasMfmrPatchLibrVersNUM <- devs.patch.libr.vers.number;
   rasMfmrPullLibrINFO     <- SEAFO::devs.pull.libr.info;
+  rasMfmrPatchLibrVersNUM <- devs.patch.libr.vers.number;
   rasMfmrReturnRenvLIST   <- SEAFO::code.return.renv.list;
   rasMfmrAppendToFILE     <- SEAFO::code.append.text.to.file;
 
