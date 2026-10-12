@@ -121,7 +121,7 @@
   rasMfmrDevsPrintCodeCheckRES <- devs.print.code.check.res;
   rasMfmrPullLibrINFO          <- SEAFO::devs.pull.libr.info;
   rasMfmrInfoPostFuncSelfID    <- SEAFO::info.post.func.self.id;
-  rasMfmrDevsPatchCodeDevTRCKR <- devs.patch.code.dev.trckr.file;
+  rasMfmrDevsPatchCodeDevTRCKR <- SEAFO::devs.patch.code.dev.trckr.file;
 
 
 
