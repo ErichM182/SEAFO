@@ -10,7 +10,7 @@ RCT_IS_VERBOSE_RT_MODE_ <- T;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker .
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
-  sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
+  sbCheckCRAN = T,   # <- Set this to `FALSE` if you only want to update the documentation !!!
   sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
@@ -40,6 +40,15 @@ lsListVals_  <- list(
   1982, "Value for VAR_B", "R-Object for VAR_C", FALSE,
   "Value for VAR_Y", TRUE, "R-List for VAR_G"
 )
+lsListVals_  <- c(
+  1982, "Value for VAR_B", "R-Object for VAR_C", FALSE,
+  "Value for VAR_Y", TRUE, "R-List for VAR_G"
+)
+dfListCON_ <- base::data.frame(
+  VarA = vsListNames_,
+  VarB = lsListVals_
+)
+dfListCON_[1:3, ]
 
 
 

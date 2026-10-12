@@ -7,9 +7,9 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  12 Oct 2026 @ 18:56:50.604 CAT
+> Code Push TIME  ==>  12 Oct 2026 @ 20:24:01.250 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.1     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.31  (devs-release)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.35  (devs-release)
 
 
 
@@ -25,8 +25,8 @@
 
 
 
--> RECENT UPDATES: The last updated files in the `SEAFO` R-Library Project [ n: 7 ] ...
-> 2026.10.12 @ 18:56:17  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
+-> LAST CHANGES: The last updated files from the `SEAFO` R-Library Project [ n: 7 ] ...
+> 2026.10.12 @ 20:22:31  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
 > 2026.10.12 @ 14:56:18  ==>  SEAFO::DEVS.Patch.Libr.Vers.Number.R
 > 2026.10.07 @ 14:21:52  ==>  SEAFO::DEVS.Check.Code.Specs.R
 > 2026.10.06 @ 18:06:19  ==>  SEAFO::RENV_ICONS.R

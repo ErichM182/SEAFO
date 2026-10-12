@@ -203,7 +203,7 @@
         );
 
         ### STEP 2.1.1b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullCRAN_ <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsCRAN_);
+        rsnListFullCRAN_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsCRAN_);
 
         rsnVersStubALPHA_  <- rsnListFullCRAN_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullCRAN_[["VERS_BETA"]];
@@ -230,7 +230,7 @@
         ### STEP 2.2.1b: Extract the ACTIVE-DEVELOPMENT CODE VERSION NUMBER (value) ...
         rssActDevVersNumFromTRCKR_ <- rasStringrStrEXTRACT(
           string = rcsFullTextTRCKR_,
-          # # Extract text between two markers <given by "RegEx" pattern (.*?) below> ...
+          # # Extract text between two markers <given by "RegExp" pattern (.*?) below> ...
           pattern = "==>(.*?)devs-release"   # <- Two markers: "==>" and "
         );
         rvsActDevVersNumFromTRCKR_n3_ <- rasBaseUNLIST(
@@ -243,7 +243,7 @@
         )[1:3];   # <- Extract only the first 3 numbers (i.e. PRODUCTION Version Stubs) !!!
 
         ### STEP 2.2.1b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullTRCKR_ <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsTRCKR_);
+        rsnListFullTRCKR_  <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsTRCKR_);
         rsnVersStubALPHA_  <- rsnListFullTRCKR_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullTRCKR_[["VERS_BETA"]];
         rsnVersStubSTABLE_ <- rsnListFullTRCKR_[["VERS_STABLE"]];
@@ -256,7 +256,7 @@
         )[1:3];   # <- Extract only the first 3 numbers (i.e. PRODUCTION Version Stubs) !!!
 
         ### STEP 2.2.2b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullDESC_ <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
+        rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
         rsnVersStubALPHA_  <- rsnListFullDESC_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullDESC_[["VERS_BETA"]];
         rsnVersStubSTABLE_ <- rsnListFullDESC_[["VERS_STABLE"]];
@@ -329,7 +329,12 @@
     rasBaseORDER(dfProjFiles_$MOD_TIME, decreasing = TRUE),
   ];
   base::rownames(dfProjFiles_) <- NULL;                  # <- Remove row names for cleaner printing ...
-  dfProjFiles_ <- dfProjFiles_[1:7, ];                   # <- Select only top 7 rows ...
+  snRowsRAW_ <- rasBaseNROW(dfProjFiles_);
+  if (snRowsRAW_ >= 7) {
+    dfProjFiles_ <- dfProjFiles_[1:7, ];   # <- Select only top 7 rows ...
+  } else {
+    dfProjFiles_ <- dfProjFiles_[1:snRowsRAW_, ];   # <- Select only top 7 rows ...
+  }
   vsFileNames_ <- rasBaseC(); vsFileDates_ <- rasBaseC(); vsFileTimes_ <- rasBaseC();
   for (row in 1:rasBaseNROW(dfProjFiles_)) {
     ssFileNameCLEAN_ <- rasBaseStrSPLIT(
@@ -355,6 +360,7 @@
       vsFileDateCLEAN_[[1]][1], ".", vsFileDateCLEAN_[[1]][2], ".", vsFileDateCLEAN_[[1]][3]
     ));
   }
+  snRowsDF_ <- rasBaseNROW(dfProjFiles_);
 
 
 
@@ -414,22 +420,83 @@
     "> devtools  ==>  v", rssVersDEVTOOLS_, "\n",
     "> roxygen2  ==>  v", rssVersROXYGEN2_, "\n"
   );
-  RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
-    "-> RECENT UPDATES: The last updated files in the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
-    rasBaseNROW(dfProjFiles_), " ] ...", "\n",
-    "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
-    "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
-    "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
-    "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n",
-    "> ", vsFileDates_[5], " @ ", vsFileTimes_[5], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[5], "\n",
-    "> ", vsFileDates_[6], " @ ", vsFileTimes_[6], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[6], "\n",
-    "> ", vsFileDates_[7], " @ ", vsFileTimes_[7], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[7], "\n"
-  );
   RCT_ACT_DEV_INFO_BODY_LVL_05_ <- rasBasePASTE0(   # -> Compiles the Project Dependencies Info ...
     "-> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: ",
         rsnDepsN_, " ] ...", "\n",
     rssLibrDepsLIST_   # <- Adds the R-Library DEPENDECIES <compiled> List !!!
   );
+
+  if (snRowsDF_ == 7) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+      "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
+      "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n",
+      "> ", vsFileDates_[5], " @ ", vsFileTimes_[5], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[5], "\n",
+      "> ", vsFileDates_[6], " @ ", vsFileTimes_[6], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[6], "\n",
+      "> ", vsFileDates_[7], " @ ", vsFileTimes_[7], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[7], "\n"
+    );
+  } else if (snRowsDF_ == 6) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+      "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
+      "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n",
+      "> ", vsFileDates_[5], " @ ", vsFileTimes_[5], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[5], "\n",
+      "> ", vsFileDates_[6], " @ ", vsFileTimes_[6], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[6], "\n"
+    );
+  } else if (snRowsDF_ == 5) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+      "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
+      "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n",
+      "> ", vsFileDates_[5], " @ ", vsFileTimes_[5], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[5], "\n"
+    );
+  } else if (snRowsDF_ == 4) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+      "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
+      "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n"
+    );
+  } else if (snRowsDF_ == 3) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+      "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n"
+    );
+  } else if (snRowsDF_ == 2) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+      "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n"
+    );
+  } else if (snRowsDF_ == 1) {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n"
+    );
+  } else {
+    RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+      "-> LAST CHANGES: The last updated files from the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+      snRowsDF_, " ] ...", "\n",
+      "> ", "... ... ...", "\n"
+    );
+  }
+
   RCT_ACT_DEV_INFO_BODY_END_STUB_ <- rasBasePASTE0(   # -> Closes OFF the DEV Tracker File ...
     "| === === === === === === === END of 'ACT-DEV' TRCKR File !!! === === === === === === === |",
     "\n"
