@@ -1,15 +1,15 @@
 #? ### ### ### ### ### ### ###
 #' @title Create Environment-safe and Immutable Enumerated R Data Objects
-#' 
-#' @description
-#' A Helper Function that compiles an Environment-safe and immutable (locked)) R
-#' Enumerated Data Object from an input list or vector of character objects.
 #'
-#' @param vsEnumVals the list or vector of character (string) values to be
-#' compiled into an R enumerated data object.
-#' @param sbKeepCase a logical (boolean) value that specifies whether the final
-#' enumerated values should be in variable case (e.g. "enTest$VariCaseVal") or
-#' should all be standardized to UPPER CASE (e.g. "enTest$VARICASEVAL") only.
+#' @description
+#' A Helper Function that compiles an Environment-safe and immutable (locked)) R Enumerated Data
+#' Object from an input list or vector of character objects.
+#'
+#' @param vsEnumVals the list or vector of character (string) values to be compiled into an R
+#'                   enumerated data object.
+#' @param sbKeepCase a logical (boolean) value that specifies whether the final enumerated values
+#'                   should be in variable case (e.g. "enTest$VariCaseVal") or should all be
+#'                   standardized to UPPER CASE (e.g. "enTest$VARICASEVAL") only.
 #'
 #' @returns
 #' * This function outputs a single R object (i.e. the enumerated data object or
@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' ### Easily create Enumerated Data Objects (enums) as follows ...
-#' require(MFMRutils)   # -> Installs and loads the "MFMRutils" package ...
+#' require(SEAFO)   # -> Installs and loads the "SEAFO" package ...
 #'
 #'
 #' ## DEMO 1a - Create a 'uniform case' "PlotsThemes" enum ...
@@ -74,12 +74,17 @@
 #? ### ### ###
 "code.create.enum" <- function(vsEnumVals=NULL, sbKeepCase=FALSE) {
 
+  ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
+  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";              # <- R Library Identifier !!!
+  RCT_TAG_FUNC_ID_SHRT_ <- "Create.Enum";        # <- Function ID - SHORT !!!
+  RCT_TAG_FUNC_ID_FULL_ <- "CODE.Create.Enum";   # <- Function ID - LONG !!!
+
   ssTagFuncID <- "EnumCreate";
 
   if (base::is.null(vsEnumVals)) {
-    ssPostNote = MFMRutils::info.post.note(
+    ssPostNote = SEAFO::info.post.note(
       ssFuncCallerID = base::paste0(ssTagFuncID, " ", 79),
-      csColorPostNote = EnvCOLORS$RedFORE, csColorCFID = EnvCOLORS$RedFORE,
+      csColorPostNote = SEAFO::EnvCOLORS$RedFORE, csColorCFID = SEAFO::EnvCOLORS$RedFORE,
       ssPostNote = "The `vsEnumVals` function argument should not be NULL !!!\n"
     )
   } else {

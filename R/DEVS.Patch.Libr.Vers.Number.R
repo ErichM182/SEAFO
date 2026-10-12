@@ -9,8 +9,8 @@
 #' function keeps track of the developmental progress of the code base and accurately updates the
 #' <appropriate> version numbers as code is committed and upgraded on the developmental cycle.
 #'
-#' @param rvsVersNumVect a vector of characters (strings) that defines the <regent> R Library's
-#'                       active development (or production) code release status (version number).
+#' @param vsVersNumVect a vector of characters (strings) that defines the <regent> R Library's
+#'                      active development (or production) code release status (version number).
 #'
 #' @returns
 #' * This function returns an environment locked list containing the updated version numbers for
@@ -32,7 +32,8 @@
 #' rlsLibrVers$VERS_STABLE   # <- Updated the <stable release> version number accordingly !!!
 #'
 #' @keywords internal
-#' @noRd
+#'
+#' @export
 #? ### ### ###
 "devs.patch.libr.vers.number" <- function(vsVersNumVect=c("0", "0", "0", "01")) {
 

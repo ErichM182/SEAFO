@@ -56,14 +56,18 @@
 
 
   ####   STEP 02 - Prime NB "Aliases" used locally (inside function)   ####
+  rasBaseC          <- base::c;
   rasBaseLIST       <- base::list;
+  rasBaseNROW       <- base::nrow;
   rasBaseCLASS      <- base::class;
+  rasBaseORDER      <- base::order;
   rasBaseLENGTH     <- base::length;
   rasBaseRETURN     <- base::return;
   rasBasePASTE0     <- base::paste0;
   rasBaseFORMAT     <- base::format;
   rasBaseIfELSE     <- base::ifelse;
   rasBaseUNLIST     <- base::unlist;
+  rasBaseSubSTR     <- base::substr;
   rasBaseIsNULL     <- base::is.null;
   rasBaseOPTIONS    <- base::options;
   rasBaseSPRINTF    <- base::sprintf;
@@ -71,11 +75,14 @@
   rasBaseStrSPLIT   <- base::strsplit;
   rasBaseReadCHAR   <- base::readChar;
   rasBaseReadLINE   <- base::readline;
+  rasBaseRowNAMES   <- base::rownames;
   rasBaseSysTimeNOW <- base::Sys.time;
-  rasBase_R_VERSION <- base::R.version;
   rasBaseFileINFO   <- base::file.info;
   rasBaseFilePATH   <- base::file.path;
   rasBaseReadLINES  <- base::readLines;
+  rasBase_R_VERSION <- base::R.version;
+  rasBaseListFILES  <- base::list.files;
+  rasBaseDataFRAME  <- base::data.frame;
   rasBaseAsNUMERIC  <- base::as.numeric;
   rasBaseDirCREATE  <- base::dir.create;
   rasBaseWriteLINES <- base::writeLines;
@@ -92,9 +99,9 @@
   `%??%`                  <- SEAFO::`%??%`;                       # <- VERY COOL Alias <NCO> !!!
   rasMfmrDEVS             <- SEAFO::RENV_DEVS;
   rasMfmrPullLibrINFO     <- SEAFO::devs.pull.libr.info;
-  rasMfmrPatchLibrVersNUM <- devs.patch.libr.vers.number;
   rasMfmrReturnRenvLIST   <- SEAFO::code.return.renv.list;
   rasMfmrAppendToFILE     <- SEAFO::code.append.text.to.file;
+  rasMfmrPatchLibrVersNUM <- SEAFO::devs.patch.libr.vers.number;
 
   rasStringrStrEXTRACT <- stringr::str_extract;
 
@@ -299,7 +306,7 @@
       );
 
       ### STEP 2.2.2b: Patch the various Version Number stubs (accordingly) ...
-      rsnListFullDESC_ <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
+      rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
       rsnVersStubDEBUG_  <- rsnListFullDESC_[["VERS_DEBUG"]];
       rsnVersStubALPHA_  <- rsnListFullDESC_[["VERS_ALPHA"]];
       rsnVersStubBETA_   <- rsnListFullDESC_[["VERS_BETA"]];
@@ -311,7 +318,47 @@
 
 
 
-  ####   STEP 06 - Extract the (3rd Party) Support Libraries Version Numbers   ####
+  ####   STEP 06 - Compile List of Latest Updated R-Library Files    ####
+  dfProjFiles_ <- rasBaseFileINFO(rasBaseListFILES(path = "./R", full.names = TRUE));
+  dfProjFiles_ <- dfProjFiles_[!dfProjFiles_$isdir, ];   # <- Filter out directories (keep only files)
+  dfProjFiles_ <- rasBaseDataFRAME(                      # <- Extract file names & mod times only ...
+    FILE_NAME = rasBaseRowNAMES(dfProjFiles_),
+    MOD_TIME = dfProjFiles_$mtime
+  );
+  dfProjFiles_ <- dfProjFiles_[                          # <- Order files by modification time ...
+    rasBaseORDER(dfProjFiles_$MOD_TIME, decreasing = TRUE),
+  ];
+  base::rownames(dfProjFiles_) <- NULL;                  # <- Remove row names for cleaner printing ...
+  dfProjFiles_ <- dfProjFiles_[1:7, ];                   # <- Select only top 7 rows ...
+  vsFileNames_ <- rasBaseC(); vsFileDates_ <- rasBaseC(); vsFileTimes_ <- rasBaseC();
+  for (row in 1:rasBaseNROW(dfProjFiles_)) {
+    ssFileNameCLEAN_ <- rasBaseStrSPLIT(
+      x = dfProjFiles_$FILE_NAME[row], split = "/"
+    )[[1]][3];
+
+    ssFileDateCLEAN_ <- rasBaseStrSPLIT(
+      x = rasBaseAsCHAR(dfProjFiles_$MOD_TIME[row]), split = " "
+    )[[1]][1];
+
+    vsFileDateCLEAN_ <- rasBaseStrSPLIT(
+      x = rasBaseAsCHAR(ssFileDateCLEAN_ ), split = "-"
+    );
+
+    ssFileModTimeRAW_ <- rasBaseStrSPLIT(
+      x = rasBaseAsCHAR(dfProjFiles_$MOD_TIME[row]), split = " "
+    )[[1]][2];
+    ssFileTimesCLEAN_ <- rasBaseSubSTR(ssFileModTimeRAW_, start = 1, stop = 8);
+
+    vsFileNames_ <- c(vsFileNames_, ssFileNameCLEAN_);
+    vsFileTimes_ <- c(vsFileTimes_, ssFileTimesCLEAN_);
+    vsFileDates_ <- c(vsFileDates_, rasBasePASTE0(
+      vsFileDateCLEAN_[[1]][1], ".", vsFileDateCLEAN_[[1]][2], ".", vsFileDateCLEAN_[[1]][3]
+    ));
+  }
+
+
+
+  ####   STEP 07 - Extract the (3rd Party) Support Libraries Version Numbers   ####
   rssVersDEVTOOLS_ <- rasUtilsPackageVERSION(pkg = "devtools");
   rssVersROXYGEN2_ <- rasUtilsPackageVERSION(pkg = "roxygen2");
   if (!rasBaseIsNULL(RCT_REGENT_LIBS_VERS_ROXYGEN2_) &&
@@ -332,7 +379,7 @@
 
 
 
-  ####   STEP 07 - Compile FINAL OUTPUT Particulars   ####
+  ####   STEP 08 - Compile FINAL OUTPUT Particulars   ####
   rssVersNewPROD_ <- rasBasePASTE0(
     rsnVersStubSTABLE_, ".", rsnVersStubBETA_, ".", rsnVersStubALPHA_
   );
@@ -348,7 +395,7 @@
     "|           Active Development Tracking Information (regent R Library Project)            |", "\n",
     "=== === === === === === === === === === === === === === === === === === === === === === ===", "\n"
   );
-  RCT_ACT_DEV_INFO_BODY_LVL_01_ <- rasBasePASTE0(   # -> Creates a Devs TimeStamp ...
+  RCT_ACT_DEV_INFO_BODY_LVL_01_ <- rasBasePASTE0(   # -> Compiles Basic DEV Information ...
     "-> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...", "\n",
     '> R-Library (Project ID): `', RCT_REGENT_R_LIB_ID_, '` \n',
     "> Code Push TYPE  ==>  ", RCT_CODE_PUSH_TYPE_, "\n",
@@ -356,30 +403,41 @@
     "> Code Push PRODUCTION VERSION #  ==>  ", rssVersNewPROD_, "     (prod-release)", "\n",
     "> Code Push ACTIVE-DEV VERSION #  ==>  ", rssVersNewDEVS_, "  (devs-release)", "\n"
   );
-  RCT_ACT_DEV_INFO_BODY_LVL_02_ <- rasBasePASTE0(
+  RCT_ACT_DEV_INFO_BODY_LVL_02_ <- rasBasePASTE0(   # -> Compiles R Version Information ...
     "-> R SOFTWARE: Specifics on `R-core` [as PROG-LANG for R Library Development] ... ", "\n",
     "> ", rasBase_R_VERSION[["version.string"]], "\n",
     '> Nickname  ==>  "', rasBase_R_VERSION[["nickname"]], '" !!!', "\n"
   );
-  RCT_ACT_DEV_INFO_BODY_LVL_03_ <- rasBasePASTE0(   # -> Creates a Devs TimeStamp ...
+  RCT_ACT_DEV_INFO_BODY_LVL_03_ <- rasBasePASTE0(   # -> Compiles DEV Support Libs Information ...
     "-> CODE SUPPORT: 3rd Party R Packages used (as DEV-TOOLS) during development [ n: ",
     "2 ] ...", "\n",
     "> devtools  ==>  v", rssVersDEVTOOLS_, "\n",
     "> roxygen2  ==>  v", rssVersROXYGEN2_, "\n"
   );
-  RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Creates a Devs TimeStamp ...
+  RCT_ACT_DEV_INFO_BODY_LVL_04_ <- rasBasePASTE0(   # -> Compiles Recently Updated Information ...
+    "-> RECENT UPDATES: The last updated files in the `", RCT_REGENT_R_LIB_ID_,"` R-Library Project [ n: ",
+    rasBaseNROW(dfProjFiles_), " ] ...", "\n",
+    "> ", vsFileDates_[1], " @ ", vsFileTimes_[1], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[1], "\n",
+    "> ", vsFileDates_[2], " @ ", vsFileTimes_[2], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[2], "\n",
+    "> ", vsFileDates_[3], " @ ", vsFileTimes_[3], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[3], "\n",
+    "> ", vsFileDates_[4], " @ ", vsFileTimes_[4], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[4], "\n",
+    "> ", vsFileDates_[5], " @ ", vsFileTimes_[5], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[5], "\n",
+    "> ", vsFileDates_[6], " @ ", vsFileTimes_[6], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[6], "\n",
+    "> ", vsFileDates_[7], " @ ", vsFileTimes_[7], "  ==>  ", RCT_REGENT_R_LIB_ID_, "::", vsFileNames_[7], "\n"
+  );
+  RCT_ACT_DEV_INFO_BODY_LVL_05_ <- rasBasePASTE0(   # -> Compiles the Project Dependencies Info ...
     "-> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: ",
         rsnDepsN_, " ] ...", "\n",
     rssLibrDepsLIST_   # <- Adds the R-Library DEPENDECIES <compiled> List !!!
   );
-  RCT_ACT_DEV_INFO_BODY_END_STUB_ <- rasBasePASTE0(   # -> Creates a Devs TimeStamp ...
+  RCT_ACT_DEV_INFO_BODY_END_STUB_ <- rasBasePASTE0(   # -> Closes OFF the DEV Tracker File ...
     "| === === === === === === === END of 'ACT-DEV' TRCKR File !!! === === === === === === === |",
     "\n"
   );
 
 
 
-  ####   STEP 08 - Write Updated DATA to ( Act_Dev_TRCKR.txt ) File   ####
+  ####   STEP 09 - Write Updated DATA to ( Act_Dev_TRCKR.txt ) File   ####
   rasBaseWriteLINES(   # -> Writes the compiled data to the "Act_Dev_TRCKR.txt" file ...
     con = RCT_PATH_FILE_ACT_DEV_INFO_TRCKR_,
     text = rasBasePASTE0(
@@ -388,13 +446,14 @@
       RCT_ACT_DEV_INFO_BODY_LVL_02_, "\n\n\n",
       RCT_ACT_DEV_INFO_BODY_LVL_03_, "\n\n\n",
       RCT_ACT_DEV_INFO_BODY_LVL_04_, "\n\n\n",
+      RCT_ACT_DEV_INFO_BODY_LVL_05_, "\n\n\n",
       RCT_ACT_DEV_INFO_BODY_END_STUB_
     )
   );
 
 
 
-  ####   STEP 09 - Patch (update) Version in Project DESCRIPTION File   ####
+  ####   STEP 10 - Patch (update) Version in Project DESCRIPTION File   ####
   rasDescSetVERSION(
     file = RCT_FILE_R_PKG_DESC_,
     version = rasBaseIfELSE(
@@ -404,14 +463,14 @@
 
 
 
-  ####   STEP 10 - COMPLETION AUDIO Feedback (only prod-release)   ####
+  ####   STEP 11 - COMPLETION AUDIO Feedback (only prod-release)   ####
   if (rsbAudioNote_) {
     rasBeeprBEEP(2);   # <- Plays the "Coin" audio clip from the `beepr` R Library !!!
   }
 
 
 
-  ####   STEP 11 - Output <key> Function Results   ####
+  ####   STEP 12 - Output <key> Function Results   ####
   rasMfmrReturnRenvLIST(
     vsListNames = c(
       "CODE_NAME_TAG",    # <- R Library Project Identifier -> TAG !!!

@@ -10,7 +10,7 @@ RCT_IS_VERBOSE_RT_MODE_ <- T;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker .
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
-  sbCheckCRAN = T,   # <- Set this to `FALSE` if you only want to update the documentation !!!
+  sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
   sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
@@ -60,16 +60,21 @@ SEAFO::devs.create.r.function(
 
 
 
-a <- 1:10
-b <- a
-b[[3]] <- 7
 
-lobstr::obj_addr(a)
-lobstr::obj_addr(b)
+dfProjFiles <- file.info(list.files(path = "./R", full.names = TRUE))
+file_info <- dfProjFiles[!dfProjFiles$isdir, ]    # 3. Filter out directories (keep only files)
+file_dates <- data.frame(
+  file_name = rownames(file_info),
+  modification_time = file_info$mtime
+)
+ordered_files <- file_dates[order(file_dates$modification_time, decreasing = TRUE), ]
+rownames(ordered_files) <- NULL
 
-lobstr::obj_addr(mean)
-lobstr::obj_addr(base::mean)
-lobstr::obj_addr(get("mean"))
-lobstr::obj_addr(evalq("mean"))
-lobstr::obj_addr(match.fun("mean"))
-lobstr::obj_addr(evalq("make.names"))
+class(file_info)
+class(dfProjFiles)
+
+
+
+
+
+

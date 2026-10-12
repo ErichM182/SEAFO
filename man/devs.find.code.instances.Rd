@@ -227,6 +227,7 @@ summary(results)
 Other SEAFO DevTools:
 \code{\link[=devs.check.code.specs]{devs.check.code.specs()}},
 \code{\link[=devs.patch.code.dev.trckr.file]{devs.patch.code.dev.trckr.file()}},
+\code{\link[=devs.patch.libr.vers.number]{devs.patch.libr.vers.number()}},
 \code{\link[=devs.pull.libr.info]{devs.pull.libr.info()}}
 }
 \concept{SEAFO DevTools}

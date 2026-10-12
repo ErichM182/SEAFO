@@ -51,6 +51,7 @@ devs.patch.code.dev.trckr.file()   # -> Executes only the DevTools Documentation
 Other SEAFO DevTools:
 \code{\link[=devs.check.code.specs]{devs.check.code.specs()}},
 \code{\link[=devs.find.code.instances]{devs.find.code.instances()}},
+\code{\link[=devs.patch.libr.vers.number]{devs.patch.libr.vers.number()}},
 \code{\link[=devs.pull.libr.info]{devs.pull.libr.info()}}
 }
 \concept{SEAFO DevTools}

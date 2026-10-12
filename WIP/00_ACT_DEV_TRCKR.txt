@@ -7,9 +7,9 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  12 Oct 2026 @ 14:42:31.754 CAT
+> Code Push TIME  ==>  12 Oct 2026 @ 18:56:50.604 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.1     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.21  (devs-release)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.31  (devs-release)
 
 
 
@@ -22,6 +22,17 @@
 -> CODE SUPPORT: 3rd Party R Packages used (as DEV-TOOLS) during development [ n: 2 ] ...
 > devtools  ==>  v2.5.2
 > roxygen2  ==>  v8.1.0
+
+
+
+-> RECENT UPDATES: The last updated files in the `SEAFO` R-Library Project [ n: 7 ] ...
+> 2026.10.12 @ 18:56:17  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
+> 2026.10.12 @ 14:56:18  ==>  SEAFO::DEVS.Patch.Libr.Vers.Number.R
+> 2026.10.07 @ 14:21:52  ==>  SEAFO::DEVS.Check.Code.Specs.R
+> 2026.10.06 @ 18:06:19  ==>  SEAFO::RENV_ICONS.R
+> 2026.10.06 @ 18:06:12  ==>  SEAFO::RENV_FSID.R
+> 2026.10.06 @ 18:06:01  ==>  SEAFO::RENV_FORMATS.R
+> 2026.10.06 @ 18:05:49  ==>  SEAFO::RENV_DEVS.R
 
 
 
