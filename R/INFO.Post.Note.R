@@ -6,8 +6,8 @@
 #'
 #' @description
 #' A Helper Function that standardizes the R Project Information Posting (i.e. User Notification)
-#' Processes. This function was intended to mainly support the MFMR Suite of R Functions (a.k.a.
-#' `SuiteMFMR`), but may be utilized as a standalone function in other (i.e. 3rd Party) R packages.
+#' Processes. This function was intended to mainly support the SEAFO Suite of R Functions (a.k.a.
+#' `SuiteSeafo`), but may be utilized as a standalone function in other (i.e. 3rd Party) R packages.
 #'
 #'
 #' @param csIconCarat ([character]) a String or Text (i.e. [character] [vector]) object that defines
@@ -156,7 +156,7 @@
 
 
   ####   STEP 01 - Prime "Function Self-ID" CONSTANTS   ####
-  ##  NB: This 👆  is THE 1st OF ONLY 2 FUNCTIONS [in the entire MFMR Suite of R Functions] THAT DO
+  ##  NB: This 👆  is THE 1st OF ONLY 2 FUNCTIONS [in the entire Seafo Suite of R Functions] THAT DO
   ##      NOT SELF-IDENTIFY (since a Self-ID implementation here will cause infinite recursion) !!!
   RCT_DBL_SYS_TIME_NOW_    <- base::Sys.time();   # <- Extract the <active> System Date-Time !!!
   RCT_TAG_FUNC_LIBR_ID_    <- "SEAFO";        # <- R Library Identifier !!!
@@ -182,16 +182,16 @@
   rasBaseIsINVISIBLE <- base::invisible;
 
   `%??%`            <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
-  rasMfmrFSID       <- SEAFO::RENV_FSID;
-  rasMfmrICONS      <- SEAFO::RENV_ICONS;
-  rasMfmrFORMATS    <- SEAFO::RENV_FORMATS;
-  rasMfmrCOLOURS    <- SEAFO::RENV_COLOURS;
-  rasMfmrPollRTMODE <- SEAFO::code.poll.r.runtime.mode;
+  rasSeafoFSID       <- SEAFO::RENV_FSID;
+  rasSeafoICONS      <- SEAFO::RENV_ICONS;
+  rasSeafoFORMATS    <- SEAFO::RENV_FORMATS;
+  rasSeafoCOLOURS    <- SEAFO::RENV_COLOURS;
+  rasSeafoPollRTMODE <- SEAFO::code.poll.r.runtime.mode;
 
   ## SPECIAL - Constant - TAG - Aliases (NB for the `INFO.Post.*` functions) ...
-  RCT_RCO_RT_MODE_       <- rasMfmrPollRTMODE();   # <- R Run-Time Mode/State !!!
-  RCT_TAG_FUNC_ID_SHORT_ <- rasMfmrFSID$CONSTS_FID_SHORT;
-  RCT_BOOL_POST_ALWAYS_  <- rasMfmrFSID$F_ARGS_BOOL_POST_ALWAYS;
+  RCT_RCO_RT_MODE_       <- rasSeafoPollRTMODE();   # <- R Run-Time Mode/State !!!
+  RCT_TAG_FUNC_ID_SHORT_ <- rasSeafoFSID$CONSTS_FID_SHORT;
+  RCT_BOOL_POST_ALWAYS_  <- rasSeafoFSID$F_ARGS_BOOL_POST_ALWAYS;
 
 
 
@@ -203,29 +203,29 @@
 
     ####   STEP 03 - Execute Custom Function's Code logic   ####
     ##   3.1 - Prime Standard Text Formats ... ####
-    csFormatBOLD_  <- rasMfmrFORMATS$ANSI_BOLD;
-    csFormatRESET_ <- rasMfmrFORMATS$ANSI_RESET;
+    csFormatBOLD_  <- rasSeafoFORMATS$ANSI_BOLD;
+    csFormatRESET_ <- rasSeafoFORMATS$ANSI_RESET;
 
     ##   3.2 - Prime selected variables (akin to constants) ...
-    csIconFLAME_    <- rasMfmrICONS$FireFlame;
-    csColorsCYAN_   <- rasMfmrCOLOURS$CyanFORE;
-    csColorsGREEN_  <- rasMfmrCOLOURS$GreenFORE;
-    csColorsYELLOW_ <- rasMfmrCOLOURS$YellowFORE;
+    csIconFLAME_    <- rasSeafoICONS$FireFlame;
+    csColorsCYAN_   <- rasSeafoCOLOURS$CyanFORE;
+    csColorsGREEN_  <- rasSeafoCOLOURS$GreenFORE;
+    csColorsYELLOW_ <- rasSeafoCOLOURS$YellowFORE;
 
     ##   3.3 - Prime selected variables (akin to constants) ...
-    RAS_ICON_CARAT_      <- rasMfmrFSID$F_ARGS_ICON_CARAT;
-    RAS_ICON_SPLIT_      <- rasMfmrFSID$F_ARGS_ICON_SPLIT;
-    RAS_ICON_TAIL_       <- rasMfmrFSID$F_ARGS_ICON_TAIL;
-    RAS_IS_SHOW_TAIL_    <- rasMfmrFSID$F_ARGS_BOOL_SHOW_TAIL;
-    RAS_IS_PRINT_PRETTY_ <- rasMfmrFSID$F_ARGS_BOOL_PRINT_PRETTY;
-    RAS_COLOUR_HEAD_     <- rasMfmrFSID$F_ARGS_COLOR_TEXT_HEAD;
-    RAS_COLOUR_BODY_     <- rasMfmrFSID$F_ARGS_COLOR_TEXT_BODY;
-    RAS_COLOUR_CARAT_    <- rasMfmrFSID$F_ARGS_COLOR_CARAT;
-    RAS_COLOUR_SPLIT_    <- rasMfmrFSID$F_ARGS_COLOR_SPLIT;
-    RAS_IS_NL_PRE_ONE_   <- rasMfmrFSID$F_ARGS_BOOL_NEW_LINE_PRE_ONE;
-    RAS_IS_NL_POST_1ST_  <- rasMfmrFSID$F_ARGS_BOOL_NEW_LINE_POST_ONE;
-    RAS_IS_NL_POST_2ND_  <- rasMfmrFSID$F_ARGS_BOOL_NEW_LINE_POST_TWO;
-    RAS_FUNC_CALLR_CELN_ <- rasMfmrFSID$F_ARGS_FUNC_CALLER_CELN;
+    RAS_ICON_CARAT_      <- rasSeafoFSID$F_ARGS_ICON_CARAT;
+    RAS_ICON_SPLIT_      <- rasSeafoFSID$F_ARGS_ICON_SPLIT;
+    RAS_ICON_TAIL_       <- rasSeafoFSID$F_ARGS_ICON_TAIL;
+    RAS_IS_SHOW_TAIL_    <- rasSeafoFSID$F_ARGS_BOOL_SHOW_TAIL;
+    RAS_IS_PRINT_PRETTY_ <- rasSeafoFSID$F_ARGS_BOOL_PRINT_PRETTY;
+    RAS_COLOUR_HEAD_     <- rasSeafoFSID$F_ARGS_COLOR_TEXT_HEAD;
+    RAS_COLOUR_BODY_     <- rasSeafoFSID$F_ARGS_COLOR_TEXT_BODY;
+    RAS_COLOUR_CARAT_    <- rasSeafoFSID$F_ARGS_COLOR_CARAT;
+    RAS_COLOUR_SPLIT_    <- rasSeafoFSID$F_ARGS_COLOR_SPLIT;
+    RAS_IS_NL_PRE_ONE_   <- rasSeafoFSID$F_ARGS_BOOL_NEW_LINE_PRE_ONE;
+    RAS_IS_NL_POST_1ST_  <- rasSeafoFSID$F_ARGS_BOOL_NEW_LINE_POST_ONE;
+    RAS_IS_NL_POST_2ND_  <- rasSeafoFSID$F_ARGS_BOOL_NEW_LINE_POST_TWO;
+    RAS_FUNC_CALLR_CELN_ <- rasSeafoFSID$F_ARGS_FUNC_CALLER_CELN;
 
 
 
@@ -264,7 +264,7 @@
         csIconCarat_ <- rasBasePASTE0(
           csFormatBOLD_,             # <- Applies the BOLD ANSI Text formatting ...
           csColorCarat_, "     ",    # <- Applies the Text Colour Formats & pre-pends a spacer ...
-          rasMfmrICONS$ArrowRIGHT,   # <- Adds the default <standardized> "Right-Arrow" icon ...
+          rasSeafoICONS$ArrowRIGHT,   # <- Adds the default <standardized> "Right-Arrow" icon ...
           csFormatRESET_, " "        # <- Closes text formatting and adds a <post-pended> spacer ...
         );
       } else {

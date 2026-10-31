@@ -79,26 +79,49 @@
   RCT_TAG_FUNC_ID_SHRT_ <- "Create.Enum";        # <- Function ID - SHORT !!!
   RCT_TAG_FUNC_ID_FULL_ <- "CODE.Create.Enum";   # <- Function ID - LONG !!!
 
-  ssTagFuncID <- "EnumCreate";
+
+  ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
+  ###    NOTES: This is a NEW approach to improve R Session Memory Efficiency ...
+  rasBasePASTE0     <- base::paste0;
+  rasBaseUNIQUE     <- base::unique;
+  rasBaseRETURN     <- base::return;
+  rasBaseAsLIST     <- base::as.list;
+  rasBaseToUPPER    <- base::toupper;
+  rasBaseSeqALONG   <- base::seq_along;
+  rasBaseAsENVIRO   <- base::as.environment;
+  rasBaseLockENVIRO <- base::lockEnvironment;
+
+  rasStatsSetNAMES <- stats::setNames
+
+  rasSeafoCOLORS       <- SEAFO::RENV_COLOURS;
+  rasSeafoGetCELN      <- SEAFO::code.get.celn;
+  rasSeafoInfoPostNOTE <- SEAFO::info.post.note;
+
+
+
+  ####   STEP 03 - Internalize ALL Function Arguments   ####
+  rvsEnumVals_   <- vsEnumVals;
+  rsbsbKeepCase_ <- sbKeepCase;
+
 
   if (base::is.null(vsEnumVals)) {
-    ssPostNote = SEAFO::info.post.note(
-      ssFuncCallerID = base::paste0(ssTagFuncID, " ", 79),
-      csColorPostNote = SEAFO::EnvCOLORS$RedFORE, csColorCFID = SEAFO::EnvCOLORS$RedFORE,
+    rasSeafoInfoPostNOTE(
+      ssFuncCallerID = rasSeafoGetCELN(ssTagFuncID, " ", 79),
+      csColorPostNote = rasSeafoCOLORS$RedFORE, csColorCFID = rasSeafoCOLORS$RedFORE,
       ssPostNote = "The `vsEnumVals` function argument should not be NULL !!!\n"
     )
   } else {
 
     if (sbKeepCase) {   # -> Maintain the character cases as supplied to function !!!
-      values <- base::unique(vsEnumVals);
+      values <- rasBaseUNIQUE(vsEnumVals);
     } else {   # -> Standardize all character cases to UPPER CASE !!!
-      values <- base::unique(base::toupper(vsEnumVals));
+      values <- rasBaseUNIQUE(rasBaseToUPPER(vsEnumVals));
     }
 
-    res <- stats::setNames(base::seq_along(values), values);
-    res <- base::as.environment(base::as.list(res));
-    base::lockEnvironment(res, bindings = TRUE);
-    base::return(res);
+    res <- rasStatsSetNAMES(rasBaseSeqALONG(values), values);
+    res <- rasBaseAsENVIRO(rasBaseAsLIST(res));
+    rasBaseLockENVIRO(res, bindings = TRUE);
+    rasBaseRETURN(res);
   }
 
 }

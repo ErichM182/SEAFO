@@ -8,8 +8,8 @@
 #' Package Development. This function programmatically updates the package version number in the R
 #' Project DESCRIPTION file before running the required documentation and/or CRAN Package
 #' Pre-Submission Code Requirement Checks (i.e. CRAN Code Validation) during iterative development
-#' cycles. This Helper Function was originally crafted as a technical support tool for the "MFMR
-#' Suite of R Libraries" (aka "SuiteMFMR"), but may also be helpful as a support tool during the R
+#' cycles. This Helper Function was originally crafted as a technical support tool for the "SEAFO
+#' Suite of R Libraries" (aka "SuiteSeafo"), but may also be helpful as a support tool during the R
 #' Package Development Cycle of other (3rd Party) R Projects.
 #'
 #' @param sbCheckDocs a logical (boolean) value that specifies whether to run the standard package
@@ -113,15 +113,15 @@
   rasDevToolsDOCUMENT <- devtools::document;
   rasDevToolsCleanDLL <- devtools::clean_dll;
 
-  `%??%`                       <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
-  rasMfmrDEVS                  <- SEAFO::RENV_DEVS;
-  rasMfmrICONS                 <- SEAFO::RENV_ICONS;
-  rasMfmrCOLORS                <- SEAFO::RENV_COLOURS;
-  rasMfmrFORMATS               <- SEAFO::RENV_FORMATS;
-  rasMfmrDevsPrintCodeCheckRES <- devs.print.code.check.res;
-  rasMfmrPullLibrINFO          <- SEAFO::devs.pull.libr.info;
-  rasMfmrInfoPostFuncSelfID    <- SEAFO::info.post.func.self.id;
-  rasMfmrDevsPatchCodeDevTRCKR <- SEAFO::devs.patch.code.dev.trckr.file;
+  `%??%`                        <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
+  rasSeafoDEVS                  <- SEAFO::RENV_DEVS;
+  rasSeafoICONS                 <- SEAFO::RENV_ICONS;
+  rasSeafoCOLORS                <- SEAFO::RENV_COLOURS;
+  rasSeafoFORMATS               <- SEAFO::RENV_FORMATS;
+  rasSeafoDevsPrintCodeCheckRES <- devs.print.code.check.res;
+  rasSeafoPullLibrINFO          <- SEAFO::devs.pull.libr.info;
+  rasSeafoInfoPostFuncSelfID    <- SEAFO::info.post.func.self.id;
+  rasSeafoDevsPatchCodeDevTRCKR <- SEAFO::devs.patch.code.dev.trckr.file;
 
 
 
@@ -132,15 +132,15 @@
   rsbIsProdRel_ <- sbIsProdRel;
 
   rvsDotsArgs_     <- rasBaseLIST(...);
-  rsbAudioNote_    <- rvsDotsArgs_[["sbAudioNote"]]    %??% FALSE;
   rsbPrintPretty_  <- rvsDotsArgs_[["sbPrintPretty"]]  %??% TRUE;
+  rsbAudioNote_    <- rvsDotsArgs_[["sbAudioNote"]]    %??% FALSE;
   rsbRunSelfID_    <- rvsDotsArgs_[["sbRunSelfID"]]    %??% FALSE;
   rssFuncCallerID_ <- rvsDotsArgs_[["ssFuncCallerID"]] %??% "TOP-LVL (rsProjMAIN)";
 
 
 
   ####   STEP 04 - Run Function SELF-ID <ENTRY> (if requested)   ####
-  rasMfmrInfoPostFuncSelfID(
+  rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_FULL_,
     siFuncMode01 = 1L, ssFuncCallerID = rssFuncCallerID_,
     sbRunSelfID = rsbRunSelfID_, sbPrintPretty = rsbPrintPretty_,
@@ -153,34 +153,34 @@
   ####   STEP 05 - Define Critical Constants   ####
   RCT_SYS_DATE_TIME_NOW_ <- rasBaseSysTimeNOW();
 
-  RCT_ANSI_BOLD_    <- rasMfmrFORMATS$BOLD;
-  RCT_ANSI_RESET_   <- rasMfmrFORMATS$RESET;
-  RCT_ANSI_ITALICS_ <- rasMfmrFORMATS$ITALICS;
+  RCT_ANSI_BOLD_    <- rasSeafoFORMATS$BOLD;
+  RCT_ANSI_RESET_   <- rasSeafoFORMATS$RESET;
+  RCT_ANSI_ITALICS_ <- rasSeafoFORMATS$ITALICS;
 
-  RCT_ICON_POINT_UP_      <- rasMfmrICONS$PointUP;
-  RCT_ICON_WHITE_X_       <- rasMfmrICONS$X_White;
-  RCT_ICON_SMILEY_SAD_    <- rasMfmrICONS$SmileySad;
-  RCT_ICON_OOGLY_EYES_    <- rasMfmrICONS$OoglyEyes;
-  RCT_ICON_CHECK_MARK_    <- rasMfmrICONS$CheckMark;
-  RCT_ICON_ARROW_RIGHT_   <- rasMfmrICONS$ArrowRIGHT;
-  RCT_ICON_SMILEY_PONDER_ <- rasMfmrICONS$SmileyPonder;
+  RCT_ICON_POINT_UP_      <- rasSeafoICONS$PointUP;
+  RCT_ICON_WHITE_X_       <- rasSeafoICONS$X_White;
+  RCT_ICON_SMILEY_SAD_    <- rasSeafoICONS$SmileySad;
+  RCT_ICON_OOGLY_EYES_    <- rasSeafoICONS$OoglyEyes;
+  RCT_ICON_CHECK_MARK_    <- rasSeafoICONS$CheckMark;
+  RCT_ICON_ARROW_RIGHT_   <- rasSeafoICONS$ArrowRIGHT;
+  RCT_ICON_SMILEY_PONDER_ <- rasSeafoICONS$SmileyPonder;
 
-  RCT_COLOR_RED_          <- rasMfmrCOLORS$RedFORE;
-  RCT_COLOR_BLUE_         <- rasMfmrCOLORS$BlueFORE;
-  RCT_COLOR_GREEN_        <- rasMfmrCOLORS$GreenFORE;
-  RCT_COLOR_TELLOW_       <- rasMfmrCOLORS$YellowFORE;
-  RCT_FOLDER_WIP_PROD_    <- rasMfmrDEVS$PATH_FOLDER_WIP_PROD;
-  RCT_FORMAT_TIME_DEV_01_ <- rasMfmrDEVS$FORMAT_TIME_DEV_LOG_V01;
-  RCT_FORMAT_TIME_DEV_02_ <- rasMfmrDEVS$FORMAT_TIME_DEV_LOG_V02;
-  RCT_FOLDER_WIP_HELPERS_ <- rasMfmrDEVS$PATH_FOLDER_WIP_HELPERS;
-  RCT_FILE_DEV_TIME_LOG_  <- rasMfmrDEVS$PATH_FILE_WIP_TIME_STAMP;
-  RCT_FILE_R_PKG_DESC_    <- rasMfmrDEVS$PATH_TO_FILE_R_PACKAGE_DESC;
+  RCT_COLOR_RED_          <- rasSeafoCOLORS$RedFORE;
+  RCT_COLOR_BLUE_         <- rasSeafoCOLORS$BlueFORE;
+  RCT_COLOR_GREEN_        <- rasSeafoCOLORS$GreenFORE;
+  RCT_COLOR_TELLOW_       <- rasSeafoCOLORS$YellowFORE;
+  RCT_FOLDER_WIP_PROD_    <- rasSeafoDEVS$PATH_FOLDER_WIP_PROD;
+  RCT_FORMAT_TIME_DEV_01_ <- rasSeafoDEVS$FORMAT_TIME_DEV_LOG_V01;
+  RCT_FORMAT_TIME_DEV_02_ <- rasSeafoDEVS$FORMAT_TIME_DEV_LOG_V02;
+  RCT_FOLDER_WIP_HELPERS_ <- rasSeafoDEVS$PATH_FOLDER_WIP_HELPERS;
+  RCT_FILE_DEV_TIME_LOG_  <- rasSeafoDEVS$PATH_FILE_WIP_TIME_STAMP;
+  RCT_FILE_R_PKG_DESC_    <- rasSeafoDEVS$PATH_TO_FILE_R_PACKAGE_DESC;
 
 
 
   ####   STEP 06 - Patch CODE DEV TRACKER   ####
   # 2. Extract the current version number from the DESCRIPTION file ...
-  rlsCodeVERS_ <- rasMfmrDevsPatchCodeDevTRCKR(
+  rlsCodeVERS_ <- rasSeafoDevsPatchCodeDevTRCKR(
     sbIsProdRel = rsbIsProdRel_, sbAudioNote = rsbAudioNote_
   );
   rssActProjID_ <- rlsCodeVERS_[["CODE_NAME_TAG"]];
@@ -198,7 +198,7 @@
     snLenNOTEs_    <- rasBaseLENGTH(coCheckResult_$notes);
     snLenERRORs_   <- rasBaseLENGTH(coCheckResult_$errors);
     snLenWARNINGs_ <- rasBaseLENGTH(coCheckResult_$warnings);
-    rasMfmrDevsPrintCodeCheckRES(
+    rasSeafoDevsPrintCodeCheckRES(
       snLenERRORs = snLenERRORs_, snLenWARNs = snLenWARNINGs_, snLenNOTEs = snLenNOTEs_,
       sbIsProdRel = rsbIsProdRel_, ssActProjID = rssActProjID_, ssProjVers = ssVersNewFULL
     );
@@ -214,7 +214,7 @@
 
   ####   STEP 06 - Run Function SELF-ID <EXIT> (if requested)   ####
   RCT_FUNC_RUN_TIME_STOP_ <- rasBaseSysTimeNOW();
-  rasMfmrInfoPostFuncSelfID(
+  rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_FULL_,
     siFuncMode01 = 0L, ssFuncCallerID = rssFuncCallerID_,
     sbRunSelfID = rsbRunSelfID_, sbPrintPretty = rsbPrintPretty_,
