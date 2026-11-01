@@ -213,7 +213,7 @@
 
   ####   STEP 01 - Prime "Function Self-ID" CONSTANTS   ####
   RCT_SYS_TIME_NOW_      <- base::Sys.time();             # <- Extract active System Date-Time !!!
-  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                  # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                      # <- R Library Identifier !!!
   RCT_TAG_FUNC_ID_SHORT_ <- "Find-Code";                  # <- FSID - SHORT !!!
   RCT_TAG_FUNC_ID_FULL_  <- "DEVS-Find-Code-Instances";   # <- FSID - LONG !!!
 

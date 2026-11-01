@@ -115,14 +115,14 @@
 #' @export
 #? ### ### ###
 "code.get.celn" <- function(
-  ssFuncName="code.get.celn\\(", sbRunByForce=FALSE, siCallIndex=1L,
+  ssFuncName="code\\.get\\.celn\\(", sbRunByForce=FALSE, siCallIndex=1L,
   sbUseAlias=FALSE, ssAliasValue="rasSeafoGetCELN\\("
 ) {
 
 
   ####   STEP 01 - Define "Function Self-ID" R Objects   ####
   RCT_RUNTIME_FUNC_START_ <- base::Sys.time();   # <- Captures <active> Date Time !!!
-  RCT_TAG_FUNC_LIBR_ID_   <- "SEAFO";        # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_   <- "SEAFO";            # <- R Library Identifier !!!
   RCT_TAG_FUNC_ID_SHORT_  <- "Get.CELN";         # <- Function ID - SHORT !!!
   RCT_TAG_FUNC_ID_LONG_   <- "CODE.Get.CELN";    # <- Function ID - LONG !!!
 

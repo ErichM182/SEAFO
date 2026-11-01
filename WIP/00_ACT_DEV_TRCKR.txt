@@ -7,9 +7,9 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  31 Oct 2026 @ 18:06:27.486 CAT
+> Code Push TIME  ==>  01 Nov 2026 @ 05:59:46.356 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.1     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.37  (devs-release)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.41  (devs-release)
 
 
 
@@ -26,13 +26,13 @@
 
 
 -> LAST CHANGES: The last updated files from the `SEAFO` R-Library Project [ n: 7 ] ...
+> 2026.11.01 @ 05:57:23  ==>  SEAFO::CODE.Create.Enum.R
+> 2026.11.01 @ 05:29:08  ==>  SEAFO::CODE.Get.CELN.R
+> 2026.11.01 @ 05:22:34  ==>  SEAFO::DEVS.Find.Code.Instances.R
+> 2026.11.01 @ 04:21:53  ==>  SEAFO::INFO.Post.Note.R
+> 2026.10.31 @ 18:24:29  ==>  SEAFO::DEVS.Check.Code.Specs.R
 > 2026.10.12 @ 20:22:31  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
 > 2026.10.12 @ 14:56:18  ==>  SEAFO::DEVS.Patch.Libr.Vers.Number.R
-> 2026.10.07 @ 14:21:52  ==>  SEAFO::DEVS.Check.Code.Specs.R
-> 2026.10.06 @ 18:06:19  ==>  SEAFO::RENV_ICONS.R
-> 2026.10.06 @ 18:06:12  ==>  SEAFO::RENV_FSID.R
-> 2026.10.06 @ 18:06:01  ==>  SEAFO::RENV_FORMATS.R
-> 2026.10.06 @ 18:05:49  ==>  SEAFO::RENV_DEVS.R
 
 
 

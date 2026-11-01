@@ -4,8 +4,8 @@
 
 
 ###   R Project Development <Run-Time Mode> Trackers   ###
-RCT_IS_DEBUG_RT_MODE_   <- T;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
-RCT_IS_VERBOSE_RT_MODE_ <- T;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker ...
+RCT_IS_DEBUG_RT_MODE_   <- F;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
+RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker ...
 
 
 ### R Library CRAN Code and Documentation Checking Function ...
@@ -28,7 +28,7 @@ nchar(ssTestVAR_);
 
 
 
-SEAFO::info.post.note(sbPostAlways = T, sbRunByForce = T)
+SEAFO::info.post.note(sbPostAlways = T, sbRunByForce = F)
 SEAFO::info.post.func.self.id(
   sbRunSelfID = T, sbPrintPretty = T, siFuncMode01L = 0L
 )
@@ -82,6 +82,22 @@ rownames(ordered_files) <- NULL
 class(file_info)
 class(dfProjFiles)
 
+
+enPlotsThemesD01 <- SEAFO::code.create.enum(
+  vsEnumVals = base::c("black_WHite", "ClasSIC",   # -> Observe how the input character values do
+                 "dark", "gRAY", "lighT", "LINE_draw",      #    not have a standard (i.e. uniform) case !!!
+                 "MiNiMAL", "voiD")
+);
+enPlotsThemesD01$BLACK_WHITE
+
+
+SEAFO::info.post.note(
+  sbPostAlways = T,
+  csIconCarat = "~>",                           # <- Sets the leading <start> icon to a "~>".
+  ssHead = "My-CUST-FUNC",                      # <- Sets the HEADER text of the notification ...
+  ssBody = "This is my COOL NOTE -> YaY !!!",   # <- Sets the MAIN <body> text of notification.
+  sbShowTail = FALSE                            # <- Hides the trailing <tail> icon object !!!
+)
 
 
 

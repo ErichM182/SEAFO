@@ -5,7 +5,7 @@
 \title{Extract the Code Editor Gutter Line Number (CELN)}
 \usage{
 code.get.celn(
-  ssFuncName = "code.get.celn\\\\(",
+  ssFuncName = "code\\\\.get\\\\.celn\\\\(",
   sbRunByForce = FALSE,
   siCallIndex = 1L,
   sbUseAlias = FALSE,
@@ -42,7 +42,7 @@ function \if{html}{\out{<internal>}} code.}
 A SPECIAL HELPER Function that extracts the Code Editor Gutter Line Number (CEGLN a.k.a. CELN) at
 the code editor line location from which the \code{code.get.celn()} function was called. This function
 was created for the purpose of enhancing the debugging, R Package development and real-time (i.e.
-interactive) code documentation processes from within the MFMR Suite of R Functions. However,
+interactive) code documentation processes from within the SEAFO Suite of R Functions. However,
 this function may also be used as a stand-alone function by (or in) other, 3rd Party, libraries
 and custom R functions - as long as the \code{SEAFO} library is linked (i.e. previously installed
 and/or specified as a library dependency).
@@ -65,9 +65,9 @@ library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally
       SEAFO::code.get.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        1L                 # <- Define the call order <call sequence> for the `CODE.Get.CELN()`
+        1L                 # <- Define the call order <call sequence> for the `code.get.celn()`
       ),                   #    function calls inside the custom function code. This is the 1st
-                           #    time the `CODE.Get.CELN()` function is called inside this custom
+                           #    time the `code.get.celn()` function is called inside this custom
                            #    function so the `siCallIndex` value here should == `1L`.
       " | Summed all 3 input values < result: ", valSUM," > !!! \n"
     )
@@ -80,7 +80,7 @@ library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally
       SEAFO::code.get.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        2L                 # <- Define the call order <call sequence> for the `CODE.Get.CELN()`
+        2L                 # <- Define the call order <call sequence> for the `code.get.celn()`
       ),                   #    function calls inside the custom function code. This is the 2nd
                            #    time the `CODE.Get.CELN()` function is called inside this custom
                            #    function so the `siCallIndex` value here should == `2L`.
@@ -95,9 +95,9 @@ library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally
       SEAFO::code.get.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        3L                 # <- Define the call order <call sequence> for the `CODE.Get.CELN()`
+        3L                 # <- Define the call order <call sequence> for the `code.get.celn()`
       ),                   #    function calls inside the custom function code. This is the 3rd
-                           #    time the `CODE.Get.CELN()` function is called inside this custom
+                           #    time the `code.get.celn()` function is called inside this custom
                            #    function so the `siCallIndex` value here should == `3L`.
       " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
     )

@@ -51,8 +51,8 @@ A Helper Function that executes the CRAN pre-requisite Code Checking Procedure d
 Package Development. This function programmatically updates the package version number in the R
 Project DESCRIPTION file before running the required documentation and/or CRAN Package
 Pre-Submission Code Requirement Checks (i.e. CRAN Code Validation) during iterative development
-cycles. This Helper Function was originally crafted as a technical support tool for the "MFMR
-Suite of R Libraries" (aka "SuiteMFMR"), but may also be helpful as a support tool during the R
+cycles. This Helper Function was originally crafted as a technical support tool for the "SEAFO
+Suite of R Libraries" (aka "SuiteSeafo"), but may also be helpful as a support tool during the R
 Package Development Cycle of other (3rd Party) R Projects.
 }
 \examples{

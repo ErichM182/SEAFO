@@ -54,7 +54,7 @@ object (default: \code{SEAFO::RENV_ICONS$FireFlame}).}
 
 \item{sbShowTail}{(\link{logical}) a Boolean value that specifies whether to include the tail (i.e.
 trailing or terminal symbol or icon) object in the note to be posted or not
-(default: \code{TRUE}).}
+(default: \link{TRUE}).}
 
 \item{sbPrintPretty}{(\link{logical}) a Boolean value that specifies whether the built-in (i.e. the
 function's internal) text formatting (i.e. ANSI \if{html}{\out{<font weight and colour>}}
@@ -63,19 +63,19 @@ formats) should be applied to the printed notification or not (default:
 
 \item{csColorHead}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that defines
 the text colour for the header (\code{ssHead}) object of the note to be posted
-(default: \code{SEAFO::RENV_COLOURSGreenFORE}).}
+(default: \code{SEAFO::RENV_COLOURS$GreenFORE}).}
 
 \item{csColorBody}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that defines
 the text colour for the main text (\code{ssBody}) object of the note to be posted
-(default: \code{SEAFO::RENV_COLOURSCyanFORE}).}
+(default: \code{SEAFO::RENV_COLOURS$CyanFORE}).}
 
 \item{csColorCarat}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that defines
 the colour for the leading (starting) symbol or icon (\code{csIconCarat}) object
-of the note to be posted (default: \code{SEAFO::RENV_COLOURSYellowFORE}).}
+of the note to be posted (default: \code{SEAFO::RENV_COLOURS$YellowFORE}).}
 
 \item{csColorSplit}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that defines
 the colour for the middle spacer (\code{csIconSplit}) object of the note to be
-posted (default: \code{SEAFO::RENV_COLOURSYellowFORE}).}
+posted (default: \code{SEAFO::RENV_COLOURS$YellowFORE}).}
 
 \item{sbPrePend1NL}{(\link{logical}) a Boolean value that specifies whether a new line (blank space or
 row) should be added to the START of the note to be posted or not (default:
@@ -115,8 +115,8 @@ return value (function result or output).
 }
 \description{
 A Helper Function that standardizes the R Project Information Posting (i.e. User Notification)
-Processes. This function was intended to mainly support the MFMR Suite of R Functions (a.k.a.
-\code{SuiteMFMR}), but may be utilized as a standalone function in other (i.e. 3rd Party) R packages.
+Processes. This function was intended to mainly support the SEAFO Suite of R Functions (a.k.a.
+\code{SuiteSeafo}), but may be utilized as a standalone function in other (i.e. 3rd Party) R packages.
 }
 \examples{
 ### Easily post notifications to the active R Console as follows ...
@@ -129,7 +129,8 @@ info.post.note()   # <- Run function without <user-specified> inputs to generate
 
 ### Example 2: Post a user-specified notification ...
 info.post.note(
-  csIconCarat = "~>",                               # <- Sets the leading <start> icon to a "~>".
+  sbPostAlways = TRUE,
+  csIconCarat = "~>",                           # <- Sets the leading <start> icon to a "~>".
   ssHead = "My-CUST-FUNC",                      # <- Sets the HEADER text of the notification ...
   ssBody = "This is my COOL NOTE -> YaY !!!",   # <- Sets the MAIN <body> text of notification.
   sbShowTail = FALSE                            # <- Hides the trailing <tail> icon object !!!

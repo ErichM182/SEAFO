@@ -34,23 +34,23 @@
 #'                   object (default: `SEAFO::RENV_ICONS$FireFlame`).
 #' @param sbShowTail ([logical]) a Boolean value that specifies whether to include the tail (i.e.
 #'                   trailing or terminal symbol or icon) object in the note to be posted or not
-#'                   (default: `TRUE`).
+#'                   (default: [TRUE]).
 #' @param sbPrintPretty ([logical]) a Boolean value that specifies whether the built-in (i.e. the
 #'                      function's internal) text formatting (i.e. ANSI <font weight and colour>
 #'                      formats) should be applied to the printed notification or not (default:
 #'                      `TRUE`).
 #' @param csColorHead ([character]) a String or Text (i.e. [character] [vector]) value that defines
 #'                    the text colour for the header (`ssHead`) object of the note to be posted
-#'                    (default: `SEAFO::RENV_COLOURSGreenFORE`).
+#'                    (default: `SEAFO::RENV_COLOURS$GreenFORE`).
 #' @param csColorBody ([character]) a String or Text (i.e. [character] [vector]) value that defines
 #'                    the text colour for the main text (`ssBody`) object of the note to be posted
-#'                    (default: `SEAFO::RENV_COLOURSCyanFORE`).
+#'                    (default: `SEAFO::RENV_COLOURS$CyanFORE`).
 #' @param csColorCarat ([character]) a String or Text (i.e. [character] [vector]) value that defines
 #'                     the colour for the leading (starting) symbol or icon (`csIconCarat`) object
-#'                     of the note to be posted (default: `SEAFO::RENV_COLOURSYellowFORE`).
+#'                     of the note to be posted (default: `SEAFO::RENV_COLOURS$YellowFORE`).
 #' @param csColorSplit ([character]) a String or Text (i.e. [character] [vector]) value that defines
 #'                     the colour for the middle spacer (`csIconSplit`) object of the note to be
-#'                     posted (default: `SEAFO::RENV_COLOURSYellowFORE`).
+#'                     posted (default: `SEAFO::RENV_COLOURS$YellowFORE`).
 #' @param sbPrePend1NL ([logical]) a Boolean value that specifies whether a new line (blank space or
 #'                     row) should be added to the START of the note to be posted or not (default:
 #'                     `FALSE`).
@@ -93,7 +93,8 @@
 #'
 #' ### Example 2: Post a user-specified notification ...
 #' info.post.note(
-#'   csIconCarat = "~>",                               # <- Sets the leading <start> icon to a "~>".
+#'   sbPostAlways = TRUE,
+#'   csIconCarat = "~>",                           # <- Sets the leading <start> icon to a "~>".
 #'   ssHead = "My-CUST-FUNC",                      # <- Sets the HEADER text of the notification ...
 #'   ssBody = "This is my COOL NOTE -> YaY !!!",   # <- Sets the MAIN <body> text of notification.
 #'   sbShowTail = FALSE                            # <- Hides the trailing <tail> icon object !!!
@@ -163,10 +164,10 @@
   RCT_TAG_R_FUNC_ID_NSIDS_ <- "Post.Note";        # <- This Function DOES NOT SELF-ID (NSID) !!!
   RCT_TAG_R_FUNC_ID_NSIDL_ <- "INFO.Post.Note";   # <- FSID - LONG !!!
 
-  RCT_INT_CELN_START_ <- 150L;   # <- The Code Editor Line Number (CELN) at which the function
-                                 #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 378L;   # <- The Code Editor Line Number (CELN) at which the function
-                                 #    CLOSING <curly> brace/bracket "}" is located !!!
+  RCT_INT_CELN_START_ <- 151L;      # <- The Code Editor Line Number (CELN) at which the function
+                                    #    OPENING <normal> brace/bracket "(" is located !!!
+  RCT_INT_CELN_STOP_  <- 380L;      # <- The Code Editor Line Number (CELN) at which the function
+                                    #    CLOSING <curly> brace/bracket "}" is located !!!
   coDotsArgs_ <- base::list(...);   # <- Capture all the "DotsArgs" values here !!!
 
 
@@ -180,8 +181,9 @@
   rasBasePASTE0      <- base::paste0;
   rasBaseIsNULL      <- base::is.null;
   rasBaseIsINVISIBLE <- base::invisible;
+  rasBasePosToENV    <- base::pos.to.env;
 
-  `%??%`            <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
+  `%??%`             <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
   rasSeafoFSID       <- SEAFO::RENV_FSID;
   rasSeafoICONS      <- SEAFO::RENV_ICONS;
   rasSeafoFORMATS    <- SEAFO::RENV_FORMATS;
@@ -250,9 +252,9 @@
 
     if (rasBaseIsNULL(ssHead_)) {
       ssHead_ <- rasBaseGET0(
-        RCT_TAG_FUNC_ID_SHORT_,          # <- Find the parent <caller> Function ID (if defined) !!!
-        envir = base::pos.to.env(-1L),   # <- The R environment the function was called from !!!
-        ifnotfound = "UNK-Func-ID"       # <- Set a DEFAULT <caller> Function Identifier <UNKNOWN> !!!
+        RCT_TAG_FUNC_ID_SHORT_,         # <- Find the parent <caller> Function ID (if defined) !!!
+        envir = rasBasePosToENV(-1L),   # <- The R environment the function was called from !!!
+        ifnotfound = "UNK-Func-ID"      # <- Set DEFAULT <caller> Function Identifier <UNKNOWN> !!!
       );
     }
 
@@ -262,10 +264,10 @@
           csIconCarat_ == "   =>   " || csIconCarat_ == "->" || csIconCarat_ == " -> " ||
           csIconCarat_ == "  ->  " || csIconCarat_ == "   ->   ") {
         csIconCarat_ <- rasBasePASTE0(
-          csFormatBOLD_,             # <- Applies the BOLD ANSI Text formatting ...
-          csColorCarat_, "     ",    # <- Applies the Text Colour Formats & pre-pends a spacer ...
+          csFormatBOLD_,              # <- Applies the BOLD ANSI Text formatting ...
+          csColorCarat_, "     ",     # <- Applies the Text Colour Formats & pre-pends a spacer ...
           rasSeafoICONS$ArrowRIGHT,   # <- Adds the default <standardized> "Right-Arrow" icon ...
-          csFormatRESET_, " "        # <- Closes text formatting and adds a <post-pended> spacer ...
+          csFormatRESET_, " "         # <- Closes text formatting & adds a <post-pended> spacer ...
         );
       } else {
         csIconCarat_ <- rasBasePASTE0(

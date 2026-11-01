@@ -67,8 +67,8 @@
 #' enPlotsThemesD03$DARK      # Output -> 3 !!!
 #' enPlotsThemesD03$MINIMAL   # Output -> 7 !!!
 #' enPlotsThemesD03$CLASSIC   # Output -> 2 !!!
-#' # Repeated values👆 are not allowed for Enumerated Data Objects. As such the function
-#' # only compiles (records) the first occurrence (index) of any duplicated input values !!!
+#' # Repeated values 👆 are not allowed for Enumerated Data Objects in R. As such the function
+#' # only compiles only the first occurrence (index) of any duplicated input values !!!
 #'
 #' @export
 #? ### ### ###
@@ -85,6 +85,7 @@
   rasBasePASTE0     <- base::paste0;
   rasBaseUNIQUE     <- base::unique;
   rasBaseRETURN     <- base::return;
+  rasBaseIsNULL     <- base::is.null;
   rasBaseAsLIST     <- base::as.list;
   rasBaseToUPPER    <- base::toupper;
   rasBaseSeqALONG   <- base::seq_along;
@@ -104,18 +105,19 @@
   rsbsbKeepCase_ <- sbKeepCase;
 
 
-  if (base::is.null(vsEnumVals)) {
+  if (rasBaseIsNULL(rvsEnumVals_)) {
     rasSeafoInfoPostNOTE(
-      ssFuncCallerID = rasSeafoGetCELN(ssTagFuncID, " ", 79),
-      csColorPostNote = rasSeafoCOLORS$RedFORE, csColorCFID = rasSeafoCOLORS$RedFORE,
-      ssPostNote = "The `vsEnumVals` function argument should not be NULL !!!\n"
+      ssHead = RCT_TAG_FUNC_ID_SHRT_, sbShowTail = FALSE,
+      ssBody = "The `vsEnumVals` func-arg is NULL !!!\n",
+      csColorHead = rasSeafoCOLORS$RedFORE, siCallCELN = 109L,
+      sbPostAlways = TRUE, csColorBody = rasSeafoCOLORS$RedFORE
     )
   } else {
 
-    if (sbKeepCase) {   # -> Maintain the character cases as supplied to function !!!
-      values <- rasBaseUNIQUE(vsEnumVals);
+    if (rsbsbKeepCase_) {   # -> Maintain the character cases as supplied to function !!!
+      values <- rasBaseUNIQUE(rvsEnumVals_);
     } else {   # -> Standardize all character cases to UPPER CASE !!!
-      values <- rasBaseUNIQUE(rasBaseToUPPER(vsEnumVals));
+      values <- rasBaseUNIQUE(rasBaseToUPPER(rvsEnumVals_));
     }
 
     res <- rasStatsSetNAMES(rasBaseSeqALONG(values), values);
