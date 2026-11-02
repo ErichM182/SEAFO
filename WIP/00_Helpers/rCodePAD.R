@@ -10,7 +10,7 @@ RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker .
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
-  sbCheckCRAN = T,   # <- Set this to `FALSE` if you only want to update the documentation !!!
+  sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
   sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
@@ -23,6 +23,7 @@ base::get0(SEAFO::RENV_FSID$CONSTS_BOOL_IS_DEBUG)
 
 
 ssTestVAR_ <- "129";
+is.numeric(ssTestVAR_);
 is.character(ssTestVAR_);
 nchar(ssTestVAR_);
 
@@ -84,9 +85,9 @@ class(dfProjFiles)
 
 
 enPlotsThemesD01 <- SEAFO::code.create.enum(
-  vsEnumVals = base::c("black_WHite", "ClasSIC",   # -> Observe how the input character values do
-                 "dark", "gRAY", "lighT", "LINE_draw",      #    not have a standard (i.e. uniform) case !!!
-                 "MiNiMAL", "voiD")
+  ### vsEnumVals = base::c("black_WHite", "ClasSIC",   # -> Observe how the input character values do
+  ###                "dark", "gRAY", "lighT", "LINE_draw",      #    not have a standard (i.e. uniform) case !!!
+  ###                "MiNiMAL", "voiD")
 );
 enPlotsThemesD01$BLACK_WHITE
 
@@ -98,6 +99,93 @@ SEAFO::info.post.note(
   ssBody = "This is my COOL NOTE -> YaY !!!",   # <- Sets the MAIN <body> text of notification.
   sbShowTail = FALSE                            # <- Hides the trailing <tail> icon object !!!
 )
+
+
+
+
+
+
+
+"my.custom.r.func" <- function(x=7, y=3, z=28) {
+
+  RCT_TAG_FUNC_ID <- "my.custom.r.func";  # <- ALWAYS TAG (ID) Custom R Functions accordingly !!!
+
+  valSUM <- sum(x, y, z);
+  cat(
+    paste0(
+      " \u279C ", RCT_TAG_FUNC_ID, " " ,
+      SEAFO::code.get.celn(
+        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
+        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
+        1L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+      ),                   #    function calls inside the custom function code. This is the 1st
+      #    time the `code.get.celn()` function is called inside this custom
+      #    function so the `siCallIndex` value here should == `1L`.
+      " | Summed all 3 input values < result: ", valSUM," > !!! \n"
+    )
+  );
+
+  valMEAN <- mean(x, y, z) / 3;
+  cat(
+    paste0(
+      " \u279C ", RCT_TAG_FUNC_ID, " " ,
+      SEAFO::code.get.celn(
+        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
+        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
+        2L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+      ),                   #    function calls inside the custom function code. This is the 2nd
+      #    time the `CODE.Get.CELN()` function is called inside this custom
+      #    function so the `siCallIndex` value here should == `2L`.
+      " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
+    )
+  );
+
+  # Notify function's SUCCESSFUL COMPLETION ( <- is only needed for code illustration) ...
+  cat(
+    paste0(
+      " \u279C ", RCT_TAG_FUNC_ID, " " ,
+      SEAFO::code.get.celn(
+        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
+        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
+        3L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+      ),                   #    function calls inside the custom function code. This is the 3rd
+      #    time the `code.get.celn()` function is called inside this custom
+      #    function so the `siCallIndex` value here should == `3L`.
+      " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
+    )
+  );
+
+  return(
+    list("SUM" = valSUM, "MEAN" = valMEAN)
+  );
+}
+
+## Execute the custom R Function ...
+my.custom.r.func()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

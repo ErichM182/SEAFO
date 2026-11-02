@@ -62,7 +62,7 @@
 #'     )
 #'   );
 #'
-#'   valMEAN <- sum(x, y, z) / 3;
+#'   valMEAN <- mean(x, y, z);
 #'   cat(
 #'     paste0(
 #'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
