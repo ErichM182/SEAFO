@@ -4,13 +4,13 @@
 
 
 ###   R Project Development <Run-Time Mode> Trackers   ###
-RCT_IS_DEBUG_RT_MODE_   <- F;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
+RCT_IS_DEBUG_RT_MODE_   <- T;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
 RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker ...
 
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
-  sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
+  sbCheckCRAN = T,   # <- Set this to `FALSE` if you only want to update the documentation !!!
   sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
@@ -36,15 +36,15 @@ SEAFO::info.post.func.self.id(
 
 
 
-vsListNames_ <- c("VAR_A", "VAR_B", "VAR_C", "VAR_X", "VAR_Y", "VAR_Z", "VAR_G")
-lsListVals_  <- list(
+vsListNames_ <- base::c("VAR_A", "VAR_B", "VAR_C", "VAR_X", "VAR_Y", "VAR_Z", "VAR_G")
+lsListVals_  <- base::list(
   1982, "Value for VAR_B", "R-Object for VAR_C", FALSE,
   "Value for VAR_Y", TRUE, "R-List for VAR_G"
-)
-lsListVals_  <- c(
-  1982, "Value for VAR_B", "R-Object for VAR_C", FALSE,
-  "Value for VAR_Y", TRUE, "R-List for VAR_G"
-)
+); base::class(lsListVals_); base::typeof(lsListVals_)
+### lsListVals_  <- c(
+###   1982, "Value for VAR_B", "R-Object for VAR_C", FALSE,
+###   "Value for VAR_Y", TRUE, "R-List for VAR_G"
+### )
 dfListCON_ <- base::data.frame(
   VarA = vsListNames_,
   VarB = lsListVals_
@@ -58,6 +58,9 @@ rlsListEnvLOCKD_ <- SEAFO::code.return.renv.list(
   vsListNames = vsListNames_, lsListVals = lsListVals_,
   sbLockList = T, sbRunByForce = T, sbPostAlways = T, sbRunSelfID = T
 )
+rlsListEnvLOCKD_$VAR_A
+rlsListEnvLOCKD_$VAR_G
+rlsListEnvLOCKD_$VAR_X
 
 
 SEAFO::devs.create.r.function(
