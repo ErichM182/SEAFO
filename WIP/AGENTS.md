@@ -9,11 +9,11 @@ Agent: DS41F (DeepSeek v4.1 Flash).
 These rules are binding for the whole project and take precedence over any
 general or default Agent behaviour.
 
-> **Binding note:** this file is kept at `WIP/AGENTS.md` by Project Owner
-> direction and is bound as a **workspace-level** instruction set via the
-> `instructions` entry in the project-root `opencode.json`. It therefore
-> governs every session whose location is inside `SEAFO`, not only files
-> under `WIP/`. Do not relocate it — moving or renaming it breaks the binding.
+> **Binding Note:** this file is kept at `./WIP/AGENTS.md` as per the Project 
+> Owner direction and is bound as a **workspace-level** instruction set via the
+> `instructions` entry in the project-root `opencode.json`. It therefore governs
+> every session whose location is inside `SEAFO`, not only files under `./WIP/`. 
+> Do not relocate it — moving or renaming it breaks the binding.
 
 ---
 
@@ -79,10 +79,10 @@ rather than assume — a missed re-scan is worse than a clarifying question.
   `.Rbuildignore`, `README.md`, `LICENSE`, `opencode.json`, plus staged and
   untracked files present (checked via the read-only git invocations permitted
   under PWR-1).
-- `R/` — every `*.R` source file: the `CODE.*`, `DEVS.*`, `INFO.*` and
+- `./R/` — every `*.R` source file: the `CODE.*`, `DEVS.*`, `INFO.*` and
   `RENV_*` function sources.
-- `man/` — every `*.Rd` file (re-listed only; roxygen2-generated, see PWR 4.4).
-- `WIP/` — `00_ACT_DEV_TRCKR.txt`, `00_Helpers/`, `01_NextForPROD/`, and this
+- `./man/` — every `*.Rd` file (re-listed only; roxygen2-generated, see PWR 4.4).
+- `./WIP/` — `00_ACT_DEV_TRCKR.txt`, `00_Helpers/`, `01_NextForPROD/`, and this
   `AGENTS.md`.
 - `./**/*` — the project root and every sub-directory beneath it (recursive,
   including new and hidden files/folders), covering any directories and files
@@ -100,11 +100,11 @@ The Agent shall **not** execute project R code unless the Project Owner has
 explicitly requested, discussed and agreed to that run in the current exchange.
 This covers, non-exhaustively:
 
-- sourcing or running any `R/*.R` file directly;
+- sourcing or running any `./R/*.R` file directly;
 - `devtools::load_all()`, `devtools::document()`, `devtools::check()`,
   `devtools::test()`, `devtools::install()`, `R CMD build`, `R CMD check`;
 - calling any exported `SEAFO::` function (including installed builds);
-- running or sourcing anything under `WIP/00_Helpers/` or `WIP/01_NextForPROD/`.
+- running or sourcing anything under `./WIP/00_Helpers/` or `./WIP/01_NextForPROD/`.
 
 Static work — reading, searching, browsing history, editing text, reviewing
 diffs — is unrestricted within the limits of PWR-2.
@@ -126,8 +126,8 @@ unless the Project Owner explicitly directs it.
 Artefacts produced by code execution are generated artefacts. In this project
 that covers:
 
-- `man/*.Rd` and `NAMESPACE` — written by roxygen2 via `devtools::document()`;
-- `WIP/00_ACT_DEV_TRCKR.txt` — rewritten by
+- `./man/*.Rd` and `NAMESPACE` — written by roxygen2 via `devtools::document()`;
+- `./WIP/00_ACT_DEV_TRCKR.txt` — rewritten by
   `devs.patch.code.dev.trckr.file()`;
 - any file written at runtime by a package function (e.g. by `info.post.note()`
   or `code.append.text.to.file()`).
@@ -140,25 +140,25 @@ discretion, informed by Agent advice under PWR-1 / PWR-2.
 
 ### 4.4 — Modification boundary: active R sources only
 All code modifications made by the Agent shall be **strictly confined to the
-active function sources in `R/`**:
+active function sources in `./R/`**:
 
-- `R/*.R` — the roxygen2-documented sources of the `CODE.*` (text & file
+- `./R/*.R` — the roxygen2-documented sources of the `CODE.*` (text & file
   helpers), `DEVS.*` (code-spec and tracker tooling), `INFO.*` (standardised
   console notifications) and `RENV_*` (runtime-environment constants) families.
 
-The Agent shall not hand-edit generated files (`man/*.Rd`, `NAMESPACE`), nor
+The Agent shall not hand-edit generated files (`./man/*.Rd`, `NAMESPACE`), nor
 non-script assets — `DESCRIPTION`, `LICENSE`, `README.md`, `.gitignore`,
-`.Rbuildignore`, `SEAFO.Rproj`, `opencode.json`, `WIP/00_ACT_DEV_TRCKR.txt`,
+`.Rbuildignore`, `SEAFO.Rproj`, `opencode.json`, `./WIP/00_ACT_DEV_TRCKR.txt`,
 this `AGENTS.md`, or any other file — unless the Project Owner explicitly
 directs that specific change.
 
-`WIP/00_Helpers/` (function templates) and `WIP/01_NextForPROD/` (staging) are
+`./WIP/00_Helpers/` (function templates) and `./WIP/01_NextForPROD/` (staging) are
 the Project Owner's development sandbox: read them freely, edit them only on
 explicit direction.
 
-New or renamed files in `R/` follow the existing scheme — file
-`R/<FAMILY>.Camel.Case.R` exporting a function whose roxygen `@name` is in
-lowercase dotted form (e.g. `R/CODE.Tiny.Helpers.EXPORTED.R` → `code.*`),
+New or renamed files in `./R/` follow the existing scheme — file
+`./R/<FAMILY>.Camel.Case.R` exporting a function whose roxygen `@name` is in
+lowercase dotted form (e.g. `./R/CODE.Tiny.Helpers.EXPORTED.R` → `code.*`),
 retaining the `#? ### ###` file-header banner and the matching `@family` tag.
 
 ---
@@ -170,13 +170,12 @@ retaining the `#? ### ###` file-header banner and the matching `@family` tag.
   tracking, isobaths and latitude block zones. The shipped `R/` layer is the
   developer/utility toolset that underpins that work.
 - **Entry point:** the package itself. `SEAFO.Rproj` at the project root;
-  function sources in `R/`, roxygen-generated documentation in `man/`, and
-  development staging plus the active-development tracker in `WIP/`. This
-  project has no `rFiles/` pipeline of R scripts.
+  function sources in `./R/`, roxygen-generated documentation in `./man/`, and
+  development staging plus the active-development tracker in `./WIP/`.
 - **Toolchain:** R 4.6.1 (2026-06-24 ucrt); devtools 2.5.2; roxygen2 8.1.0 with
-  `Roxygen: list(markdown = TRUE)` — `NAMESPACE` and `man/` are roxygen-driven.
+  `Roxygen: list(markdown = TRUE)` — `NAMESPACE` and `./man/` are roxygen-driven.
 - **Versioning:** production `0.0.1`, active development `0.0.1.*`; current
-  state recorded in `WIP/00_ACT_DEV_TRCKR.txt`.
+  state recorded in `./WIP/00_ACT_DEV_TRCKR.txt`.
 - **Conventions:** path building via `here::here()`; `_`-suffixed identifiers
   for local variables and constants (function parameters keep their `ss`/`sb`/
   `cs` prefix without a trailing `_`); 2-space indentation (spaces, not tabs);
