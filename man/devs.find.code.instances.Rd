@@ -14,7 +14,7 @@ devs.find.code.instances(
   sbIncludeGlobal = TRUE,
   sbVerboseSearch = TRUE,
   snRetSnipSize = 82,
-  sbWarnNoSrcref = FALSE
+  sbWarnNoSrcRef = FALSE
 )
 }
 \arguments{
@@ -46,7 +46,7 @@ to show search results message or not.}
 \item{snRetSnipSize}{(\link{numeric}) A Numeric function argument that indicates how many characters
 to include in code snippets (i.e. returned search results code-snippets).}
 
-\item{sbWarnNoSrcref}{(\link{logical}) A Boolean (logical) function argument that specifies whether
+\item{sbWarnNoSrcRef}{(\link{logical}) A Boolean (logical) function argument that specifies whether
 to raise a warning when a matched R function carries NO source reference
 (\code{srcref}) - in which case the returned \code{LINE_NUMBER} is relative to the
 de-parsed function body and NOT an absolute source-file line number.}

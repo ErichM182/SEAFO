@@ -87,12 +87,18 @@ class(file_info)
 class(dfProjFiles)
 
 
-enPlotsThemesD01 <- SEAFO::code.create.enum(
+enPlotsThemesD01 <- SEAFO::code_enums.create.renv.enum(
   ### vsEnumVals = base::c("black_WHite", "ClasSIC",   # -> Observe how the input character values do
   ###                "dark", "gRAY", "lighT", "LINE_draw",      #    not have a standard (i.e. uniform) case !!!
   ###                "MiNiMAL", "voiD")
 );
 enPlotsThemesD01$BLACK_WHITE
+
+
+SEAFO::devs.find.code.instances(
+  ssFindText = "sbWarnNoSrcRef", vsTargetLibs = c("SEAFO"), sbIgnoreCase = T
+)
+
 
 
 SEAFO::info.post.note(

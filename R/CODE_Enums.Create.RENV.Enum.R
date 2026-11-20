@@ -21,7 +21,7 @@
 #'
 #'
 #' ## DEMO 1a - Create a 'uniform case' "PlotsThemes" enum ...
-#' enPlotsThemesD01 <- code.create.enum(
+#' enPlotsThemesD01 <- code_enums.create.renv.enum(
 #'   vsEnumVals = c("black_WHite", "ClasSIC",   # -> Observe how the input character values do
 #'   "dark", "gRAY", "lighT", "LINE_draw",      #    not have a standard (i.e. uniform) case !!!
 #'   "MiNiMAL", "voiD")
@@ -38,7 +38,7 @@
 #'
 #'
 #' ## DEMO 2a - Create a 'variable case' "PlotsThemes" enum ...
-#' enPlotsThemesD02 <- code.create.enum(
+#' enPlotsThemesD02 <- code_enums.create.renv.enum(
 #'   vsEnumVals = c("black_WHite", "ClasSIC",
 #'   "dark", "gRAY", "lighT", "LINE_draw",
 #'   "MiNiMAL", "voiD"), sbKeepCase = TRUE      # -> Set to TRUE !!!
@@ -55,9 +55,9 @@
 #'
 #'
 #' ## DEMO 3a - The function is duplication-safe (when standardizing case) !!!
-#' enPlotsThemesD03 <- code.create.enum(         # -> This function was provided with duplicate
-#'   vsEnumVals = c("black_WHite", "ClasSIC",    #    values for the levels "Classic", "Dark"
-#'   "dark", "gRAY", "lighT", "LINE_draw",       #    and "Minimal" as input values !!!
+#' enPlotsThemesD03 <- code_enums.create.renv.enum(   # -> Function provided with duplicate
+#'   vsEnumVals = c("black_WHite", "ClasSIC",         #    values for the levels "Classic",
+#'   "dark", "gRAY", "lighT", "LINE_draw",            #    "Dark" & "Minimal" as input values !!!
 #'   "MiNiMAL", "voiD", "darK", "Dark", "DaRk",
 #'   "DarK", "claSSic", "CLASSic", "minIMAL",
 #'   "MINImal"), sbKeepCase = FALSE            # -> Set to FALSE - the duplication check only
@@ -72,12 +72,14 @@
 #'
 #' @export
 #? ### ### ###
-"code.create.enum" <- function(vsEnumVals=NULL, sbKeepCase=FALSE) {
+"code_enums.create.renv.enum" <- function(vsEnumVals=NULL, sbKeepCase=FALSE) {
 
   ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
-  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";              # <- R Library Identifier !!!
-  RCT_TAG_FUNC_ID_SHRT_ <- "Create.Enum";        # <- Function ID - SHORT !!!
-  RCT_TAG_FUNC_ID_FULL_ <- "CODE.Create.Enum";   # <- Function ID - LONG !!!
+  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";                                # <- R Library Identifier !!!
+  RCT_TAG_FUNC_ID_SHRT_ <- "SEAFO::Create.Enum";                   # <- Function ID - SHORT !!!
+  RCT_TAG_FUNC_ID_121_  <- "code_enums.create.renv.enum";          # <- Function ID - 1:1 (121) !!!
+  RCT_TAG_FUNC_ID_FULL_ <- "SEAFO::CODE_Enums.Create.RENV.Enum";   # <- Function ID - LONG !!!
+
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
@@ -112,8 +114,8 @@
       ssBody = "The `vsEnumVals` function argument is NULL !!!\n",
       sbPostAlways = TRUE, csColorBody = rasSeafoCOLORS$RedFORE,
       csColorHead = rasSeafoCOLORS$RedFORE, siCallCELN = rasSeafoGetCELN(
-        ssFuncName = "code.create.enum", sbUseAlias = TRUE,
-        sbRunByForce = TRUE, siCallIndex = 1L, ssAliasValue = "rasSeafoGetCELN\\("
+        ssFuncName = RCT_TAG_FUNC_ID_121_, siCallIndex = 1L,
+        sbRunByForce = TRUE, sbUseAlias = TRUE, ssAliasValue = "rasSeafoGetCELN\\("
       )
     )
   } else {

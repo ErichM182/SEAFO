@@ -31,7 +31,7 @@
 #'                        to include the Global R Environment in the search or not.
 #' @param sbVerboseSearch ([logical]) A Boolean (logical) function argument that specifies whether
 #'                        to show search results message or not.
-#' @param sbWarnNoSrcref ([logical]) A Boolean (logical) function argument that specifies whether
+#' @param sbWarnNoSrcRef ([logical]) A Boolean (logical) function argument that specifies whether
 #'                        to raise a warning when a matched R function carries NO source reference
 #'                        (`srcref`) - in which case the returned `LINE_NUMBER` is relative to the
 #'                        de-parsed function body and NOT an absolute source-file line number.
@@ -211,15 +211,15 @@
 "devs.find.code.instances" <- function(
   ssFindText, vsTargetLibs=NULL, coRENVs=base::list(base::globalenv()), sbSearchInternals = TRUE,
   sbUseRegex = TRUE, sbIgnoreCase = TRUE, sbIncludeGlobal = TRUE, sbVerboseSearch = TRUE,
-  snRetSnipSize = 82, sbWarnNoSrcref = FALSE
+  snRetSnipSize = 82, sbWarnNoSrcRef = FALSE
 ) {
 
 
   ####   STEP 01 - Prime "Function Self-ID" CONSTANTS   ####
   RCT_SYS_TIME_NOW_      <- base::Sys.time();             # <- Extract active System Date-Time !!!
   RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                      # <- R Library Identifier !!!
-  RCT_TAG_FUNC_ID_SHORT_ <- "Find-Code";                  # <- FSID - SHORT !!!
-  RCT_TAG_FUNC_ID_FULL_  <- "DEVS-Find-Code-Instances";   # <- FSID - LONG !!!
+  RCT_TAG_FUNC_ID_SHORT_ <- "Find.Code";                  # <- FSID - SHORT !!!
+  RCT_TAG_FUNC_ID_FULL_  <- "DEVS_Find.Code.Instances";   # <- FSID - LONG !!!
 
 
 
@@ -357,7 +357,7 @@
     if (rasBaseLENGTH(matches) == 0) rasBaseRETURN(NULL);
 
     # Warn when the line numbers are NOT anchored to the source file ...
-    if (rasBaseIsNULL(srcref) && sbWarnNoSrcref) {
+    if (rasBaseIsNULL(srcref) && sbWarnNoSrcRef) {
       rasBaseWARNING(rasBasePASTE0(
         ' \u279C "', func_name, '" carries NO source reference (`srcref`) -> ',
         "LINE_NUMBER is relative to the de-parsed body, NOT the source file !!!"

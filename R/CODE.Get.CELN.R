@@ -222,7 +222,7 @@
     ##             `sbIncludeGlobal` - searching it twice would duplicate every single match.
     rdfFuncCalls_ <- rasSeafoFindCODE(
       vsTargetLibs = rasBaseC(RCT_TAG_FUNC_LIBR_ID_), coRENVs = rasBaseLIST(),
-      sbVerboseSearch = FALSE, sbIgnoreCase = FALSE, sbWarnNoSrcref = TRUE,
+      sbVerboseSearch = FALSE, sbIgnoreCase = FALSE, sbWarnNoSrcRef = TRUE,
       ssFindText = ssFindText_
     );
 
