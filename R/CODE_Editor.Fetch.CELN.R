@@ -1,17 +1,17 @@
 #? ### ### ### ### ### ### ###
 #' @title Extract the Code Editor Gutter Line Number (CELN)
-#' @name code.get.celn
+#' @name code_editor.fetch.celn
 #' @family CODE Functions (`SEAFO`)
 #'
 #'
 #' @description
 #' A SPECIAL HELPER Function that extracts the Code Editor Gutter Line Number (CEGLN a.k.a. CELN) at
-#' the code editor line location from which the `code.get.celn()` function was called. This function
-#' was created for the purpose of enhancing the debugging, R Package development and real-time (i.e.
-#' interactive) code documentation processes from within the SEAFO Suite of R Functions. However,
-#' this function may also be used as a stand-alone function by (or in) other, 3rd Party, libraries
-#' and custom R functions - as long as the `SEAFO` library is linked (i.e. previously installed
-#' and/or specified as a library dependency).
+#' the code editor line location from which the `code_editor.fetch.celn()` function was called. This
+#' function was created for the purpose of enhancing the debugging, R Package development and
+#' real-time (i.e. interactive) code documentation processes from within the SEAFO Suite of R
+#' Functions. However, this function may also be used as a stand-alone function by (or in) other,
+#' 3rd Party, libraries and custom R functions - as long as the `SEAFO` library is linked (i.e.
+#' previously installed and/or specified as a library dependency).
 #'
 #'
 #' @param ssFuncName ([character]) a String or Text (i.e. [character] [vector]) value that specifies
@@ -24,18 +24,19 @@
 #'                     a value of `TRUE`) or not (default: `FALSE`).
 #' @param siCallIndex ([integer]) an Integer value that defines the "Call Index" or "Call Sequence"
 #'                    in the localized (function <internal>) call stack in reference to when (i.e.
-#'                    in which order) the `code.get.celn()` function was called (i.e. from inside a
-#'                    function). An index that exceeds the number of `code.get.celn()` calls found
-#'                    in the target function returns `NA_integer_` (it is never an error).
+#'                    in which order) the `code_editor.fetch.celn()` function was called (i.e. from
+#'                    inside a function). An index that exceeds the number of
+#'                    `code_editor.fetch.celn()` calls found in the target function returns
+#'                    `NA_integer_` (it is never an error).
 #' @param sbUseAlias ([logical]) a Boolean value that specifies whether the function should use the
-#'                   standard `code.get.celn()` function identifier or not (default: `FALSE`).
-#'                   If set to `TRUE` the function will NOT search for the standard
-#'                   `code.get.celn(` text, but rather for the exact text supplied via the
-#'                   `ssAliasValue` function argument (e.g. `rasSeafoGetCELN(`).
+#'                   standard `code_editor.fetch.celn()` function identifier or not (default:
+#'                   `FALSE`). If set to `TRUE` the function will NOT search for the standard
+#'                   `code_editor.fetch.celn(` text, but rather for the exact text supplied via the
+#'                   `ssAliasValue` function argument (e.g. `rasSeafoFetchCELN(`).
 #' @param ssAliasValue ([character]) a String or Text (i.e. [character] [vector]) value that
 #'                     specifies the alias (i.e. re-assigned function identifier) of the default or
-#'                     standard `code.get.celn()` function identifier to search for in the R
-#'                     function <internal> code. This value IS a Regular Expression (it is passed
+#'                     standard `code_editor.fetch.celn()` function identifier to search for in the
+#'                     R function <internal> code. This value IS a Regular Expression (it is passed
 #'                     to `grep()`), so a literal opening bracket must be backslash-escaped.
 #'
 #'
@@ -43,7 +44,7 @@
 #' * A single [integer] value - the Code Editor Line Number (CELN) - when `ssFuncName` is found
 #'   and `siCallIndex` is within range.
 #' * `NA_integer_`, with a [warning], when the target function is not found, when `siCallIndex`
-#'   exceeds the number of `code.get.celn()` calls it contains, or when an argument is invalid.
+#'   exceeds the number of `code_editor.fetch.celn()` calls it contains, or when an arg is invalid.
 #' * `NULL` (invisibly) when the function is neither in DEBUG mode nor forced via
 #'   `sbRunByForce = TRUE` - in that case no search is performed at all.
 #'
@@ -70,12 +71,13 @@
 #'   cat(
 #'     paste0(
 #'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::code.get.celn(
+#'       SEAFO::code_editor.fetch.celn(
 #'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
 #'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         1L                 # <- Define the call order <call sequence> for the `code.get.celn()`
-#'       ),                   #    function calls inside the custom function code. This is the 1st
-#'                            #    time the `code.get.celn()` function is called inside this custom
+#'         1L                 # <- Define the call order <call sequence> for the
+#'       ),                   #    `code_editor.fetch.celn()` function calls inside the custom
+#'                            #    function code. This is the 1st time the
+#'                            #    `code_editor.fetch.celn()` function is called inside this custom
 #'                            #    function so the `siCallIndex` value here should == `1L`.
 #'       " | Summed all 3 input values < result: ", valSUM," > !!! \n"
 #'     )
@@ -85,13 +87,14 @@
 #'   cat(
 #'     paste0(
 #'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::code.get.celn(
+#'       SEAFO::code_editor.fetch.celn(
 #'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
 #'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         2L                 # <- Define the call order <call sequence> for the `code.get.celn()`
-#'       ),                   #    function calls inside the custom function code. This is the 2nd
-#'                            #    time the `CODE.Get.CELN()` function is called inside this custom
-#'                            #    function so the `siCallIndex` value here should == `2L`.
+#'         2L                 # <- Define the call order <call sequence> for the
+#'       ),                   #    `code_editor.fetch.celn()` function calls inside the custom
+#'                            #    function code. This is the 2nd time the `CODE.Get.CELN()`
+#'                            #    function is called inside this custom function so the
+#'                            #    `siCallIndex` value here should == `2L`.
 #'       " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
 #'     )
 #'   );
@@ -100,12 +103,13 @@
 #'   cat(
 #'     paste0(
 #'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::code.get.celn(
+#'       SEAFO::code_editor.fetch.celn(
 #'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
 #'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         3L                 # <- Define the call order <call sequence> for the `code.get.celn()`
-#'       ),                   #    function calls inside the custom function code. This is the 3rd
-#'                            #    time the `code.get.celn()` function is called inside this custom
+#'         3L                 # <- Define the call order <call sequence> for the
+#'       ),                   #    `code_editor.fetch.celn()` function calls inside the custom
+#'                            #    function code. This is the 3rd time the
+#'                            #    `code_editor.fetch.celn()` function is called inside this custom
 #'                            #    function so the `siCallIndex` value here should == `3L`.
 #'       " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
 #'     )
@@ -133,24 +137,25 @@
 #'
 #' @export
 #? ### ### ###
-"code.get.celn" <- function(
-  ssFuncName="code.get.celn", sbRunByForce=FALSE, siCallIndex=1L,
-  sbUseAlias=FALSE, ssAliasValue="rasSeafoGetCELN\\("
+"code_editor.fetch.celn" <- function(
+  ssFuncName="code_editor.fetch.celn", sbRunByForce=FALSE,
+  siCallIndex=1L, sbUseAlias=FALSE, ssAliasValue="rasSeafoFetchCELN\\("
 ) {
 
 
   ####   STEP 01 - Define "Function Self-ID" R Objects   ####
-  RCT_RUNTIME_FUNC_START_ <- base::Sys.time();   # <- Captures <active> Date Time !!!
-  RCT_TAG_FUNC_LIBR_ID_   <- "SEAFO";            # <- R Library Identifier !!!
-  RCT_TAG_FUNC_ID_SHORT_  <- "Get.CELN";         # <- Function ID - SHORT !!!
-  RCT_TAG_FUNC_ID_LONG_   <- "CODE.Get.CELN";    # <- Function ID - LONG !!!
+  RCT_RUNTIME_FUNC_START_ <- base::Sys.time();                  # <- Captures <active> Date Time !!!
+  RCT_TAG_FUNC_LIBR_ID_   <- "SEAFO";                           # <- R Library Identifier !!!
+  RCT_TAG_FUNC_ID_SHORT_  <- "SEAFO::Fetch.CELN";               # <- Function ID - SHORT !!!
+  RCT_TAG_FUNC_ID_121_    <- "code_editor.fetch.celn";          # <- Function ID - 1:1 (121) !!!
+  RCT_TAG_FUNC_ID_LONG_   <- "SEAFO::CODE_Editor.Fetch.CELN";   # <- Function ID - LONG !!!
 
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this R function; while at
-  ###           the same time precluding issues related R's infamous function masking attribute.
+  ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
+  ###           external functions used in this R function; while at the same time precluding
+  ###           issues related R's infamous function masking attribute.
   rasBaseC           <- base::c;
   rasBaseLIST        <- base::list;
   rasBaseNROW        <- base::nrow;
@@ -216,7 +221,7 @@
       rasBaseRETURN(NA_integer_);
     }
 
-    ## 4.2 - Run an R Function Code Search to locate all instances of this `code.get.celn()`
+    ## 4.2 - Run an R Function Code Search to locate all instances of this `code_editor.fetch.celn()`
     ##       function in the specified <active> R Function <internal function code> ...
     ##       NOTE: `coRENVs` is emptied because the Global Environment is already searched via
     ##             `sbIncludeGlobal` - searching it twice would duplicate every single match.

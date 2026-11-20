@@ -48,7 +48,7 @@ nested functions: \if{html}{\out{<br>}}
 \enumerate{
 \item \code{\link[=info.post.func.self.id]{info.post.func.self.id()}} , \if{html}{\out{<br>}}
 \item \code{\link[=info.post.note]{info.post.note()}} , and \if{html}{\out{<br>}}
-\item \code{\link[=code.get.celn]{code.get.celn()}} .
+\item \code{\link[=code_editor.fetch.celn]{code_editor.fetch.celn()}} .
 }}
 }
 \value{

@@ -96,7 +96,7 @@ enPlotsThemesD01$BLACK_WHITE
 
 
 SEAFO::devs.find.code.instances(
-  ssFindText = "sbWarnNoSrcRef", vsTargetLibs = c("SEAFO"), sbIgnoreCase = T
+  ssFindText = "fetch.CELN", vsTargetLibs = c("SEAFO"), sbIgnoreCase = T
 )
 
 

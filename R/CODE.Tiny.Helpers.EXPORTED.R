@@ -36,16 +36,16 @@
 
 
   ####   STEP 01 - Define "Function Self-ID" Tags   ####
-  RCT_TAG_FUNC_LIBR_ID_    <- "SEAFO";                       # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_    <- "SEAFO";                           # <- R Library Identifier !!!
   RCT_TAG_R_FUNC_ID_SHORT_ <- "Null.Coal.Oper";                  # <- Function ID - SHORT !!!
   RCT_TAG_R_FUNC_ID_LONG_  <- "CODE.Null.Coalescing.Operator";   # <- Function ID - LONG !!!
 
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this R function; while at
-  ###           the same time precluding issues related R's infamous function masking attribute.
+  ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
+  ###           external functions used in this R function; while at the same time precluding
+  ###           issues related R's infamous function masking attribute.
   rasBaseANY    <- base::any;
   rasBaseIsNA   <- base::is.na;
   rasBaseLENGTH <- base::length;
@@ -116,9 +116,9 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this R function; while at
-  ###           the same time precluding issues related R's infamous function masking attribute.
+  ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
+  ###           external functions used in this R function; while at the same time precluding
+  ###           issues related R's infamous function masking attribute.
   rasBaseGET0   <- base::get0;
   rasBaseLIST   <- base::list;
   rasBaseRETURN <- base::return;
@@ -199,9 +199,9 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this R function; while at
-  ###           the same time precluding issues related R's infamous function masking attribute.
+  ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
+  ###           external functions used in this R function; while at the same time precluding
+  ###           issues related R's infamous function masking attribute.
   rasBaseC      <- base::c;
   rasBaseRETURN <- base::return;
   rasBaseIsNULL <- base::is.null;

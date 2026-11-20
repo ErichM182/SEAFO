@@ -36,7 +36,7 @@
 #'            nested functions: <br>
 #'               1. [SEAFO::info.post.func.self.id()] , <br>
 #'               2. [SEAFO::info.post.note()] , and <br>
-#'               3. [SEAFO::code.get.celn()] .
+#'               3. [SEAFO::code_editor.fetch.celn()] .
 #'
 #'
 #' @return
@@ -100,21 +100,22 @@
 
   ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
   RCT_DBL_R_FUNC_RT_START_ <- base::Sys.time();          # <- Extract <active> System Date-Time !!!
-  RCT_TAG_R_LIBR_ID_       <- "SEAFO";               # <- R Library Identifier !!!
-  RCT_TAG_R_FUNC_ID_SHORT_ <- "Ret.RENV.List";           # <- Function ID - SHORT !!!
-  RCT_TAG_R_FUNC_ID_LONG_  <- "CODE.Return.RENV.List";   # <- Function ID - LONG !!!
+  RCT_TAG_R_LIBR_ID_       <- "SEAFO";                          # <- R Library Identifier !!!
+  RCT_TAG_R_FUNC_ID_SHORT_ <- "SEAFO::Ret.RENV.List";           # <- Function ID - SHORT !!!
+  RCT_TAG_FUNC_ID_121_     <- "code.return.renv.list";          # <- Function ID - 1:1 (121) !!!
+  RCT_TAG_R_FUNC_ID_LONG_  <- "SEAFO::CODE.Return.RENV.List";   # <- Function ID - LONG !!!
 
   RCT_INT_CELN_START_ <- 95L;    # <- The Code Editor Line Number (CELN) at which the function
                                  #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 284L;   # <- The Code Editor Line Number (CELN) at which the function
+  RCT_INT_CELN_STOP_  <- 286L;   # <- The Code Editor Line Number (CELN) at which the function
                                  #    CLOSING <curly> brace/bracket "}" is located !!!
 
 
 
   ####   STEP 02 - Prime NB "Aliases" used locally (inside function)   ####
-  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this R function; while at
-  ###           the same time precluding issues related R's infamous function masking attribute.
+  ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
+  ###           external functions used in this R function; while at the same time precluding
+  ###           issues related R's infamous function masking attribute.
   rasBaseANY             <- base::any;
   rasBaseLIST            <- base::list;
   rasBaseSTOP            <- base::stop;
@@ -132,16 +133,16 @@
 
   rasStatsSetNAMES <- stats::setNames;
 
-  `%??%`          <- SEAFO::`%??%`;                   # <- VERY COOL Alias <NCO> !!!
-  rasMfmrFSID     <- SEAFO::RENV_FSID;
-  rasMfmrGetCELN  <- SEAFO::code.get.celn;
-  rasMfmrPostNOTE <- SEAFO::info.post.note;
-  rasMfmrPostFSID <- SEAFO::info.post.func.self.id;
+  `%??%`            <- SEAFO::`%??%`;                   # <- VERY COOL Alias <NCO> !!!
+  rasSeafoFSID      <- SEAFO::RENV_FSID;
+  rasSeafoPostNOTE  <- SEAFO::info.post.note;
+  rasSeafoPostFSID  <- SEAFO::info.post.func.self.id;
+  rasSeafoFetchCELN <- SEAFO::code_editor.fetch.celn;
 
 
 
   ###   Run Function Self-ID (ENTRY) Notification   ###
-  rasMfmrPostFSID(
+  rasSeafoPostFSID(
     ssFuncSelfID = RCT_TAG_R_FUNC_ID_LONG_, siFuncMode01L = 1L,
     siStartCELN = RCT_INT_CELN_START_, siStopCELN = RCT_INT_CELN_STOP_, ...
   );
@@ -157,19 +158,19 @@
 
   ##   3.2 - Prime Function Variables ...
   sbShowTAIL_      <- FALSE;
-  ssFindCodeALIAS_ <- "rasMfmrPostNOTE\\(";
+  ssFindCodeALIAS_ <- "rasSeafoPostNOTE\\(";
 
   ##   3.3 - Capture "DotsArgs" Values (as needed) ...
   coDotsArgs_ <- base::list(...);   # <- Capture all the "DotsArgs" values here !!!
 
 
-  rasMfmrPostNOTE(
+  rasSeafoPostNOTE(
     ssHead = RCT_TAG_R_FUNC_ID_SHORT_, sbShowTail = sbShowTAIL_,
     ssBody = "Internalized ALL Function Arguments ...",
-    siCallCELN = rasMfmrGetCELN(
-      ssFuncName = RCT_TAG_R_FUNC_ID_LONG_,
+    siCallCELN = rasSeafoFetchCELN(
+      ssFuncName = RCT_TAG_FUNC_ID_121_,
       siCallIndex = 1L, sbUseAlias = TRUE, ssAliasValue = ssFindCodeALIAS_,
-      sbRunByForce = coDotsArgs_[[rasMfmrFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
+      sbRunByForce = coDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
     ),
     ...
   );
@@ -208,13 +209,13 @@
   }
 
 
-  rasMfmrPostNOTE(
+  rasSeafoPostNOTE(
     ssHead = RCT_TAG_R_FUNC_ID_SHORT_, sbShowTail = sbShowTAIL_,
     ssBody = "Function Argument NULL-Checks Completed Successfully ...",
-    siCallCELN = rasMfmrGetCELN(
-      ssFuncName = RCT_TAG_R_FUNC_ID_LONG_,
+    siCallCELN = rasSeafoFetchCELN(
+      ssFuncName = RCT_TAG_FUNC_ID_121_,
       siCallIndex = 2L, sbUseAlias = TRUE, ssAliasValue = ssFindCodeALIAS_,
-      sbRunByForce = coDotsArgs_[[rasMfmrFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
+      sbRunByForce = coDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
     )
   );
 
@@ -259,13 +260,13 @@
   }
 
 
-  rasMfmrPostNOTE(
+  rasSeafoPostNOTE(
     ssHead = RCT_TAG_R_FUNC_ID_SHORT_, sbShowTail = sbShowTAIL_,
     ssBody = "Finalized Function Results <outputs> ...",
-    siCallCELN = rasMfmrGetCELN(
-      ssFuncName = RCT_TAG_R_FUNC_ID_LONG_,
+    siCallCELN = rasSeafoFetchCELN(
+      ssFuncName = RCT_TAG_FUNC_ID_121_,
       siCallIndex = 3L, sbUseAlias = TRUE, ssAliasValue = ssFindCodeALIAS_,
-      sbRunByForce = coDotsArgs_[[rasMfmrFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
+      sbRunByForce = coDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_RUN_BY_FORCE]] %??% FALSE
     ),
     ...
   );
@@ -273,7 +274,7 @@
 
 
   ###   Run Function Self-ID (EXIT) Notification   ###
-  rasMfmrPostFSID(
+  rasSeafoPostFSID(
     ssFuncSelfID = RCT_TAG_R_FUNC_ID_LONG_, siFuncMode01L = 0L,
     siStartCELN = RCT_INT_CELN_START_, siStopCELN = RCT_INT_CELN_STOP_,
     csTimeStart = RCT_DBL_R_FUNC_RT_START_, csTimeStop = base::Sys.time(), ...

@@ -7,9 +7,9 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  20 Nov 2026 @ 18:37:45.966 CAT
+> Code Push TIME  ==>  20 Nov 2026 @ 19:30:35.901 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.1     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.76  (devs-release)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.1.85  (devs-release)
 
 
 
@@ -26,13 +26,13 @@
 
 
 -> LAST CHANGES: The last updated files from the `SEAFO` R-Library Project [ n: 7 ] ...
-> 2026.11.20 @ 18:35:37  ==>  SEAFO::CODE.Get.CELN.R
-> 2026.11.20 @ 18:28:14  ==>  SEAFO::CODE_Enums.Create.RENV.Enum.R
-> 2026.11.20 @ 18:07:58  ==>  SEAFO::DEVS.Find.Code.Instances.R
-> 2026.11.20 @ 16:17:00  ==>  SEAFO::INFO.Post.Note.R
-> 2026.11.20 @ 16:16:39  ==>  SEAFO::INFO.Post.Func.Self.ID.R
-> 2026.11.20 @ 16:16:23  ==>  SEAFO::DEVS.Pull.Libr.Info.R
-> 2026.11.20 @ 16:15:45  ==>  SEAFO::DEVS.Print.Code.Check.Res.R
+> 2026.11.20 @ 19:30:11  ==>  SEAFO::CODE.Return.RENV.List.R
+> 2026.11.20 @ 19:26:19  ==>  SEAFO::CODE_Editor.Fetch.CELN.R
+> 2026.11.20 @ 19:17:44  ==>  SEAFO::CODE_Enums.Create.RENV.Enum.R
+> 2026.11.20 @ 19:06:40  ==>  SEAFO::INFO.Post.Note.R
+> 2026.11.20 @ 19:06:25  ==>  SEAFO::INFO.Post.Func.Self.ID.R
+> 2026.11.20 @ 19:06:11  ==>  SEAFO::DEVS.Pull.Libr.Info.R
+> 2026.11.20 @ 19:05:54  ==>  SEAFO::DEVS.Print.Code.Check.Res.R
 
 
 
