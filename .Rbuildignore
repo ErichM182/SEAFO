@@ -1,3 +1,4 @@
 ^WIP$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^opencode\.json$

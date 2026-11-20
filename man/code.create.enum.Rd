@@ -21,7 +21,7 @@ standardized to UPPER CASE (e.g. "enTest$VARICASEVAL") only.}
 }
 }
 \description{
-A Helper Function that compiles an Environment-safe and immutable (locked)) R Enumerated Data
+A Helper Function that compiles an Environment-safe and immutable (locked) R Enumerated Data
 Object from an input list or vector of character objects.
 }
 \examples{

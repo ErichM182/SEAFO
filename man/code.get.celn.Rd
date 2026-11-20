@@ -5,7 +5,7 @@
 \title{Extract the Code Editor Gutter Line Number (CELN)}
 \usage{
 code.get.celn(
-  ssFuncName = "code\\\\.get\\\\.celn\\\\(",
+  ssFuncName = "code.get.celn",
   sbRunByForce = FALSE,
   siCallIndex = 1L,
   sbUseAlias = FALSE,

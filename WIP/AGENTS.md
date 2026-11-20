@@ -9,10 +9,10 @@ Agent: DS41F (DeepSeek v4.1 Flash).
 These rules are binding for the whole project and take precedence over any
 general or default Agent behaviour.
 
-> **Binding Note:** this file is kept at `./WIP/AGENTS.md` as per the Project 
+> **Binding Note:** this file is kept at `./WIP/AGENTS.md` as per the Project
 > Owner direction and is bound as a **workspace-level** instruction set via the
 > `instructions` entry in the project-root `opencode.json`. It therefore governs
-> every session whose location is inside `SEAFO`, not only files under `./WIP/`. 
+> every session whose location is inside `SEAFO`, not only files under `./WIP/`.
 > Do not relocate it — moving or renaming it breaks the binding.
 
 ---
@@ -171,7 +171,9 @@ retaining the `#? ### ###` file-header banner and the matching `@family` tag.
   developer/utility toolset that underpins that work.
 - **Entry point:** the package itself. `SEAFO.Rproj` at the project root;
   function sources in `./R/`, roxygen-generated documentation in `./man/`, and
-  development staging plus the active-development tracker in `./WIP/`.
+  development staging plus the active-development tracker in `./WIP/`. This
+  project has no `rFiles/` pipeline of R scripts, and follows conventional R
+  Package project structure guidelines.
 - **Toolchain:** R 4.6.1 (2026-06-24 ucrt); devtools 2.5.2; roxygen2 8.1.0 with
   `Roxygen: list(markdown = TRUE)` — `NAMESPACE` and `./man/` are roxygen-driven.
 - **Versioning:** production `0.0.1`, active development `0.0.1.*`; current

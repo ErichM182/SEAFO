@@ -2,7 +2,7 @@
 #' @title Create Environment-safe and Immutable Enumerated R Data Objects
 #'
 #' @description
-#' A Helper Function that compiles an Environment-safe and immutable (locked)) R Enumerated Data
+#' A Helper Function that compiles an Environment-safe and immutable (locked) R Enumerated Data
 #' Object from an input list or vector of character objects.
 #'
 #' @param vsEnumVals the list or vector of character (string) values to be compiled into an R
@@ -81,8 +81,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
-  ###    NOTES: This is a NEW approach to improve R Session Memory Efficiency ...
-  rasBasePASTE0     <- base::paste0;
+  ###    NOTES: Local aliases provide stable, greppable names (rasBase* / rasStats* / rasSeafo*)
+  ###           and act as source-text markers for `code.get.celn()` line-number look-ups.
   rasBaseUNIQUE     <- base::unique;
   rasBaseRETURN     <- base::return;
   rasBaseIsNULL     <- base::is.null;
@@ -92,7 +92,7 @@
   rasBaseAsENVIRO   <- base::as.environment;
   rasBaseLockENVIRO <- base::lockEnvironment;
 
-  rasStatsSetNAMES <- stats::setNames
+  rasStatsSetNAMES  <- stats::setNames;
 
   rasSeafoCOLORS       <- SEAFO::RENV_COLOURS;
   rasSeafoGetCELN      <- SEAFO::code.get.celn;
@@ -101,26 +101,26 @@
 
 
   ####   STEP 03 - Internalize ALL Function Arguments   ####
-  rvsEnumVals_   <- vsEnumVals;
-  rsbsbKeepCase_ <- sbKeepCase;
+  vsEnumVals_ <- vsEnumVals;
+  sbKeepCase_ <- sbKeepCase;
 
 
-  if (rasBaseIsNULL(rvsEnumVals_)) {
+  if (rasBaseIsNULL(vsEnumVals_)) {
     rasSeafoInfoPostNOTE(
       ssHead = RCT_TAG_FUNC_ID_SHRT_, sbShowTail = FALSE,
-      ssBody = "The `vsEnumVals` func-arg is NULL !!!\n",
+      ssBody = "The `vsEnumVals` function argument is NULL !!!\n",
       sbPostAlways = TRUE, csColorBody = rasSeafoCOLORS$RedFORE,
       csColorHead = rasSeafoCOLORS$RedFORE, siCallCELN = rasSeafoGetCELN(
-        ssFuncName = "code\\.create\\.enum\\(", sbUseAlias = TRUE,
+        ssFuncName = "code.create.enum", sbUseAlias = TRUE,
         sbRunByForce = TRUE, siCallIndex = 1L, ssAliasValue = "rasSeafoGetCELN\\("
-      ),
+      )
     )
   } else {
 
-    if (rsbsbKeepCase_) {   # -> Maintain the character cases as supplied to function !!!
-      values <- rasBaseUNIQUE(rvsEnumVals_);
+    if (sbKeepCase_) {   # -> Maintain the character cases as supplied to function !!!
+      values <- rasBaseUNIQUE(vsEnumVals_);
     } else {   # -> Standardize all character cases to UPPER CASE !!!
-      values <- rasBaseUNIQUE(rasBaseToUPPER(rvsEnumVals_));
+      values <- rasBaseUNIQUE(rasBaseToUPPER(vsEnumVals_));
     }
 
     res <- rasStatsSetNAMES(rasBaseSeqALONG(values), values);

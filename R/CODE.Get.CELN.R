@@ -115,7 +115,7 @@
 #' @export
 #? ### ### ###
 "code.get.celn" <- function(
-  ssFuncName="code\\.get\\.celn\\(", sbRunByForce=FALSE, siCallIndex=1L,
+  ssFuncName="code.get.celn", sbRunByForce=FALSE, siCallIndex=1L,
   sbUseAlias=FALSE, ssAliasValue="rasSeafoGetCELN\\("
 ) {
 
