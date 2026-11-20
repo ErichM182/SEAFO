@@ -56,6 +56,8 @@
 
 
   ####   STEP 02 - Prime NB "Aliases" used locally (inside function)   ####
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasBaseC          <- base::c;
   rasBaseLIST       <- base::list;
   rasBaseNROW       <- base::nrow;

@@ -65,7 +65,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: This is a NEW approach to improve R Session Memory Efficiency ...
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasRETURN <- base::return;
   rasIsNULL <- base::is.null;
 

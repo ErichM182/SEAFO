@@ -15,7 +15,8 @@ code.get.celn(
 \arguments{
 \item{ssFuncName}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that specifies
 the Function Identifier (i.e. name) where the R Code Search or Function ID
-look-up should be conducted (i.e. directed at).}
+look-up should be conducted (i.e. directed at). The look-up is NOT case
+sensitive - both this value and the R function name are case-folded.}
 
 \item{sbRunByForce}{(\link{logical}) a Boolean value that specifies whether the function must execute
 its standard code logic even if the R Project Development DEBUG tracker (
@@ -25,18 +26,30 @@ a value of \code{TRUE}) or not (default: \code{FALSE}).}
 \item{siCallIndex}{(\link{integer}) an Integer value that defines the "Call Index" or "Call Sequence"
 in the localized (function \if{html}{\out{<internal>}}) call stack in reference to when (i.e.
 in which order) the \code{code.get.celn()} function was called (i.e. from inside a
-function).}
+function). An index that exceeds the number of \code{code.get.celn()} calls found
+in the target function returns \code{NA_integer_} (it is never an error).}
 
 \item{sbUseAlias}{(\link{logical}) a Boolean value that specifies whether the function should use the
-the standard \code{code.get.celn()} function identifier or not (default: \code{FALSE}).
-If set to \code{TRUE} the function will NOT use standard function ID (i.e.
-"code\\.get\\.celn"), but rather the value supplied to the function via the
-\code{ssAliasValue} function argument.}
+standard \code{code.get.celn()} function identifier or not (default: \code{FALSE}).
+If set to \code{TRUE} the function will NOT search for the standard
+\verb{code.get.celn(} text, but rather for the exact text supplied via the
+\code{ssAliasValue} function argument (e.g. \verb{rasSeafoGetCELN(}).}
 
 \item{ssAliasValue}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that
 specifies the alias (i.e. re-assigned function identifier) of the default or
 standard \code{code.get.celn()} function identifier to search for in the R
-function \if{html}{\out{<internal>}} code.}
+function \if{html}{\out{<internal>}} code. This value IS a Regular Expression (it is passed
+to \code{grep()}), so a literal opening bracket must be backslash-escaped.}
+}
+\value{
+\itemize{
+\item A single \link{integer} value - the Code Editor Line Number (CELN) - when \code{ssFuncName} is found
+and \code{siCallIndex} is within range.
+\item \code{NA_integer_}, with a \link{warning}, when the target function is not found, when \code{siCallIndex}
+exceeds the number of \code{code.get.celn()} calls it contains, or when an argument is invalid.
+\item \code{NULL} (invisibly) when the function is neither in DEBUG mode nor forced via
+\code{sbRunByForce = TRUE} - in that case no search is performed at all.
+}
 }
 \description{
 A SPECIAL HELPER Function that extracts the Code Editor Gutter Line Number (CEGLN a.k.a. CELN) at
@@ -46,6 +59,12 @@ interactive) code documentation processes from within the SEAFO Suite of R Funct
 this function may also be used as a stand-alone function by (or in) other, 3rd Party, libraries
 and custom R functions - as long as the \code{SEAFO} library is linked (i.e. previously installed
 and/or specified as a library dependency).
+}
+\details{
+The CELN is an ABSOLUTE code-editor line number only while the target function carries a
+source reference (\code{srcref}) - i.e. under \code{devtools::load_all()}, or for an install performed
+with \verb{R CMD INSTALL --with-keep.source}. Without it the line number is relative to the
+de-parsed function body, and a warning is raised instead of silently returning it.
 }
 \examples{
 ### Easily debug custom R function code with this <cool> helper function ...
@@ -112,9 +131,9 @@ library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally
 my.custom.r.func()
 
 ## Outputs from "my.custom.r.func()" should be as follows ...
-# ➜ My.Cust.R.FUNC 9 | Summed all 3 input values < result: 38 > !!!
-# ➜ My.Cust.R.FUNC 24 | Averaged the 3 input values < result: 12.7 > !!!
-# ➜ My.Cust.R.FUNC 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
+# ➜ my.custom.r.func 9 | Summed all 3 input values < result: 38 > !!!
+# ➜ my.custom.r.func 24 | Averaged the 3 input values < result: 12.7 > !!!
+# ➜ my.custom.r.func 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
 
 # $SUM
 # [1] 38

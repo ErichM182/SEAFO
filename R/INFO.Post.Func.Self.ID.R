@@ -92,14 +92,15 @@
 
   RCT_INT_CELN_START_ <- 79L;    # <- The Code Editor Line Number (CELN) at which the function
                                  #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 572L;   # <- The Code Editor Line Number (CELN) at which the function
+  RCT_INT_CELN_STOP_  <- 573L;   # <- The Code Editor Line Number (CELN) at which the function
                                  #    CLOSING <curly> brace/bracket "}" is located !!!
   coDotsArgs_ <- base::list(...);   # <- Capture all the "DotsArgs" values here !!!
 
 
 
   ####   STEP 02 - Alias ALL <required> Functions   ####
-  ##  NOTES: This is a NEW approach to improve R Session Memory Efficiency ...
+  ##  NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ##         as an inventory of external functions used in this function's code base.
   rasBaseABS         <- base::abs;
   rasBaseANY         <- base::any;
   rasBaseCAT         <- base::cat;

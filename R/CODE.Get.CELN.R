@@ -16,7 +16,8 @@
 #'
 #' @param ssFuncName ([character]) a String or Text (i.e. [character] [vector]) value that specifies
 #'                   the Function Identifier (i.e. name) where the R Code Search or Function ID
-#'                   look-up should be conducted (i.e. directed at).
+#'                   look-up should be conducted (i.e. directed at). The look-up is NOT case
+#'                   sensitive - both this value and the R function name are case-folded.
 #' @param sbRunByForce ([logical]) a Boolean value that specifies whether the function must execute
 #'                     its standard code logic even if the R Project Development DEBUG tracker (
 #'                     `RCT_IS_DEBUG_RT_MODE_`) was activated (i.e. found in the call stack & set to
@@ -24,16 +25,34 @@
 #' @param siCallIndex ([integer]) an Integer value that defines the "Call Index" or "Call Sequence"
 #'                    in the localized (function <internal>) call stack in reference to when (i.e.
 #'                    in which order) the `code.get.celn()` function was called (i.e. from inside a
-#'                    function).
+#'                    function). An index that exceeds the number of `code.get.celn()` calls found
+#'                    in the target function returns `NA_integer_` (it is never an error).
 #' @param sbUseAlias ([logical]) a Boolean value that specifies whether the function should use the
-#'                   the standard `code.get.celn()` function identifier or not (default: `FALSE`).
-#'                   If set to `TRUE` the function will NOT use standard function ID (i.e.
-#'                   "code\\.get\\.celn"), but rather the value supplied to the function via the
-#'                   `ssAliasValue` function argument.
+#'                   standard `code.get.celn()` function identifier or not (default: `FALSE`).
+#'                   If set to `TRUE` the function will NOT search for the standard
+#'                   `code.get.celn(` text, but rather for the exact text supplied via the
+#'                   `ssAliasValue` function argument (e.g. `rasSeafoGetCELN(`).
 #' @param ssAliasValue ([character]) a String or Text (i.e. [character] [vector]) value that
 #'                     specifies the alias (i.e. re-assigned function identifier) of the default or
 #'                     standard `code.get.celn()` function identifier to search for in the R
-#'                     function <internal> code.
+#'                     function <internal> code. This value IS a Regular Expression (it is passed
+#'                     to `grep()`), so a literal opening bracket must be backslash-escaped.
+#'
+#'
+#' @returns
+#' * A single [integer] value - the Code Editor Line Number (CELN) - when `ssFuncName` is found
+#'   and `siCallIndex` is within range.
+#' * `NA_integer_`, with a [warning], when the target function is not found, when `siCallIndex`
+#'   exceeds the number of `code.get.celn()` calls it contains, or when an argument is invalid.
+#' * `NULL` (invisibly) when the function is neither in DEBUG mode nor forced via
+#'   `sbRunByForce = TRUE` - in that case no search is performed at all.
+#'
+#'
+#' @details
+#' The CELN is an ABSOLUTE code-editor line number only while the target function carries a
+#' source reference (`srcref`) - i.e. under `devtools::load_all()`, or for an install performed
+#' with `R CMD INSTALL --with-keep.source`. Without it the line number is relative to the
+#' de-parsed function body, and a warning is raised instead of silently returning it.
 #'
 #'
 #' @examples
@@ -101,9 +120,9 @@
 #' my.custom.r.func()
 #'
 #' ## Outputs from "my.custom.r.func()" should be as follows ...
-#' # ➜ My.Cust.R.FUNC 9 | Summed all 3 input values < result: 38 > !!!
-#' # ➜ My.Cust.R.FUNC 24 | Averaged the 3 input values < result: 12.7 > !!!
-#' # ➜ My.Cust.R.FUNC 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
+#' # ➜ my.custom.r.func 9 | Summed all 3 input values < result: 38 > !!!
+#' # ➜ my.custom.r.func 24 | Averaged the 3 input values < result: 12.7 > !!!
+#' # ➜ my.custom.r.func 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
 #'
 #' # $SUM
 #' # [1] 38
@@ -126,26 +145,28 @@
   RCT_TAG_FUNC_ID_SHORT_  <- "Get.CELN";         # <- Function ID - SHORT !!!
   RCT_TAG_FUNC_ID_LONG_   <- "CODE.Get.CELN";    # <- Function ID - LONG !!!
 
-  RCT_INT_CELN_START_ <- 117L;   # <- The Code Editor Line Number (CELN) at which the function
-                                 #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 206L;   # <- The Code Editor Line Number (CELN) at which the function
-                                 #    CLOSING <curly> brace/bracket "}" is located !!!
-
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  ## NOTES: This is a <NEW> approach to improve the R Session Memory Efficiency ...
-  rasBaseC          <- base::c;
-  rasBaseGET0       <- base::get0;
-  rasBaseNROW       <- base::nrow;
-  rasBaseORDER      <- base::order;
-  rasBaseRETURN     <- base::return;
-  rasBaseSubSET     <- base::subset;
-  rasBaseIfELSE     <- base::ifelse;
-  rasBaseToLOWER    <- base::tolower;
-  rasBaseSeqALONG   <- base::seq_along;
-  rasBaseAsNUMERIC  <- base::as.numeric;
-  rasBaseDUPLICATED <- base::duplicated;
+  ## NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ##        as an inventory of external functions used in this function's code base.
+  rasBaseC           <- base::c;
+  rasBaseLIST        <- base::list;
+  rasBaseNROW        <- base::nrow;
+  rasBaseORDER       <- base::order;
+  rasBaseRETURN      <- base::return;
+  rasBaseIfELSE      <- base::ifelse;
+  rasBaseToLOWER     <- base::tolower;
+  rasBaseSeqLEN      <- base::seq_len;
+  rasBasePASTE0      <- base::paste0;
+  rasBaseWARNING     <- base::warning;
+  rasBaseLENGTH      <- base::length;
+  rasBaseIsNA        <- base::is.na;
+  rasBaseAsINTEGER   <- base::as.integer;
+  rasBaseAsNUMERIC   <- base::as.numeric;
+  rasBaseIsNUMERIC   <- base::is.numeric;
+  rasBaseAsCHARACTER <- base::as.character;
+  rasBaseIsCHARACTER <- base::is.character;
 
   rasSeafoFindCODE   <- SEAFO::devs.find.code.instances;
   rasSeafoPollRTMODE <- SEAFO::code.poll.r.runtime.mode;
@@ -168,38 +189,88 @@
   if (sbRunByForce_ || sbIsDEBUG_) {   # <- Run standard code logic if either of these is TRUE !!!
 
     ####   STEP 04 - Trace Function Call Stack Location   ####
-    ## 4.1 - Run an R Function Code Search to locate all instances of this `code.get.celn()`
+    ## 4.1 - Validate the <caller-supplied> search parameters up-front (fail soft with `NA`) ...
+    ssFindText_ <- rasBaseIfELSE(
+      sbUseAlias_,
+      ssAliasValue_,           # <- This is the user-specified "Alias" value to search for !!!
+      "code\\.get\\.celn\\("   # <- NEVER CHANGE THIS (it is the 100% CORRECT default value) !!!
+    );
+
+    if (!rasBaseIsCHARACTER(ssFuncName_) || rasBaseLENGTH(ssFuncName_) != 1L ||
+        rasBaseIsNA(ssFuncName_)) {
+      rasBaseWARNING(" `ssFuncName` must be a single <non-NA> string -> returning NA !!!");
+      rasBaseRETURN(NA_integer_);
+    }
+
+    if (!rasBaseIsNUMERIC(siCallIndex_) || rasBaseLENGTH(siCallIndex_) != 1L ||
+        rasBaseIsNA(siCallIndex_) || siCallIndex_ < 1L) {
+      rasBaseWARNING(" `siCallIndex` must be a single positive integer -> returning NA !!!");
+      rasBaseRETURN(NA_integer_);
+    }
+    siCallIndex_ <- rasBaseAsINTEGER(siCallIndex_);
+
+    if (!rasBaseIsCHARACTER(ssFindText_) || rasBaseLENGTH(ssFindText_) != 1L ||
+        rasBaseIsNA(ssFindText_)) {
+      rasBaseWARNING(" `ssAliasValue` must be a single <non-NA> char string -> returning NA !!!");
+      rasBaseRETURN(NA_integer_);
+    }
+
+    ## 4.2 - Run an R Function Code Search to locate all instances of this `code.get.celn()`
     ##       function in the specified <active> R Function <internal function code> ...
+    ##       NOTE: `coRENVs` is emptied because the Global Environment is already searched via
+    ##             `sbIncludeGlobal` - searching it twice would duplicate every single match.
     rdfFuncCalls_ <- rasSeafoFindCODE(
-      vsTargetLibs = rasBaseC(RCT_TAG_FUNC_LIBR_ID_),
-      sbVerboseSearch = FALSE, sbIgnoreCase = FALSE,
-      ssFindText = rasBaseIfELSE(
-        sbUseAlias_,
-        ssAliasValue_,           # <- This is the user-specified "Alias" value to search for !!!
-        "code\\.get\\.celn\\("   # <- NEVER CHANGE THIS (it is the 100% CORRECT default value) !!!
-      )
+      vsTargetLibs = rasBaseC(RCT_TAG_FUNC_LIBR_ID_), coRENVs = rasBaseLIST(),
+      sbVerboseSearch = FALSE, sbIgnoreCase = FALSE, sbWarnNoSrcref = TRUE,
+      ssFindText = ssFindText_
     );
 
-    ## 4.2 - Extract only results that match specified Function ID ...
-    rdfFuncCalls_v02_ <- rasBaseSubSET(
-      rdfFuncCalls_, rdfFuncCalls_[["FUNC_NAME"]] == rasBaseToLOWER(ssFuncName_)
-    );
-    rdfFuncCalls_UNIQUE_LNs_ <- rdfFuncCalls_v02_[
-      !rasBaseDUPLICATED(rdfFuncCalls_v02_[["LINE_NUMBER"]]),
+    ## 4.3 - Extract only results that match the specified Function ID ...
+    ##       NOTE: BOTH sides are case-folded - `FUNC_NAME` keeps the <declared> source case,
+    ##             so folding only the <argument> would miss every mixed-case function name.
+    rdfFuncCalls_v02_ <- rdfFuncCalls_[
+      rasBaseToLOWER(rasBaseAsCHARACTER(rdfFuncCalls_[["FUNC_NAME"]])) ==
+        rasBaseToLOWER(ssFuncName_), ,
+      drop = FALSE
     ];
 
-    ## 4.3 - Create a new INDEX Variable for the subset results Data Frame ...
-    rdfFuncCalls_v03_ <- rdfFuncCalls_UNIQUE_LNs_[
-      rasBaseORDER(rasBaseAsNUMERIC(rdfFuncCalls_UNIQUE_LNs_[["MATCH_ID"]]), decreasing = FALSE),
-    ];
-    rdfFuncCalls_v03_$INDEX <- rasBaseSeqALONG(1:rasBaseNROW(rdfFuncCalls_v03_));
+    ## 4.4 - NO MATCH -> return `NA` (never let `seq_len(0)`/`1:0` build an empty INDEX) ...
+    ##       NOTE: <exact> duplicate rows are already prevented structurally (step 4.2 empties
+    ##             `coRENVs`), so NO de-duplication is done here - de-duplicating on the line
+    ##             number would wrongly collapse two genuine calls that share a source line.
+    if (rasBaseNROW(rdfFuncCalls_v02_) == 0L) {
+      rasBaseWARNING(rasBasePASTE0(
+        " `", ssFuncName_, "()` not found in the ", RCT_TAG_FUNC_LIBR_ID_,
+        " R Library or Global Environment -> returning NA !!!"
+      ));
+      rasBaseRETURN(NA_integer_);
+    }
 
-    ## 4.5 - Extract the Code Editor Line Number (CELN) accordingly ...
-    rdfAtCELN_ <- rasBaseSubSET(rdfFuncCalls_v03_, rdfFuncCalls_v03_[["INDEX"]] == siCallIndex_);
+    ## 4.5 - Order the matches by their <source file> position & prime the INDEX variable ...
+    rdfFuncCalls_v03_ <- rdfFuncCalls_v02_[
+      rasBaseORDER(rasBaseAsNUMERIC(rdfFuncCalls_v02_[["MATCH_ID"]]), decreasing = FALSE), ,
+      drop = FALSE
+    ];
+    rdfFuncCalls_v03_[["INDEX"]] <- rasBaseSeqLEN(rasBaseNROW(rdfFuncCalls_v03_));
+
+    ## 4.6 - An OUT-OF-RANGE <call index> returns `NA` (never a silent `numeric(0)`) ...
+    if (siCallIndex_ > rasBaseNROW(rdfFuncCalls_v03_)) {
+      rasBaseWARNING(rasBasePASTE0(
+        " `siCallIndex` = ", siCallIndex_, " but only ", rasBaseNROW(rdfFuncCalls_v03_),
+        " `", ssFuncName_, "()` call(s) found -> returning NA !!!"
+      ));
+      rasBaseRETURN(NA_integer_);
+    }
+
+    ## 4.7 - Extract the Code Editor Line Number (CELN) accordingly ...
+    rdfAtCELN_ <- rdfFuncCalls_v03_[
+      rdfFuncCalls_v03_[["INDEX"]] == siCallIndex_, ,
+      drop = FALSE
+    ];
 
 
     ####   STEP 05 - Return Function Outputs   ####
-    rasBaseRETURN(rasBaseAsNUMERIC(rdfAtCELN_[["LINE_NUMBER"]]));
+    rasBaseRETURN(rasBaseAsINTEGER(rdfAtCELN_[["LINE_NUMBER"]]));
 
   }
 

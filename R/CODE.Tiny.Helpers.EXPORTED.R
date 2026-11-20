@@ -43,7 +43,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: This is a <NEW> approach to improve the R Session Memory Efficiency ...
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasBaseANY    <- base::any;
   rasBaseIsNA   <- base::is.na;
   rasBaseLENGTH <- base::length;
@@ -114,7 +115,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: This is a <NEW> approach to improve the R Session Memory Efficiency ...
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasBaseGET0   <- base::get0;
   rasBaseLIST   <- base::list;
   rasBaseRETURN <- base::return;
@@ -195,7 +197,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: This is a <NEW> approach to improve the R Session Memory Efficiency ...
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasBaseC      <- base::c;
   rasBaseRETURN <- base::return;
   rasBaseIsNULL <- base::is.null;

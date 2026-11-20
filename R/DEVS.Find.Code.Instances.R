@@ -31,6 +31,10 @@
 #'                        to include the Global R Environment in the search or not.
 #' @param sbVerboseSearch ([logical]) A Boolean (logical) function argument that specifies whether
 #'                        to show search results message or not.
+#' @param sbWarnNoSrcref ([logical]) A Boolean (logical) function argument that specifies whether
+#'                        to raise a warning when a matched R function carries NO source reference
+#'                        (`srcref`) - in which case the returned `LINE_NUMBER` is relative to the
+#'                        de-parsed function body and NOT an absolute source-file line number.
 #'
 #'
 #' @return
@@ -207,7 +211,7 @@
 "devs.find.code.instances" <- function(
   ssFindText, vsTargetLibs=NULL, coRENVs=base::list(base::globalenv()), sbSearchInternals = TRUE,
   sbUseRegex = TRUE, sbIgnoreCase = TRUE, sbIncludeGlobal = TRUE, sbVerboseSearch = TRUE,
-  snRetSnipSize = 82
+  snRetSnipSize = 82, sbWarnNoSrcref = FALSE
 ) {
 
 
@@ -220,7 +224,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
-  ###    NOTES: This is a NEW approach to improve R Session Memory Efficiency ...
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as an inventory of external functions used in this function's code base.
   rasBaseLS                  <- base::ls;
   rasBaseGET                 <- base::get;
   rasBaseREP                 <- base::rep;
@@ -349,6 +354,14 @@
     );
 
     if (rasBaseLENGTH(matches) == 0) rasBaseRETURN(NULL);
+
+    # Warn when the line numbers are NOT anchored to the source file ...
+    if (rasBaseIsNULL(srcref) && sbWarnNoSrcref) {
+      rasBaseWARNING(rasBasePASTE0(
+        ' \u279C "', func_name, '" carries NO source reference (`srcref`) -> ',
+        "LINE_NUMBER is relative to the de-parsed body, NOT the source file !!!"
+      ))
+    }
 
     # Get source file ..
     src_file <- rcf_get.source.file(func)

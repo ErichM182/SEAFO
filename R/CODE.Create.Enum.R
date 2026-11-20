@@ -81,8 +81,8 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
-  ###    NOTES: Local aliases provide stable, greppable names (rasBase* / rasStats* / rasSeafo*)
-  ###           and act as source-text markers for `code.get.celn()` line-number look-ups.
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as an inventory of external functions used in this function's code base.
   rasBaseUNIQUE     <- base::unique;
   rasBaseRETURN     <- base::return;
   rasBaseIsNULL     <- base::is.null;

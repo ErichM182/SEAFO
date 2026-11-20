@@ -106,12 +106,14 @@
 
   RCT_INT_CELN_START_ <- 95L;    # <- The Code Editor Line Number (CELN) at which the function
                                  #    OPENING <normal> brace/bracket "(" is located !!!
-  RCT_INT_CELN_STOP_  <- 282L;   # <- The Code Editor Line Number (CELN) at which the function
+  RCT_INT_CELN_STOP_  <- 284L;   # <- The Code Editor Line Number (CELN) at which the function
                                  #    CLOSING <curly> brace/bracket "}" is located !!!
 
 
 
   ####   STEP 02 - Prime NB "Aliases" used locally (inside function)   ####
+  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  #        as an inventory of external functions used in this function's code base.
   rasBaseANY             <- base::any;
   rasBaseLIST            <- base::list;
   rasBaseSTOP            <- base::stop;
