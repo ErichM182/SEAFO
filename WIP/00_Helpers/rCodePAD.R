@@ -96,7 +96,7 @@ enPlotsThemesD01$BLACK_WHITE
 
 
 SEAFO::devs.find.code.instances(
-  ssFindText = "fetch.CELN", vsTargetLibs = c("SEAFO"), sbIgnoreCase = T
+  ssFindText = "devs.find.code.instances", vsTargetLibs = c("SEAFO"), sbIgnoreCase = T
 )
 
 
