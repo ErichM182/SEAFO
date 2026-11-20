@@ -58,32 +58,33 @@
 ) {
 
   ####   STEP 01 - Define "Function Self-ID" Tags   ####
-  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";            # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";                # <- R Library Identifier !!!
   rssTagFuncIDv01_      <- "Classify.Func";        # <- Function ID - SHORT !!!
   rssTagFuncIDv02_      <- "CODE.Classify.Func";   # <- Function ID - LONG !!!
 
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  #        as an inventory of external functions used in this function's code base.
-  rasRETURN <- base::return;
-  rasIsNULL <- base::is.null;
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as a concise inventory of external functions used in this R function; while at
+  ###           the same time precluding issues related R's infamous function masking attribute.
+  rasBaseRETURN <- base::return;
+  rasBaseIsNULL <- base::is.null;
 
 
 
   ####   STEP 03 - Internalize ALL Function Arguments   ####
   # NOTES: hand-over all func-args to func-local <internal> variables ...
-  ssFuncRes_ <- NULL;   # -> The <final> function outputs <results> object.
+  ssFuncRes_   <- NULL;   # -> The <final> function outputs <results> object.
   siStartCELN_ <- siStartCELN; siStopCELN_ <- siStopCELN;
 
 
 
   ####   STEP 04 - Calculate Function Code DELTA (START vs. END)   ####
-  if (rasIsNULL(siStartCELN_)) {
+  if (rasBaseIsNULL(siStartCELN_)) {
     siStartCELN_ <- 1L;
   }
-  if (rasIsNULL(siStopCELN_)) {
+  if (rasBaseIsNULL(siStopCELN_)) {
     siStopCELN_ <- 7L;
   }
   siCodeDELTA_ <- siStopCELN_ - siStartCELN_;
@@ -106,7 +107,7 @@
 
 
   ####   STEP 06 - Return Result to Function CALL   ####
-  rasRETURN(ssFuncRes_);
+  rasBaseRETURN(ssFuncRes_);
 
 }
 

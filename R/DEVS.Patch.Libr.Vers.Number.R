@@ -44,8 +44,9 @@
 
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  #        as an inventory of external functions used in this function's code base.
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as a concise inventory of external functions used in this R function; while at
+  ###           the same time precluding issues related R's infamous function masking attribute.
   rasBaseLIST      <- base::list;
   rasBaseLENGTH    <- base::length;
   rasBaseRETURN    <- base::return;

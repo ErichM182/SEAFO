@@ -69,7 +69,8 @@
 
   ####   STEP 02 - Define "Local Aliases" for ALL Internal Functions   ####
   ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as a concise inventory of external functions used in this function's code base.
+  ###           as a concise inventory of external functions used in this R function; while at
+  ###           the same time precluding issues related R's infamous function masking attribute.
   rasBaseCAT        <- base::cat;
   rasBaseANY        <- base::any;
   rasBaseGREP       <- base::grep;
