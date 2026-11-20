@@ -127,24 +127,24 @@
 
 
   ####   STEP 03 - Internalize ALL Function Arguments   ####
-  rsbCheckDocs_ <- sbCheckDocs;
-  rsbCheckCRAN_ <- sbCheckCRAN;
-  rssTimeZone_  <- ssTimeZone;
-  rsbIsProdRel_ <- sbIsProdRel;
+  sbCheckDocs_ <- sbCheckDocs;
+  sbCheckCRAN_ <- sbCheckCRAN;
+  ssTimeZone_  <- ssTimeZone;
+  sbIsProdRel_ <- sbIsProdRel;
 
-  rvsDotsArgs_     <- rasBaseLIST(...);
-  rsbPrintPretty_  <- rvsDotsArgs_[["sbPrintPretty"]]  %??% TRUE;
-  rsbAudioNote_    <- rvsDotsArgs_[["sbAudioNote"]]    %??% FALSE;
-  rsbRunSelfID_    <- rvsDotsArgs_[["sbRunSelfID"]]    %??% FALSE;
-  rssFuncCallerID_ <- rvsDotsArgs_[["ssFuncCallerID"]] %??% "TOP-LVL (rsProjMAIN)";
+  vsDotsArgs_     <- rasBaseLIST(...);
+  sbPrintPretty_  <- vsDotsArgs_[["sbPrintPretty"]]  %??% TRUE;
+  sbAudioNote_    <- vsDotsArgs_[["sbAudioNote"]]    %??% FALSE;
+  sbRunSelfID_    <- vsDotsArgs_[["sbRunSelfID"]]    %??% FALSE;
+  ssFuncCallerID_ <- vsDotsArgs_[["ssFuncCallerID"]] %??% "TOP-LVL (rsProjMAIN)";
 
 
 
   ####   STEP 04 - Run Function SELF-ID <ENTRY> (if requested)   ####
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_FULL_,
-    siFuncMode01 = 1L, ssFuncCallerID = rssFuncCallerID_,
-    sbRunSelfID = rsbRunSelfID_, sbPrintPretty = rsbPrintPretty_,
+    siFuncMode01 = 1L, ssFuncCallerID = ssFuncCallerID_,
+    sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUN_TIME_START_, csTimeStop = RCT_FUNC_RUN_TIME_START_
   );
@@ -181,16 +181,16 @@
 
   ####   STEP 06 - Patch CODE DEV TRACKER   ####
   # 2. Extract the current version number from the DESCRIPTION file ...
-  rlsCodeVERS_ <- rasSeafoDevsPatchCodeDevTRCKR(
-    sbIsProdRel = rsbIsProdRel_, sbAudioNote = rsbAudioNote_
+  lsCodeVERS_ <- rasSeafoDevsPatchCodeDevTRCKR(
+    sbIsProdRel = sbIsProdRel_, sbAudioNote = sbAudioNote_
   );
-  rssActProjID_ <- rlsCodeVERS_[["CODE_NAME_TAG"]];
-  ssVersNewFULL <- rlsCodeVERS_[["CODE_VERS_DEVS"]];
+  ssActProjID_  <- lsCodeVERS_[["CODE_NAME_TAG"]];
+  ssVersNewFULL <- lsCodeVERS_[["CODE_VERS_DEVS"]];
 
 
   ####   STEP 07 - Run DOCs and/or CRAN Code Checks   ####
   # 6. Finally - Run the required R-Libs Project Documentation & CRAN Checks !!!
-  if (rsbCheckCRAN_ || rsbIsProdRel_) {   # -> Runs the COMPLETE Documentation & CRAN Requirements
+  if (sbCheckCRAN_ || sbIsProdRel_) {   # -> Runs the COMPLETE Documentation & CRAN Requirements
                                           #    Checking Processes !!!
     rasDevToolsCleanDLL();   # <- ALWAYS run BEFORE 'rasDevToolsLoadALL()' !!!
     rasDevToolsLoadALL();    # <- ALWAYS run AFTER 'rasDevToolsCleanDLL()' !!!
@@ -201,13 +201,13 @@
     snLenWARNINGs_ <- rasBaseLENGTH(coCheckResult_$warnings);
     rasSeafoDevsPrintCodeCheckRES(
       snLenERRORs = snLenERRORs_, snLenWARNs = snLenWARNINGs_, snLenNOTEs = snLenNOTEs_,
-      sbIsProdRel = rsbIsProdRel_, ssActProjID = rssActProjID_, ssProjVers = ssVersNewFULL
+      sbIsProdRel = sbIsProdRel_, ssActProjID = ssActProjID_, ssProjVers = ssVersNewFULL
     );
 
   }
 
   # -> Runs the Documentation process ONLY IF the "sbCheckCRAN" value is FALSE !!!
-  if (!rsbCheckCRAN_ && rsbCheckDocs_) {
+  if (!sbCheckCRAN_ && sbCheckDocs_) {
     rasDevToolsDOCUMENT(roclets = rasBaseC('rd', 'collate', 'namespace'));
   }
 
@@ -217,8 +217,8 @@
   RCT_FUNC_RUN_TIME_STOP_ <- rasBaseSysTimeNOW();
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_FULL_,
-    siFuncMode01 = 0L, ssFuncCallerID = rssFuncCallerID_,
-    sbRunSelfID = rsbRunSelfID_, sbPrintPretty = rsbPrintPretty_,
+    siFuncMode01 = 0L, ssFuncCallerID = ssFuncCallerID_,
+    sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUN_TIME_START_, csTimeStop = RCT_FUNC_RUN_TIME_STOP_
   );
@@ -229,7 +229,7 @@
   rasBaseRETURN(
     rasBaseINVISIBLE(
       rasBaseLIST(
-        "ProjID" = rssActProjID_,
+        "ProjID" = ssActProjID_,
         "CodeVers" = rasBasePASTE0("v", ssVersNewFULL),
         "CodeTime" = rasBaseFORMAT(RCT_FUNC_RUN_TIME_STOP_, RCT_FORMAT_TIME_DEV_02_)
       )
