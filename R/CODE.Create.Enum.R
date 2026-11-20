@@ -82,7 +82,7 @@
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
   ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ###           as an inventory of external functions used in this function's code base.
+  ###           as a concise inventory of external functions used in this function's code base.
   rasBaseUNIQUE     <- base::unique;
   rasBaseRETURN     <- base::return;
   rasBaseIsNULL     <- base::is.null;

@@ -157,10 +157,10 @@
 
 
   ####   STEP 01 - Prime "Function Self-ID" CONSTANTS   ####
-  ##  NB: This 👆  is THE 1st OF ONLY 2 FUNCTIONS [in the entire Seafo Suite of R Functions] THAT DO
+  ##  NB: This 👆  is THE 1st OF ONLY 2 FUNCTIONS [in the entire SEAFO Suite of R Functions] THAT DO
   ##      NOT SELF-IDENTIFY (since a Self-ID implementation here will cause infinite recursion) !!!
   RCT_DBL_SYS_TIME_NOW_    <- base::Sys.time();   # <- Extract the <active> System Date-Time !!!
-  RCT_TAG_FUNC_LIBR_ID_    <- "SEAFO";        # <- R Library Identifier !!!
+  RCT_TAG_FUNC_LIBR_ID_    <- "SEAFO";            # <- R Library Identifier !!!
   RCT_TAG_R_FUNC_ID_NSIDS_ <- "Post.Note";        # <- This Function DOES NOT SELF-ID (NSID) !!!
   RCT_TAG_R_FUNC_ID_NSIDL_ <- "INFO.Post.Note";   # <- FSID - LONG !!!
 
@@ -173,8 +173,8 @@
 
 
   ####   STEP 02 - Alias ALL <required> Functions   ####
-  ##   NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  ##          as an inventory of external functions used in this function's code base.
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as a concise inventory of external functions used in this function's code base.
   rasBaseCAT         <- base::cat;
   rasBaseGET0        <- base::get0;
   rasBaseNCHAR       <- base::nchar;
@@ -290,7 +290,7 @@
         rasBaseIfELSE(
           sbHasVal_ && sbIsDEBUG_ ||
           sbHasVal_ && sbIsVERBOSE_ || sbHasVal_ && sbPostAlways_,
-          " ", ""                      # <= Adds a pre-pended spacer (if valid CELN Conditions) !!!
+          " ", ""                      # <- Adds a pre-pended spacer (if valid CELN Conditions) !!!
         ),
         siCallCELN_,                   # <- Adds a Caller CELN if in DEBUG Mode !!!
         csFormatRESET_                 # <- Closes text formatting ...
@@ -316,7 +316,7 @@
         csIconSplit_ <- rasBasePASTE0(
           csFormatBOLD_,        # <- Applies the BOLD ANSI Text formatting ...
           csColorSplit_, " ",   # <- Applies the Text Colour Formats & pre-pends a spacer ...
-          csIconSplit_,             # <- Adds the user-defined SPLIT icon ...
+          csIconSplit_,         # <- Adds the user-defined SPLIT icon ...
           csFormatRESET_, " "   # <- Closes text formatting & post-pends a spacer...
         );
       }
@@ -337,8 +337,8 @@
     if (sbShowTail_) {
       if (sbPrintPretty_) {
         csIconTail_ <- rasBasePASTE0(
-          " ",      # <= Adds a pre-pended spacer ...
-          csIconTail_   # <= Adds the defined TAIL icon (or symbol) ...
+          " ",          # <- Adds a pre-pended spacer ...
+          csIconTail_   # <- Adds the defined TAIL icon (or symbol) ...
         );
       }
     } else {

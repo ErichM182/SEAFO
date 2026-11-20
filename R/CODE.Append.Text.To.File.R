@@ -54,7 +54,7 @@
 #'
 #' @export
 #? ### ### ###
-code.append.text.to.file <- function(
+"code.append.text.to.file" <- function(
   ssFilePath=".", ssFileID=".Rbuildignore",
   ssAppendText="^WIP$", sbMultiAppend=FALSE, sbPostPend=TRUE
 ) {
@@ -68,8 +68,8 @@ code.append.text.to.file <- function(
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Internal Functions   ####
-  # NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
-  #        as an inventory of external functions used in this function's code base.
+  ###    NOTES: Local aliases give greppable names + `code.get.celn()` markers. This also serves
+  ###           as a concise inventory of external functions used in this function's code base.
   rasBaseCAT        <- base::cat;
   rasBaseANY        <- base::any;
   rasBaseGREP       <- base::grep;
