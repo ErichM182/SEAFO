@@ -5,15 +5,20 @@
 #'
 #' @description
 #' A Helper Function that executes the CRAN pre-requisite Code Checking Procedure during active R
-#' Package Development. This function programmatically updates the package version number in the R
-#' Project DESCRIPTION file before running the required documentation and/or CRAN Package
-#' Pre-Submission Code Requirement Checks (i.e. CRAN Code Validation) during iterative development
-#' cycles. This Helper Function was originally crafted as a technical support tool for the "SEAFO
-#' Suite of R Libraries" (aka "SuiteSeafo"), but may also be helpful as a support tool during the R
-#' Package Development Cycle of other (3rd Party) R Projects.
+#' Package Development. This function programmatically regenerates the package documentation and
+#' then updates the package version number in the R Project DESCRIPTION file only when a delta is
+#' detected in the documentation (i.e. a change in the "./man/*.Rd" files or the "NAMESPACE" file)
+#' and/or in the package code base (i.e. a change in the "./R", "./src", "./data", "./tests" or
+#' "./inst" asset trees), before running the required CRAN Package Pre-Submission Code Requirement
+#' Checks (i.e. CRAN Code Validation) during iterative development cycles. This Helper Function was
+#' originally crafted as a technical support tool for the "SEAFO Suite of R Libraries" (aka
+#' "SuiteSeafo"), but may also be helpful as a support tool during the R Package Development Cycle
+#' of other (3rd Party) R Projects.
 #'
 #' @param sbCheckDocs a logical (boolean) value that specifies whether to run the standard package
 #'                    documentation process only (not the FULL CRAN Code Validation Process/Check).
+#'                    The documentation is (re)generated in both modes so that the documentation
+#'                    delta <version bump trigger> can be detected prior to the version patch.
 #' @param sbCheckCRAN a logical (boolean) value that specifies whether to run the FULL CRAN Code
 #'                    Validation Process/Check (inclusive of the pre-check documentation steps).
 #' @param ssTimeZone a simple character vector (string) that defines the Time Zone to be used for
@@ -29,6 +34,12 @@
 #' @returns
 #' * This function returns the programmatically amended or updated (real-time or active) version
 #'   number for the active R Library Project as a list of character objects.
+#' * The version number is only incremented when a delta is detected in the documentation (i.e. a
+#'   changed "./man/*.Rd" or "NAMESPACE" artefact) and/or in the package code base (i.e. a changed
+#'   file in the "./R", "./src", "./data", "./tests" or "./inst" asset trees, detected via the
+#'   "Code Base Fingerprint" recorded in the tracker file). When neither delta is found the
+#'   current version number is returned unchanged and both the "ACT-DEV" tracker file and the
+#'   project DESCRIPTION file are left untouched.
 #' * This function creates a Work-In-Progress (WIP) directory at the root of the active R-Libs
 #'   Project (i.e. "./WIP" <- if not already exists). The "./WIP" folder and all of its contents
 #'   are included in GIT push-&-pull processes. You must MANUALLY ADD the following code stub
@@ -55,8 +66,9 @@
 #' devs.check.code.specs(sbCheckCRAN = TRUE)   # -> Executes the more complete (stringent) CRAN Code
 #'                                             #    Validation Process.
 #'
-#' ### Check (i.e. "rasDevToolsCHECK()") overrides the documentation process ...
-#' # The complete (CRAN) Documentation Process will only be executed once if both are TRUE !!!
+#' ### NB: The documentation is (re)generated FIRST in both modes so that the documentation delta
+#' ###     <a version bump trigger> can be detected. The ACTIVE-DEVELOPMENT version number is only
+#' ###     incremented when a DOCUMENTATION or CODE BASE delta is found (i.e. no version churn) !!!
 #' devs.check.code.specs(sbCheckDocs = TRUE, sbCheckCRAN = TRUE)
 #'
 #' }
@@ -75,7 +87,7 @@
 
   base::Sys.setenv(TZ = ssTimeZone);   # <- Set correct Time Zone BEFORE querying System CLOCK !!!
   RCT_FUNC_RUN_TIME_START_ <- base::Sys.time();
-  RCT_FUNC_CELN_START_ <- 66L; RCT_FUNC_CELN_STOP_ <- 240L;
+  RCT_FUNC_CELN_START_ <- 78L; RCT_FUNC_CELN_STOP_ <- 288L;
 
 
 
@@ -106,9 +118,12 @@
   rasBaseWriteLINES <- base::writeLines;
   rasBaseFileCREATE <- base::file.create;
   rasBaseFileEXISTS <- base::file.exists;
+  rasBaseListFILES  <- base::list.files;
+  rasBaseIDENTICAL  <- base::identical;
   rasBaseAsCHAR     <- base::as.character;
 
   rasDescSetVERSION <- desc::desc_set_version;
+  rasToolsMD5SUM    <- tools::md5sum;
 
   rasDevToolsCHECK    <- devtools::check;
   rasDevToolsLoadALL  <- devtools::load_all;
@@ -180,19 +195,57 @@
 
 
 
-  ####   STEP 06 - Patch CODE DEV TRACKER   ####
+  ####   STEP 06 - Regenerate DOCs & Detect DOCUMENTATION DELTA   ####
+  # NB: The documentation artefacts (i.e. "./man/*.Rd" and "NAMESPACE") are (re)generated
+  #     FIRST so that any content change they exhibit can be detected and used to gate the
+  #     ACTIVE-DEVELOPMENT version number increment (i.e. version bump) in STEP 07 below !!!
+  rsbDocsDELTA_ <- FALSE;
+  if (sbCheckDocs_ || sbCheckCRAN_ || sbIsProdRel_) {
+
+    ### 6.1 - Snapshot the documentation artefacts BEFORE regeneration ...
+    rvsDocsFilesBEFORE_ <- rasBaseC(
+      rasBaseListFILES(path = "man", pattern = "[.]Rd$", full.names = TRUE),
+      "NAMESPACE"
+    );
+    rvsDocsFilesBEFORE_ <- rvsDocsFilesBEFORE_[
+      rasBaseFileEXISTS(rvsDocsFilesBEFORE_)
+    ];
+    rcsDocsHashBEFORE_ <- rasToolsMD5SUM(rvsDocsFilesBEFORE_);
+
+    ### 6.2 - Regenerate the documentation artefacts ...
+    rasDevToolsDOCUMENT(roclets = rasBaseC('rd', 'collate', 'namespace'));
+
+    ### 6.3 - Snapshot the documentation artefacts AFTER regeneration ...
+    rvsDocsFilesAFTER_ <- rasBaseC(
+      rasBaseListFILES(path = "man", pattern = "[.]Rd$", full.names = TRUE),
+      "NAMESPACE"
+    );
+    rvsDocsFilesAFTER_ <- rvsDocsFilesAFTER_[
+      rasBaseFileEXISTS(rvsDocsFilesAFTER_)
+    ];
+    rcsDocsHashAFTER_ <- rasToolsMD5SUM(rvsDocsFilesAFTER_);
+
+    ### 6.4 - Establish whether the documentation actually changed (DELTA) ...
+    rsbDocsDELTA_ <- !rasBaseIDENTICAL(rcsDocsHashBEFORE_, rcsDocsHashAFTER_);
+
+  }
+
+
+  ####   STEP 07 - Patch CODE DEV TRACKER (bump upon DOC or CODE DELTA)   ####
   # 2. Extract the current version number from the DESCRIPTION file ...
+  # NB: The tracker helper ALSO detects a CODE BASE delta (against the "Code Base Fingerprint"
+  #     recorded in the TRCKR file), so the version is only withheld when neither delta exists !!!
   lsCodeVERS_ <- rasSeafoDevsPatchCodeDevTRCKR(
-    sbIsProdRel = sbIsProdRel_, sbAudioNote = sbAudioNote_
+    sbIsProdRel = sbIsProdRel_, sbAudioNote = sbAudioNote_,
+    sbPatchVers = (sbIsProdRel_ || rsbDocsDELTA_)   # <- NB -> DOCS delta only (CODE is in-call) !
   );
   ssActProjID_  <- lsCodeVERS_[["CODE_NAME_TAG"]];
   ssVersNewFULL <- lsCodeVERS_[["CODE_VERS_DEVS"]];
 
 
-  ####   STEP 07 - Run DOCs and/or CRAN Code Checks   ####
-  # 6. Finally - Run the required R-Libs Project Documentation & CRAN Checks !!!
-  if (sbCheckCRAN_ || sbIsProdRel_) {   # -> Runs the COMPLETE Documentation & CRAN Requirements
-                                          #    Checking Processes !!!
+  ####   STEP 08 - Run CRAN Code Checks (if requested)   ####
+  # 6. Finally - Run the required R-Libs Project CRAN Checks !!!
+  if (sbCheckCRAN_ || sbIsProdRel_) {   # -> Runs the COMPLETE CRAN Requirements Check !!!
     rasDevToolsCleanDLL();   # <- ALWAYS run BEFORE 'rasDevToolsLoadALL()' !!!
     rasDevToolsLoadALL();    # <- ALWAYS run AFTER 'rasDevToolsCleanDLL()' !!!
 
@@ -207,14 +260,9 @@
 
   }
 
-  # -> Runs the Documentation process ONLY IF the "sbCheckCRAN" value is FALSE !!!
-  if (!sbCheckCRAN_ && sbCheckDocs_) {
-    rasDevToolsDOCUMENT(roclets = rasBaseC('rd', 'collate', 'namespace'));
-  }
 
 
-
-  ####   STEP 06 - Run Function SELF-ID <EXIT> (if requested)   ####
+  ####   STEP 09 - Run Function SELF-ID <EXIT> (if requested)   ####
   RCT_FUNC_RUN_TIME_STOP_ <- rasBaseSysTimeNOW();
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_FULL_,

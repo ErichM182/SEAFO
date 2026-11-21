@@ -4,11 +4,18 @@
 \alias{devs.patch.libr.vers.number}
 \title{R Library Version Number Updater ("SEAFO" DevTools)}
 \usage{
-devs.patch.libr.vers.number(vsVersNumVect = c("0", "0", "0", "01"))
+devs.patch.libr.vers.number(
+  vsVersNumVect = c("0", "0", "0", "01"),
+  sbPatchVers = TRUE
+)
 }
 \arguments{
 \item{vsVersNumVect}{a vector of characters (strings) that defines the \if{html}{\out{<regent>}} R Library's
 active development (or production) code release status (version number).}
+
+\item{sbPatchVers}{a logical (boolean) value that defines whether the version stubs should be
+incremented (i.e. patched) or merely parsed and returned unchanged. When set
+to \code{FALSE} the current (i.e. regent) version numbers are returned as-is.}
 }
 \value{
 \itemize{

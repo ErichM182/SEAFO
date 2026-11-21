@@ -4,7 +4,11 @@
 \alias{devs.patch.code.dev.trckr.file}
 \title{Update the R Code Development Tracker File ("SEAFO" DevTools)}
 \usage{
-devs.patch.code.dev.trckr.file(sbIsProdRel = FALSE, sbAudioNote = FALSE)
+devs.patch.code.dev.trckr.file(
+  sbIsProdRel = FALSE,
+  sbAudioNote = FALSE,
+  sbPatchVers = TRUE
+)
 }
 \arguments{
 \item{sbIsProdRel}{(\link{logical}) A boolean value that defines whether the code-check and/or code
@@ -14,12 +18,22 @@ commit process (action) is a "Production Release" action or not.}
 should be played at the completion of this function's code execution (upon
 successful patching \if{html}{\out{<updating>}} of the "Active Development Information Tracker
 File").}
+
+\item{sbPatchVers}{(\link{logical}) A boolean value that specifies whether the R Library version
+number should be incremented (i.e. patched) as part of the tracker update.
+When set to \code{FALSE} the version is still bumped if a CODE BASE delta is
+detected (i.e. the files in the "./R", "./src", "./data", "./tests" and
+"./inst" asset trees differ from the fingerprint recorded at the last code
+push); otherwise the current (i.e. regent) version numbers are returned
+without rewriting the tracker or the DESCRIPTION file.}
 }
 \value{
 \itemize{
 \item This function programmatically amends \if{html}{\out{<patches or updates>}} the active (i.e. regent) R Library
 Project's Code Development Tracking Information (i.e. TRCKR) file for code versioning and
 project (i.e. library code) development tracking purposes.
+\item When \code{sbPatchVers} is \code{FALSE} and no code base delta is detected the TRCKR and DESCRIPTION
+files are left untouched and only the current (i.e. regent) version numbers are returned.
 }
 }
 \description{
@@ -28,6 +42,13 @@ Tracker File" (i.e. "00_ACT_DEV_TRCKR.txt") located in the active project's deve
 launchpad folder (i.e. the "./WIP/" path or directory). This "Active Development Information
 Tracker File" will be programmatically initialized (created) by this helper function if not
 found in the default project directory (i.e. "./WIP/" project folder).
+
+By default this helper function also increments (i.e. patches) the R Library version number.
+The version bump \if{html}{\out{<along with the TRCKR and DESCRIPTION file updates>}} is withheld when
+\code{sbPatchVers} is set to \code{FALSE} and no change in the package code base is detected. The
+function records a "Code Base Fingerprint" (i.e. an md5 hash over the package asset trees:
+"./R", "./src", "./data", "./tests" & "./inst") in the TRCKR file, which allows it to detect a
+code base delta since the last code push.
 }
 \examples{
 \dontrun{   ### <- This function constitutes a development utility !!! This function requires a

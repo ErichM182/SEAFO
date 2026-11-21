@@ -11,6 +11,13 @@
 #' Tracker File" will be programmatically initialized (created) by this helper function if not
 #' found in the default project directory (i.e. "./WIP/" project folder).
 #'
+#' By default this helper function also increments (i.e. patches) the R Library version number.
+#' The version bump <along with the TRCKR and DESCRIPTION file updates> is withheld when
+#' `sbPatchVers` is set to `FALSE` and no change in the package code base is detected. The
+#' function records a "Code Base Fingerprint" (i.e. an md5 hash over the package asset trees:
+#' "./R", "./src", "./data", "./tests" & "./inst") in the TRCKR file, which allows it to detect a
+#' code base delta since the last code push.
+#'
 #'
 #' @param sbIsProdRel ([logical]) A boolean value that defines whether the code-check and/or code
 #'                    commit process (action) is a "Production Release" action or not.
@@ -18,12 +25,21 @@
 #'                    should be played at the completion of this function's code execution (upon
 #'                    successful patching <updating> of the "Active Development Information Tracker
 #'                    File").
+#' @param sbPatchVers ([logical]) A boolean value that specifies whether the R Library version
+#'                    number should be incremented (i.e. patched) as part of the tracker update.
+#'                    When set to `FALSE` the version is still bumped if a CODE BASE delta is
+#'                    detected (i.e. the files in the "./R", "./src", "./data", "./tests" and
+#'                    "./inst" asset trees differ from the fingerprint recorded at the last code
+#'                    push); otherwise the current (i.e. regent) version numbers are returned
+#'                    without rewriting the tracker or the DESCRIPTION file.
 #'
 #'
 #' @returns
 #' * This function programmatically amends <patches or updates> the active (i.e. regent) R Library
 #'   Project's Code Development Tracking Information (i.e. TRCKR) file for code versioning and
 #'   project (i.e. library code) development tracking purposes.
+#' * When `sbPatchVers` is `FALSE` and no code base delta is detected the TRCKR and DESCRIPTION
+#'   files are left untouched and only the current (i.e. regent) version numbers are returned.
 #'
 #'
 #' @examples
@@ -45,7 +61,9 @@
 #'
 #' @export
 #? ### ### ###
-"devs.patch.code.dev.trckr.file" <- function(sbIsProdRel=FALSE, sbAudioNote=FALSE) {
+"devs.patch.code.dev.trckr.file" <- function(
+  sbIsProdRel=FALSE, sbAudioNote=FALSE, sbPatchVers=TRUE
+) {
 
 
   ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
@@ -92,12 +110,19 @@
   rasBaseFileEXISTS <- base::file.exists;
   rasBaseFileCREATE <- base::file.create;
   rasBaseAsCHAR     <- base::as.character;
+  rasBaseGREP       <- base::grep;
+  rasBaseIDENTICAL  <- base::identical;
+  rasBaseUNNAME     <- base::unname;
+  rasBaseTEMPFile   <- base::tempfile;
+  rasBaseUNLINK     <- base::unlink;
 
   rasBeeprBEEP <- beepr::beep;
 
   rasDescSetVERSION <- desc::desc_set_version;
 
   rasJsonLiteFromJSON <- jsonlite::fromJSON;
+
+  rasToolsMD5SUM <- tools::md5sum;
 
   `%??%`                  <- SEAFO::`%??%`;                       # <- VERY COOL Alias <NCO> !!!
   rasMfmrDEVS             <- SEAFO::RENV_DEVS;
@@ -115,6 +140,7 @@
   ####   STEP 03 - Internalize Function Arguments   ####
   rsbIsProdRel_ <- sbIsProdRel;
   rsbAudioNote_ <- sbAudioNote;
+  rsbPatchVers_ <- sbPatchVers;
 
 
 
@@ -150,6 +176,50 @@
     );
 
   }
+
+
+  ####   STEP 04B - Read STORED "Code Base FINGERPRINT" (from TRCKR File)   ####
+  # NB: The stored fingerprint records the "./R" source files as at the LAST code push !!!
+  rssCodeHASHSTORED_ <- NA_character_;
+  rcsTrackerLINES_ <- rasBaseReadLINES(RCT_PATH_FILE_ACT_DEV_INFO_TRCKR_);
+  rcsHashLINE_ <- rcsTrackerLINES_[
+    rasBaseGREP(pattern = "Code Base FINGERPRINT", x = rcsTrackerLINES_)
+  ];
+  if (rasBaseLENGTH(rcsHashLINE_) > 0) {
+    rssCodeHASHSTORED_ <- rasStringrStrEXTRACT(
+      string = rcsHashLINE_[1], pattern = "[0-9a-f]{32}"
+    );
+  }
+
+
+  ####   STEP 04C - Compile CURRENT "Code Base FINGERPRINT" (Asset Trees)   ####
+  # NB: The package asset trees below are fingerprinted RECURSIVELY (i.e. all files) !!!
+  rvsCodeTREES_ <- rasBaseC("./R", "./src", "./data", "./tests", "./inst");
+  rvsCodeSrcFILES_ <- rasBaseC();
+  for (rssCodeTREE_ in rvsCodeTREES_) {
+    if (rasBaseFileEXISTS(rssCodeTREE_)) {
+      rvsCodeSrcFILES_ <- rasBaseC(
+        rvsCodeSrcFILES_,
+        rasBaseListFILES(
+          path = rssCodeTREE_, recursive = TRUE, full.names = TRUE
+        )
+      );
+    }
+  }
+  rcsCodeHASHMANIFEST_ <- rasBasePASTE0(
+    rasToolsMD5SUM(rvsCodeSrcFILES_), "  ", rvsCodeSrcFILES_, collapse = "\n"
+  );
+  rcsCodeTMPFILE_ <- rasBaseTEMPFile();
+  rasBaseWriteLINES(con = rcsCodeTMPFILE_, text = rcsCodeHASHMANIFEST_);
+  rssCodeHASHNOW_ <- rasBaseUNNAME(rasToolsMD5SUM(rcsCodeTMPFILE_));
+  rasBaseUNLINK(rcsCodeTMPFILE_);
+
+  ### Establish whether the package CODE BASE changed since the last code push !!!
+  rsbCodeDELTA_ <- !rasBaseIDENTICAL(rssCodeHASHSTORED_, rssCodeHASHNOW_);
+
+  ### NB: The version is patched on EITHER a DOCUMENTATION delta (passed in by the caller),
+  ###     a CODE BASE delta (detected above) or when a brand-new TRCKR file must be seeded !!!
+  rsbPatchVers_ <- rsbPatchVers_ || rsbCodeDELTA_ || rsbIsNewActDevTRCKR_;
 
 
 
@@ -206,7 +276,9 @@
         );
 
         ### STEP 2.1.1b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullCRAN_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsCRAN_);
+        rsnListFullCRAN_   <- rasMfmrPatchLibrVersNUM(
+          rvsLibrVersPartsCRAN_, sbPatchVers = rsbPatchVers_
+        );
 
         rsnVersStubALPHA_  <- rsnListFullCRAN_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullCRAN_[["VERS_BETA"]];
@@ -246,7 +318,9 @@
         )[1:3];   # <- Extract only the first 3 numbers (i.e. PRODUCTION Version Stubs) !!!
 
         ### STEP 2.2.1b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullTRCKR_  <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsTRCKR_);
+        rsnListFullTRCKR_  <- rasMfmrPatchLibrVersNUM(
+          rvsLibrVersPartsTRCKR_, sbPatchVers = rsbPatchVers_
+        );
         rsnVersStubALPHA_  <- rsnListFullTRCKR_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullTRCKR_[["VERS_BETA"]];
         rsnVersStubSTABLE_ <- rsnListFullTRCKR_[["VERS_STABLE"]];
@@ -259,7 +333,9 @@
         )[1:3];   # <- Extract only the first 3 numbers (i.e. PRODUCTION Version Stubs) !!!
 
         ### STEP 2.2.2b: Patch the various Version Number stubs (accordingly) ...
-        rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
+        rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(
+          rvsLibrVersPartsDESC_, sbPatchVers = rsbPatchVers_
+        );
         rsnVersStubALPHA_  <- rsnListFullDESC_[["VERS_ALPHA"]];
         rsnVersStubBETA_   <- rsnListFullDESC_[["VERS_BETA"]];
         rsnVersStubSTABLE_ <- rsnListFullDESC_[["VERS_STABLE"]];
@@ -295,7 +371,9 @@
       );
 
       ### STEP 2.2.1b: Patch the various Version Number stubs (accordingly) ...
-      rsnListFullTRCKR_  <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsTRCKR_);
+      rsnListFullTRCKR_  <- rasMfmrPatchLibrVersNUM(
+        rvsLibrVersPartsTRCKR_, sbPatchVers = rsbPatchVers_
+      );
       rsnVersStubDEBUG_  <- rsnListFullTRCKR_[["VERS_DEBUG"]];
       rsnVersStubALPHA_  <- rsnListFullTRCKR_[["VERS_ALPHA"]];
       rsnVersStubBETA_   <- rsnListFullTRCKR_[["VERS_BETA"]];
@@ -309,7 +387,9 @@
       );
 
       ### STEP 2.2.2b: Patch the various Version Number stubs (accordingly) ...
-      rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(rvsLibrVersPartsDESC_);
+      rsnListFullDESC_   <- rasMfmrPatchLibrVersNUM(
+        rvsLibrVersPartsDESC_, sbPatchVers = rsbPatchVers_
+      );
       rsnVersStubDEBUG_  <- rsnListFullDESC_[["VERS_DEBUG"]];
       rsnVersStubALPHA_  <- rsnListFullDESC_[["VERS_ALPHA"]];
       rsnVersStubBETA_   <- rsnListFullDESC_[["VERS_BETA"]];
@@ -410,7 +490,8 @@
     "> Code Push TYPE  ==>  ", RCT_CODE_PUSH_TYPE_, "\n",
     "> Code Push TIME  ==>  ", rcoCodePushDateTIME_, "\n",
     "> Code Push PRODUCTION VERSION #  ==>  ", rssVersNewPROD_, "     (prod-release)", "\n",
-    "> Code Push ACTIVE-DEV VERSION #  ==>  ", rssVersNewDEVS_, "  (devs-release)", "\n"
+    "> Code Push ACTIVE-DEV VERSION #  ==>  ", rssVersNewDEVS_, "  (devs-release)", "\n",
+    "> Code Base FINGERPRINT  ==>  ", rssCodeHASHNOW_, "   (md5: pkg asset trees)", "\n"
   );
   RCT_ACT_DEV_INFO_BODY_LVL_02_ <- rasBasePASTE0(   # -> Compiles R Version Information ...
     "-> R SOFTWARE: Specifics on `R-core` [as PROG-LANG for R Library Development] ... ", "\n",
@@ -508,28 +589,38 @@
 
 
   ####   STEP 09 - Write Updated DATA to ( Act_Dev_TRCKR.txt ) File   ####
-  rasBaseWriteLINES(   # -> Writes the compiled data to the "Act_Dev_TRCKR.txt" file ...
-    con = RCT_PATH_FILE_ACT_DEV_INFO_TRCKR_,
-    text = rasBasePASTE0(
-      RCT_ACT_DEV_INFO_HEADER_,      "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_LVL_01_, "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_LVL_02_, "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_LVL_03_, "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_LVL_04_, "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_LVL_05_, "\n\n\n",
-      RCT_ACT_DEV_INFO_BODY_END_STUB_
-    )
-  );
+  # NB: The TRCKR file is only rewritten when the version number is actually patched !!!
+  if (rsbPatchVers_) {
+
+    rasBaseWriteLINES(   # -> Writes the compiled data to the "Act_Dev_TRCKR.txt" file ...
+      con = RCT_PATH_FILE_ACT_DEV_INFO_TRCKR_,
+      text = rasBasePASTE0(
+        RCT_ACT_DEV_INFO_HEADER_,      "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_LVL_01_, "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_LVL_02_, "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_LVL_03_, "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_LVL_04_, "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_LVL_05_, "\n\n\n",
+        RCT_ACT_DEV_INFO_BODY_END_STUB_
+      )
+    );
+
+  }
 
 
 
   ####   STEP 10 - Patch (update) Version in Project DESCRIPTION File   ####
-  rasDescSetVERSION(
-    file = RCT_FILE_R_PKG_DESC_,
-    version = rasBaseIfELSE(
-      sbIsProdRel, rssVersNewPROD_, rssVersNewDEVS_
-    )
-  );
+  # NB: The DESCRIPTION file is only patched when the version is actually bumped !!!
+  if (rsbPatchVers_) {
+
+    rasDescSetVERSION(
+      file = RCT_FILE_R_PKG_DESC_,
+      version = rasBaseIfELSE(
+        sbIsProdRel, rssVersNewPROD_, rssVersNewDEVS_
+      )
+    );
+
+  }
 
 
 

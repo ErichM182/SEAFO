@@ -11,6 +11,9 @@
 #'
 #' @param vsVersNumVect a vector of characters (strings) that defines the <regent> R Library's
 #'                      active development (or production) code release status (version number).
+#' @param sbPatchVers a logical (boolean) value that defines whether the version stubs should be
+#'                    incremented (i.e. patched) or merely parsed and returned unchanged. When set
+#'                    to `FALSE` the current (i.e. regent) version numbers are returned as-is.
 #'
 #' @returns
 #' * This function returns an environment locked list containing the updated version numbers for
@@ -35,7 +38,9 @@
 #'
 #' @export
 #? ### ### ###
-"devs.patch.libr.vers.number" <- function(vsVersNumVect=c("0", "0", "0", "01")) {
+"devs.patch.libr.vers.number" <- function(
+  vsVersNumVect=c("0", "0", "0", "01"), sbPatchVers=TRUE
+) {
 
   ####   STEP 01 - Prime the "Function Self-ID" Constants   ####
   RCT_TAG_FUNC_LIBR_ID_ <- "SEAFO";                         # <- R Library Identifier !!!
@@ -57,6 +62,7 @@
 
   ####   STEP 03 - Internalize Function Arguments   ####
   rvsVersNumVect_ <- vsVersNumVect;
+  rsbPatchVers_   <- sbPatchVers;
 
 
   ####   STEP 04 - Initialize NB Variables & Constants   ####
@@ -74,8 +80,10 @@
     rsnVersProdSTABLE_ <- rasBaseAsNUMERIC(rvsVersNumVect_[1]);
 
 
-    ####   STEP 5.2 - Update the "ALPHA" Version Stub (always)   ####
-    rsnVersProdALPHA_ <- rsnVersProdALPHA_ + 1;
+    ####   STEP 5.2 - Update the "ALPHA" Version Stub (only when patching)   ####
+    if (rsbPatchVers_) {
+      rsnVersProdALPHA_ <- rsnVersProdALPHA_ + 1;
+    }
     if (rsnVersProdALPHA_ >= 10) {   # <- The MAX Level for "PRODUCTION" stubs is 9 !!!
 
       ####   STEP 5.2.1a - Reset the "ALPHA" Version Stub to ZERO   ####
@@ -111,8 +119,10 @@
     rsnVersProdSTABLE_ <- rasBaseAsNUMERIC(rvsVersNumVect_[1]);
 
 
-    ####   STEP 6.2 - Update the "DEBUG" Version Stub (always)   ####
-    rsnVersDevsDEBUG_ <- rsnVersDevsDEBUG_ + 1;
+    ####   STEP 6.2 - Update the "DEBUG" Version Stub (only when patching)   ####
+    if (rsbPatchVers_) {
+      rsnVersDevsDEBUG_ <- rsnVersDevsDEBUG_ + 1;
+    }
     if (rsnVersDevsDEBUG_ >= 100) {   # <- The MAX Level for "DEBUG" stubs is 999 !!!
 
       ####   STEP 6.2.1a - Reset the "DEBUG" Version Stub to ZERO   ####
