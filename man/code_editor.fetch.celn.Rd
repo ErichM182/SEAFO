@@ -103,7 +103,7 @@ library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
         2L                 # <- Define the call order <call sequence> for the
       ),                   #    `code_editor.fetch.celn()` function calls inside the custom
-                           #    function code. This is the 2nd time the `CODE.Get.CELN()`
+                           #    function code. This is the 2nd time `code_editor.fetch.celn()`
                            #    function is called inside this custom function so the
                            #    `siCallIndex` value here should == `2L`.
       " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"

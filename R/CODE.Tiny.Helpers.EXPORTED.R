@@ -44,8 +44,8 @@
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-  ###           external functions used in this R function; while at the same time precluding
-  ###           issues related R's infamous function masking attribute.
+  ###           external functions used in this R function; while at the same time shielding these
+  ###           calls from R's infamous search-path (name) masking behaviour.
   rasBaseANY    <- base::any;
   rasBaseIsNA   <- base::is.na;
   rasBaseLENGTH <- base::length;
@@ -117,8 +117,8 @@
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-  ###           external functions used in this R function; while at the same time precluding
-  ###           issues related R's infamous function masking attribute.
+  ###           external functions used in this R function; while at the same time shielding these
+  ###           calls from R's infamous search-path (name) masking behaviour.
   rasBaseGET0   <- base::get0;
   rasBaseLIST   <- base::list;
   rasBaseRETURN <- base::return;
@@ -200,8 +200,8 @@
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-  ###           external functions used in this R function; while at the same time precluding
-  ###           issues related R's infamous function masking attribute.
+  ###           external functions used in this R function; while at the same time shielding these
+  ###           calls from R's infamous search-path (name) masking behaviour.
   rasBaseC      <- base::c;
   rasBaseRETURN <- base::return;
   rasBaseIsNULL <- base::is.null;

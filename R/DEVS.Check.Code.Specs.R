@@ -75,14 +75,14 @@
 
   base::Sys.setenv(TZ = ssTimeZone);   # <- Set correct Time Zone BEFORE querying System CLOCK !!!
   RCT_FUNC_RUN_TIME_START_ <- base::Sys.time();
-  RCT_FUNC_CELN_START_ <- 66L; RCT_FUNC_CELN_STOP_ <- 239L;
+  RCT_FUNC_CELN_START_ <- 66L; RCT_FUNC_CELN_STOP_ <- 240L;
 
 
 
   ####   STEP 02 - Define "Local Aliases" for ALL Functions   ####
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-  ###           external functions used in this R function; while at the same time precluding
-  ###           issues related R's infamous function masking attribute.
+  ###           external functions used in this R function; while at the same time shielding these
+  ###           calls from R's infamous search-path (name) masking behaviour.
   rasBaseC          <- base::c;
   rasBaseCAT        <- base::cat;
   rasBaseLIST       <- base::list;

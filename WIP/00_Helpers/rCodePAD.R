@@ -123,12 +123,12 @@ SEAFO::info.post.note(
   cat(
     paste0(
       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::code.get.celn(
+      SEAFO::code_editor.fetch.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        1L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+        1L                 # <- Define the call order <call sequence> for the `code_editor.fetch.celn()`
       ),                   #    function calls inside the custom function code. This is the 1st
-      #    time the `code.get.celn()` function is called inside this custom
+      #    time the `code_editor.fetch.celn()` function is called inside this custom
       #    function so the `siCallIndex` value here should == `1L`.
       " | Summed all 3 input values < result: ", valSUM," > !!! \n"
     )
@@ -138,12 +138,12 @@ SEAFO::info.post.note(
   cat(
     paste0(
       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::code.get.celn(
+      SEAFO::code_editor.fetch.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        2L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+        2L                 # <- Define the call order <call sequence> for the `code_editor.fetch.celn()`
       ),                   #    function calls inside the custom function code. This is the 2nd
-      #    time the `CODE.Get.CELN()` function is called inside this custom
+      #    time the `code_editor.fetch.celn()` function is called inside this custom
       #    function so the `siCallIndex` value here should == `2L`.
       " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
     )
@@ -153,12 +153,12 @@ SEAFO::info.post.note(
   cat(
     paste0(
       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::code.get.celn(
+      SEAFO::code_editor.fetch.celn(
         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        3L                 # <- Define the call order <call sequence> for the `code.get.celn()`
+        3L                 # <- Define the call order <call sequence> for the `code_editor.fetch.celn()`
       ),                   #    function calls inside the custom function code. This is the 3rd
-      #    time the `code.get.celn()` function is called inside this custom
+      #    time the `code_editor.fetch.celn()` function is called inside this custom
       #    function so the `siCallIndex` value here should == `3L`.
       " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
     )

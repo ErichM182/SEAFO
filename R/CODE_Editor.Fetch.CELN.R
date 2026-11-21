@@ -92,7 +92,7 @@
 #'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
 #'         2L                 # <- Define the call order <call sequence> for the
 #'       ),                   #    `code_editor.fetch.celn()` function calls inside the custom
-#'                            #    function code. This is the 2nd time the `CODE.Get.CELN()`
+#'                            #    function code. This is the 2nd time `code_editor.fetch.celn()`
 #'                            #    function is called inside this custom function so the
 #'                            #    `siCallIndex` value here should == `2L`.
 #'       " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
@@ -154,8 +154,8 @@
 
   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-  ###           external functions used in this R function; while at the same time precluding
-  ###           issues related R's infamous function masking attribute.
+  ###           external functions used in this R function; while at the same time shielding these
+  ###           calls from R's infamous search-path (name) masking behaviour.
   rasBaseC           <- base::c;
   rasBaseLIST        <- base::list;
   rasBaseNROW        <- base::nrow;
@@ -198,8 +198,8 @@
     ## 4.1 - Validate the <caller-supplied> search parameters up-front (fail soft with `NA`) ...
     ssFindText_ <- rasBaseIfELSE(
       sbUseAlias_,
-      ssAliasValue_,           # <- This is the user-specified "Alias" value to search for !!!
-      "code\\.get\\.celn\\("   # <- NEVER CHANGE THIS (it is the 100% CORRECT default value) !!!
+      ssAliasValue_,                    # <- The user-specified "Alias" value to search for !!!
+      "code_editor\\.fetch\\.celn\\("   # <- NEVER CHANGE THIS (100% CORRECT default value) !!!
     );
 
     if (!rasBaseIsCHARACTER(ssFuncName_) || rasBaseLENGTH(ssFuncName_) != 1L ||
