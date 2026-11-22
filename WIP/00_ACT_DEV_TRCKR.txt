@@ -7,10 +7,10 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  22 Nov 2026 @ 23:42:12.029 CAT
+> Code Push TIME  ==>  23 Nov 2026 @ 00:27:05.721 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.2     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.2.08  (devs-release)
-> Code Base FINGERPRINT  ==>  2d0a65eb23deed835fa6b30ced723c0d   (md5: pkg asset trees)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.2.10  (devs-release)
+> Code Base FINGERPRINT  ==>  76b5170359fb63699992b1dc5c93b5ec   (md5: pkg asset trees)
 
 
 
@@ -27,28 +27,27 @@
 
 
 -> LAST CHANGES: The last updated files from the `SEAFO` R-Library Project [ n: 7 ] ...
-> 2026.11.22 @ 23:38:39  ==>  SEAFO::MAPS_DYNAMIC.Compile.Basemap.SEAFO.R
+> 2026.11.23 @ 00:21:29  ==>  SEAFO::MAPS_DYNAMIC.Compile.Basemap.SEAFO.R
+> 2026.11.23 @ 00:21:02  ==>  SEAFO::CODE.Tiny.Helpers.EXPORTED.R
 > 2026.11.22 @ 17:53:24  ==>  SEAFO::RENV_FSID.R
 > 2026.11.22 @ 11:48:29  ==>  SEAFO::data.R
 > 2026.11.21 @ 11:47:11  ==>  SEAFO::DEVS.Check.Code.Specs.R
 > 2026.11.21 @ 11:45:23  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
 > 2026.11.21 @ 10:58:59  ==>  SEAFO::DEVS.Patch.Libr.Vers.Number.R
-> 2026.11.21 @ 10:30:15  ==>  SEAFO::INFO.Post.Note.R
 
 
 
--> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: 11 ] ...
+-> DEPENDENCIES: 3rd Party R Packages used (as DEPs) in this R-Library Project [ n: 10 ] ...
 > beepr v2.0
 > desc v1.4.3
 > devtools v2.5.2
+> here v1.0.2
 > htmlwidgets v1.6.4
 > jsonlite v2.0.0
-> leafem v0.2.5
 > leaflet v2.2.3
 > leaflet.providers v3.0.0
 > sfheaders v0.4.5
 > stringr v1.6.0
-> usethis v3.2.2
 
 
 

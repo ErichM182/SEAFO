@@ -419,7 +419,7 @@
         polygon_id = 'group', # "id",
         keep = TRUE                     # <- Preserves ALL columns from original input data frame
       )                                 #    (into the output 'sf' data object) !!!
-    )
+    );
 
     ### 5.4c - Plot <add> Spatial <data> Layer to Leaflet BaseMap ...
     ssLyrId_ClosedAreas_ <- "SEAFO Closed Areas";
@@ -459,7 +459,7 @@
               ssHeaderWCL_, "</label>');
             } "
         )
-      )
+      );
   }
 
 
@@ -487,3 +487,5 @@
   rasBaseRETURN(coBaseMapLM_);             # <- Hand-over Function Ouputs to Function Call !!!
 
 }
+
+

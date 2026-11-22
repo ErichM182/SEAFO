@@ -1,3 +1,17 @@
+# ### ### ### ### ### ### ###
+####   PACKAGE-WIDE "GLOBAL VARIABLES" DECLARATIONS (for 'codetools')   ####
+###    NB: `base::load()` (aliased above as `rasBaseLOAD`) injects the SEAFO ".rda" data
+###        frames into the function's <evaluation> frame at RUN-TIME only. That behaviour
+###        is invisible to the STATIC code analysis performed by `R CMD check` (i.e.
+###        'codetools'), which would otherwise report a "no visible binding for global
+###        variable" NOTE for each of the names declared below. Registering them here
+###        (package-wide) silences those <false positive> NOTEs !!!
+# ### ### ###
+utils::globalVariables(
+  base::c("dfSEAFO_CA", "dfSEAFO_ClosedAreas", "dfSEAFO_EEZv11")
+);
+
+
 #? ### ### ### ### ### ### ###
 #' @title Null-Coalescing Operator (the "SEAFO" way)
 #' @name %??%
