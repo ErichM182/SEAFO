@@ -2,11 +2,11 @@
 % Please edit documentation in R/MAPS_DYNAMIC.Compile.Basemap.SEAFO.R
 \name{maps_dynamic.compile.basemap.seafo}
 \alias{maps_dynamic.compile.basemap.seafo}
-\title{Extract the Code Editor Gutter Line Number (CELN)}
+\title{Compile the SEAFO Dynamic BaseMap (Leaflet)}
 \usage{
 maps_dynamic.compile.basemap.seafo(
   snMapSRC = 2,
-  ssHeaderWCL = "SEAFO Convention Area (CA) BaseMap",
+  ssHeaderWCL = "SEAFO Convention Area (CA)",
   snZoomMin = 2,
   snZoomMax = 10,
   sbShowEEZs = TRUE,
@@ -20,142 +20,161 @@ maps_dynamic.compile.basemap.seafo(
 )
 }
 \arguments{
-\item{ssFuncName}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that specifies
-the Function Identifier (i.e. name) where the R Code Search or Function ID
-look-up should be conducted (i.e. directed at). The look-up is NOT case
-sensitive - both this value and the R function name are case-folded.}
+\item{snMapSRC}{(\link{numeric}) a Numeric (i.e. \link{numeric}) value that specifies the
+BaseMap tile source \if{html}{\out{<selector>}}. A value of \code{1} selects the "ESRI Ocean
+BaseMap" provider; any other value (i.e. the default \code{2}) selects the "ESRI
+NatGeo World Map" provider.}
 
-\item{sbRunByForce}{(\link{logical}) a Boolean value that specifies whether the function must execute
-its standard code logic even if the R Project Development DEBUG tracker (
-\code{RCT_IS_DEBUG_RT_MODE_}) was activated (i.e. found in the call stack & set to
-a value of \code{TRUE}) or not (default: \code{FALSE}).}
+\item{ssHeaderWCL}{(\link{character}) a String or Text (i.e. \link{character}) value that
+specifies the caption (i.e. header title) prepended to the Layer Control
+box (WCL) of the compiled BaseMap (default: "SEAFO Convention Area (CA)").
+The caption is applied with an \code{htmlwidgets::onRender()} JavaScript
+callback, so it is only visible in the rendered map.}
 
-\item{siCallIndex}{(\link{integer}) an Integer value that defines the "Call Index" or "Call Sequence"
-in the localized (function \if{html}{\out{<internal>}}) call stack in reference to when (i.e.
-in which order) the \code{maps_dynamic.compile.basemap.seafo()} function was called (i.e. from
-inside a function). An index that exceeds the number of
-\code{maps_dynamic.compile.basemap.seafo()} calls found in the target function returns
-\code{NA_integer_} (it is never an error).}
+\item{snZoomMin}{(\link{numeric}) a Numeric (i.e. \link{numeric}) value that specifies the
+minimum zoom level allowed for the BaseMap tiles (default: \code{2}).}
 
-\item{sbUseAlias}{(\link{logical}) a Boolean value that specifies whether the function should use the
-standard \code{maps_dynamic.compile.basemap.seafo()} function identifier or not (default:
-\code{FALSE}). If set to \code{TRUE} the function will NOT search for the standard
-\verb{maps_dynamic.compile.basemap.seafo(} text, but rather for the exact text supplied via the
-\code{ssAliasValue} function argument (e.g. \verb{rasSeafoFetchCELN(}).}
+\item{snZoomMax}{(\link{numeric}) a Numeric (i.e. \link{numeric}) value that specifies the
+maximum zoom level allowed for the BaseMap tiles (default: \code{10}).}
 
-\item{ssAliasValue}{(\link{character}) a String or Text (i.e. \link{character} \link{vector}) value that
-specifies the alias (i.e. re-assigned function identifier) of the default or
-standard \code{maps_dynamic.compile.basemap.seafo()} function identifier to search for in the
-R function \if{html}{\out{<internal>}} code. This value IS a Regular Expression (it is passed
-to \code{grep()}), so a literal opening bracket must be backslash-escaped.}
+\item{sbShowEEZs}{(\link{logical}) a Boolean value that specifies whether the SEAFO Exclusive
+Economic Zones (EEZs) layer must be added to the BaseMap (default: \code{TRUE}).
+The layer is sourced from \code{./data/dfSEAFO_EEZv11.rda} (v11, 2019).}
+
+\item{sbShowCA}{(\link{logical}) a Boolean value that specifies whether the SEAFO Convention Area
+(CA) layer must be added to the BaseMap (default: \code{TRUE}). The layer is
+sourced from \code{./data/dfSEAFO_CA.rda} and is a pre-requisite for both the SEAFO
+area labels (\code{sbShowLabels}) and the SEAFO Closed Areas (\code{sbShowClosedAreas}).}
+
+\item{sbShowClosedAreas}{(\link{logical}) a Boolean value that specifies whether the SEAFO VME
+Closures (VMECs) layer must be added to the BaseMap (default:
+\code{TRUE}). The layer is sourced from
+\code{./data/dfSEAFO_ClosedAreas.rda} and is only compiled when
+\code{sbShowCA = TRUE}.}
+
+\item{sbShowFishFootPrint}{(\link{logical}) a Boolean value that is reserved for the forthcoming
+fishing-footprint (VMS) overlay. The argument is currently
+internalized only and does NOT yet add a layer to the BaseMap
+(default: \code{TRUE}).}
+
+\item{sbShowLabels}{(\link{logical}) a Boolean value that specifies whether the SEAFO area labels
+(i.e. "A", "A1", "B", "B1", "C", "C1", "D" and "D1") must be added to the
+BaseMap (default: \code{TRUE}). The labels are only compiled when
+\code{sbShowCA = TRUE}, and are always-on (i.e. \code{noHide = TRUE}, text only).}
+
+\item{sbHideWCL}{(\link{logical}) a Boolean value that specifies whether the Layer Control box
+(WCL) must be compiled for the BaseMap (default: \code{TRUE}). NB: when set to
+\code{FALSE} the Layer Control box is omitted altogether, so the overlay layers
+can no longer be toggled by the user.}
+
+\item{sbNotifyRunTimeF}{(\link{logical}) a Boolean value that specifies whether the function must
+notify the user of its run-time START and STOP with an audible cue
+(i.e. \code{beepr::beep()}; default: \code{FALSE}).}
+
+\item{...}{(\link{list}) a List of R Objects function argument to catch all "Fall-Through" or
+"DotsArgs" values used by the nested functions within this main function.
+Applicable DotsArgs are collated in the \link{RENV_FSID} immutable list (i.e.
+all \verb{F_ARGS_*} list items) and here pertain to the following nested R functions:
+\if{html}{\out{<br>}}
+\enumerate{
+\item \code{\link[=info.post.func.self.id]{info.post.func.self.id()}} (i.e. \code{sbPrintPretty}, \code{sbRunSelfID} and
+\code{ssFuncCallerID}), and \if{html}{\out{<br>}}
+\item \code{\link[=info.post.note]{info.post.note()}} .
+}}
 }
 \value{
-\itemize{
-\item A single \link{integer} value - the Code Editor Line Number (CELN) - when \code{ssFuncName} is found
-and \code{siCallIndex} is within range.
-\item \code{NA_integer_}, with a \link{warning}, when the target function is not found, when \code{siCallIndex}
-exceeds the number of \code{maps_dynamic.compile.basemap.seafo()} calls it contains, or when an arg is invalid.
-\item \code{NULL} (invisibly) when the function is neither in DEBUG mode nor forced via
-\code{sbRunByForce = TRUE} - in that case no search is performed at all.
-}
+A \code{leaflet} \code{htmlwidget} object - i.e. the fully compiled and interactive SEAFO BaseMap. The
+widget is handed back to the calling R function (or to the console), where it is auto-printed
+when not assigned, so it may either be inspected on the spot or stored in an R object for
+later use (e.g. \code{coMap <- maps_dynamic.compile.basemap.seafo()}).
 }
 \description{
-A SPECIAL HELPER Function that extracts the Code Editor Gutter Line Number (CEGLN a.k.a. CELN) at
-the code editor line location from which the \code{maps_dynamic.compile.basemap.seafo()} function was called. This
-function was created for the purpose of enhancing the debugging, R Package development and
-real-time (i.e. interactive) code documentation processes from within the SEAFO Suite of R
-Functions. However, this function may also be used as a stand-alone function by (or in) other,
-3rd Party, libraries and custom R functions - as long as the \code{SEAFO} library is linked (i.e.
-previously installed and/or specified as a library dependency).
+A Helper Function that compiles an interactive \code{leaflet} BaseMap of the South East Atlantic
+Fisheries Organisation (SEAFO) Convention Area (CA) and its surrounding geographic context.
+The BaseMap combines a selected ESRI tile provider with the SEAFO spatial layers that ship
+with this package (i.e. the SEAFO Convention Area, the SEAFO Exclusive Economic Zones and the
+SEAFO VME Closures) and equips the resulting map widget with a measuring tool, a map scale bar
+and a non-collapsed Layer Control box. This function was created to support the routine
+data-analysis work conducted by the Scientific Committee (SC) of the SEAFO, but may also be
+used as a quick "situational awareness" BaseMap in other (3rd Party) R libraries and custom R
+functions - as long as the \code{SEAFO} library is linked (i.e. previously installed and/or
+specified as a library dependency).
 }
 \details{
-The CELN is an ABSOLUTE code-editor line number only while the target function carries a
-source reference (\code{srcref}) - i.e. under \code{devtools::load_all()}, or for an install performed
-with \verb{R CMD INSTALL --with-keep.source}. Without it the line number is relative to the
-de-parsed function body, and a warning is raised instead of silently returning it.
+\subsection{BaseMap source}{
+
+The tile provider is selected with \code{snMapSRC}: a value of \code{1} maps to the "ESRI Ocean
+BaseMap" provider, and any other value (i.e. the default \code{2}) maps to the "ESRI NatGeo World
+Map" provider. Both provider definitions are pulled from the \code{leaflet.providers} package, and
+the selected provider name is written to the console via \code{\link[=info.post.note]{info.post.note()}} as the
+BaseMap is compiled.
+}
+
+\subsection{Spatial layers}{
+
+The SEAFO spatial layers are read at run-time (i.e. with \code{base::load()}) from the package's
+\verb{./data/} folder, which is resolved with \code{here::here()}. The function therefore expects to be
+run from the R Project (i.e. package source) root - i.e. the directory that holds the \verb{data/}
+folder. The layers, in the order they are added, are:
+\itemize{
+\item \strong{EEZs} - the SEAFO Exclusive Economic Zones (\code{dfSEAFO_EEZv11.rda}), added when
+\code{sbShowEEZs = TRUE};
+\item \strong{SEAFO CA} - the SEAFO Convention Area (\code{dfSEAFO_CA.rda}), added when
+\code{sbShowCA = TRUE};
+\item \strong{SEAFO Labels} - the eight SEAFO area tags (\code{A}, \code{A1}, \code{B}, \code{B1}, \code{C}, \code{C1}, \code{D} and
+\code{D1}), added when both \code{sbShowCA = TRUE} and \code{sbShowLabels = TRUE};
+\item \strong{SEAFO Closed Areas} - the SEAFO VME Closures (\code{dfSEAFO_ClosedAreas.rda}), added when
+both \code{sbShowCA = TRUE} and \code{sbShowClosedAreas = TRUE}.
+}
+}
+
+\subsection{Map controls}{
+
+The BaseMap is compiled with a measuring tool (top-left), a map scale bar (bottom-left) and,
+when \code{sbHideWCL = TRUE}, a non-collapsed Layer Control box (top-left) whose caption is
+supplied via \code{ssHeaderWCL}. The initial map view is fitted to the SEAFO Convention Area
+bounding box (i.e. longitudes \code{-25.25} to \code{31.25} and latitudes \code{2.75} to \code{-52.05}).
+}
+
+\subsection{Self-identification}{
+
+The function also brackets its own execution with "Function Self-ID" console notifications
+(i.e. via \code{\link[=info.post.func.self.id]{info.post.func.self.id()}}), reported against its START and STOP Code Editor
+Line Numbers (CELN). These notifications are only printed when \code{sbRunSelfID = TRUE} is passed
+through the \code{...} argument.
+}
 }
 \examples{
-### Easily debug custom R function code with this <cool> helper function ...
+\dontrun{
+### Compile the DEFAULT SEAFO BaseMap (ESRI NatGeo World Map tiles) ...
 library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally.
 
+coMap <- SEAFO::maps_dynamic.compile.basemap.seafo()
+coMap            # <- Renders the interactive BaseMap in the RStudio Viewer pane !!!
 
 
-### Use with any custom R function as follows ...
-"my.custom.r.func" <- function(x=7, y=3, z=28) {
+### Compile the ESRI Ocean BaseMap without the EEZ & Closed Areas layers ...
+SEAFO::maps_dynamic.compile.basemap.seafo(
+  snMapSRC          = 1,               # <- Select the ESRI Ocean BaseMap tiles ...
+  sbShowEEZs        = FALSE,           # <- Skip the SEAFO EEZ layer ...
+  sbShowClosedAreas = FALSE,           # <- Skip the SEAFO VME Closures layer ...
+  ssHeaderWCL       = "SEAFO Layers",  # <- Custom Layer Control box caption ...
+  sbNotifyRunTimeF  = TRUE             # <- Audible START & STOP notification ...
+)
 
-  RCT_TAG_FUNC_ID <- "my.custom.r.func";  # <- ALWAYS TAG (ID) Custom R Functions accordingly !!!
 
-  valSUM <- sum(x, y, z);
-  cat(
-    paste0(
-      " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::maps_dynamic.compile.basemap.seafo(
-        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        1L                 # <- Define the call order <call sequence> for the
-      ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-                           #    function code. This is the 1st time the
-                           #    `maps_dynamic.compile.basemap.seafo()` function is called inside this custom
-                           #    function so the `siCallIndex` value here should == `1L`.
-      " | Summed all 3 input values < result: ", valSUM," > !!! \n"
-    )
-  );
-
-  valMEAN <- mean(x, y, z);
-  cat(
-    paste0(
-      " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::maps_dynamic.compile.basemap.seafo(
-        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        2L                 # <- Define the call order <call sequence> for the
-      ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-                           #    function code. This is the 2nd time `maps_dynamic.compile.basemap.seafo()`
-                           #    function is called inside this custom function so the
-                           #    `siCallIndex` value here should == `2L`.
-      " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
-    )
-  );
-
-  # Notify function's SUCCESSFUL COMPLETION ( <- is only needed for code illustration) ...
-  cat(
-    paste0(
-      " \u279C ", RCT_TAG_FUNC_ID, " " ,
-      SEAFO::maps_dynamic.compile.basemap.seafo(
-        RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-        TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-        3L                 # <- Define the call order <call sequence> for the
-      ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-                           #    function code. This is the 3rd time the
-                           #    `maps_dynamic.compile.basemap.seafo()` function is called inside this custom
-                           #    function so the `siCallIndex` value here should == `3L`.
-      " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
-    )
-  );
-
-  return(
-    list("SUM" = valSUM, "MEAN" = valMEAN)
-  );
+### Compile a "clean" CA BaseMap (no overlays, no labels) with Self-ID notes ...
+SEAFO::maps_dynamic.compile.basemap.seafo(
+  sbShowEEZs     = FALSE,
+  sbShowLabels   = FALSE,
+  snZoomMin      = 3,
+  snZoomMax      = 8,
+  sbRunSelfID    = TRUE,                # <- <DotsArg> prints the Self-ID notifications ...
+  ssFuncCallerID = "my.custom.r.func"   # <- <DotsArg> tags the calling function ...
+)
 }
 
-## Execute the custom R Function ...
-my.custom.r.func()
-
-## Outputs from "my.custom.r.func()" should be as follows ...
-# ➜ my.custom.r.func 9 | Summed all 3 input values < result: 38 > !!!
-# ➜ my.custom.r.func 24 | Averaged the 3 input values < result: 12.7 > !!!
-# ➜ my.custom.r.func 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
-
-# $SUM
-# [1] 38
-
-# $MEAN
-# [1] 12.66667
 
 
 }
-\seealso{
-Other CODE Functions (\code{SEAFO}):
-\code{\link[=code_editor.fetch.celn]{code_editor.fetch.celn()}}
-}
-\concept{CODE Functions (\code{SEAFO})}
+\concept{MAPS Functions (SEAFO)}

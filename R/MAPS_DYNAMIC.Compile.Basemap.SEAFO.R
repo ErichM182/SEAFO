@@ -1,138 +1,145 @@
 #? ### ### ### ### ### ### ###
-#' @title Extract the Code Editor Gutter Line Number (CELN)
+#' @title Compile the SEAFO Dynamic BaseMap (Leaflet)
 #' @name maps_dynamic.compile.basemap.seafo
-#' @family CODE Functions (`SEAFO`)
+#' @family MAPS Functions (SEAFO)
 #'
 #'
 #' @description
-#' A SPECIAL HELPER Function that extracts the Code Editor Gutter Line Number (CEGLN a.k.a. CELN) at
-#' the code editor line location from which the `maps_dynamic.compile.basemap.seafo()` function was called. This
-#' function was created for the purpose of enhancing the debugging, R Package development and
-#' real-time (i.e. interactive) code documentation processes from within the SEAFO Suite of R
-#' Functions. However, this function may also be used as a stand-alone function by (or in) other,
-#' 3rd Party, libraries and custom R functions - as long as the `SEAFO` library is linked (i.e.
-#' previously installed and/or specified as a library dependency).
+#' A Helper Function that compiles an interactive `leaflet` BaseMap of the South East Atlantic
+#' Fisheries Organisation (SEAFO) Convention Area (CA) and its surrounding geographic context.
+#' The BaseMap combines a selected ESRI tile provider with the SEAFO spatial layers that ship
+#' with this package (i.e. the SEAFO Convention Area, the SEAFO Exclusive Economic Zones and the
+#' SEAFO VME Closures) and equips the resulting map widget with a measuring tool, a map scale bar
+#' and a non-collapsed Layer Control box. This function was created to support the routine
+#' data-analysis work conducted by the Scientific Committee (SC) of the SEAFO, but may also be
+#' used as a quick "situational awareness" BaseMap in other (3rd Party) R libraries and custom R
+#' functions - as long as the `SEAFO` library is linked (i.e. previously installed and/or
+#' specified as a library dependency).
 #'
 #'
-#' @param ssFuncName ([character]) a String or Text (i.e. [character] [vector]) value that specifies
-#'                   the Function Identifier (i.e. name) where the R Code Search or Function ID
-#'                   look-up should be conducted (i.e. directed at). The look-up is NOT case
-#'                   sensitive - both this value and the R function name are case-folded.
-#' @param sbRunByForce ([logical]) a Boolean value that specifies whether the function must execute
-#'                     its standard code logic even if the R Project Development DEBUG tracker (
-#'                     `RCT_IS_DEBUG_RT_MODE_`) was activated (i.e. found in the call stack & set to
-#'                     a value of `TRUE`) or not (default: `FALSE`).
-#' @param siCallIndex ([integer]) an Integer value that defines the "Call Index" or "Call Sequence"
-#'                    in the localized (function <internal>) call stack in reference to when (i.e.
-#'                    in which order) the `maps_dynamic.compile.basemap.seafo()` function was called (i.e. from
-#'                    inside a function). An index that exceeds the number of
-#'                    `maps_dynamic.compile.basemap.seafo()` calls found in the target function returns
-#'                    `NA_integer_` (it is never an error).
-#' @param sbUseAlias ([logical]) a Boolean value that specifies whether the function should use the
-#'                   standard `maps_dynamic.compile.basemap.seafo()` function identifier or not (default:
-#'                   `FALSE`). If set to `TRUE` the function will NOT search for the standard
-#'                   `maps_dynamic.compile.basemap.seafo(` text, but rather for the exact text supplied via the
-#'                   `ssAliasValue` function argument (e.g. `rasSeafoFetchCELN(`).
-#' @param ssAliasValue ([character]) a String or Text (i.e. [character] [vector]) value that
-#'                     specifies the alias (i.e. re-assigned function identifier) of the default or
-#'                     standard `maps_dynamic.compile.basemap.seafo()` function identifier to search for in the
-#'                     R function <internal> code. This value IS a Regular Expression (it is passed
-#'                     to `grep()`), so a literal opening bracket must be backslash-escaped.
+#' @param snMapSRC ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
+#'                BaseMap tile source <selector>. A value of `1` selects the "ESRI Ocean
+#'                BaseMap" provider; any other value (i.e. the default `2`) selects the "ESRI
+#'                NatGeo World Map" provider.
+#' @param ssHeaderWCL ([character]) a String or Text (i.e. [character]) value that
+#'                    specifies the caption (i.e. header title) prepended to the Layer Control
+#'                    box (WCL) of the compiled BaseMap (default: "SEAFO Convention Area (CA)").
+#'                    The caption is applied with an `htmlwidgets::onRender()` JavaScript
+#'                    callback, so it is only visible in the rendered map.
+#' @param snZoomMin ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
+#'                minimum zoom level allowed for the BaseMap tiles (default: `2`).
+#' @param snZoomMax ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
+#'                maximum zoom level allowed for the BaseMap tiles (default: `10`).
+#' @param sbShowEEZs ([logical]) a Boolean value that specifies whether the SEAFO Exclusive
+#'                  Economic Zones (EEZs) layer must be added to the BaseMap (default: `TRUE`).
+#'                  The layer is sourced from `./data/dfSEAFO_EEZv11.rda` (v11, 2019).
+#' @param sbShowCA ([logical]) a Boolean value that specifies whether the SEAFO Convention Area
+#'                (CA) layer must be added to the BaseMap (default: `TRUE`). The layer is
+#'                sourced from `./data/dfSEAFO_CA.rda` and is a pre-requisite for both the SEAFO
+#'                area labels (`sbShowLabels`) and the SEAFO Closed Areas (`sbShowClosedAreas`).
+#' @param sbShowClosedAreas ([logical]) a Boolean value that specifies whether the SEAFO VME
+#'                          Closures (VMECs) layer must be added to the BaseMap (default:
+#'                          `TRUE`). The layer is sourced from
+#'                          `./data/dfSEAFO_ClosedAreas.rda` and is only compiled when
+#'                          `sbShowCA = TRUE`.
+#' @param sbShowFishFootPrint ([logical]) a Boolean value that is reserved for the forthcoming
+#'                            fishing-footprint (VMS) overlay. The argument is currently
+#'                            internalized only and does NOT yet add a layer to the BaseMap
+#'                            (default: `TRUE`).
+#' @param sbShowLabels ([logical]) a Boolean value that specifies whether the SEAFO area labels
+#'                    (i.e. "A", "A1", "B", "B1", "C", "C1", "D" and "D1") must be added to the
+#'                    BaseMap (default: `TRUE`). The labels are only compiled when
+#'                    `sbShowCA = TRUE`, and are always-on (i.e. `noHide = TRUE`, text only).
+#' @param sbHideWCL ([logical]) a Boolean value that specifies whether the Layer Control box
+#'                 (WCL) must be compiled for the BaseMap (default: `TRUE`). NB: when set to
+#'                 `FALSE` the Layer Control box is omitted altogether, so the overlay layers
+#'                 can no longer be toggled by the user.
+#' @param sbNotifyRunTimeF ([logical]) a Boolean value that specifies whether the function must
+#'                         notify the user of its run-time START and STOP with an audible cue
+#'                         (i.e. `beepr::beep()`; default: `FALSE`).
+#' @param ... ([list]) a List of R Objects function argument to catch all "Fall-Through" or
+#'            "DotsArgs" values used by the nested functions within this main function.
+#'            Applicable DotsArgs are collated in the [SEAFO::RENV_FSID] immutable list (i.e.
+#'            all `F_ARGS_*` list items) and here pertain to the following nested R functions:
+#'            <br>
+#'               1. [SEAFO::info.post.func.self.id()] (i.e. `sbPrintPretty`, `sbRunSelfID` and
+#'                  `ssFuncCallerID`), and <br>
+#'               2. [SEAFO::info.post.note()] .
 #'
 #'
 #' @returns
-#' * A single [integer] value - the Code Editor Line Number (CELN) - when `ssFuncName` is found
-#'   and `siCallIndex` is within range.
-#' * `NA_integer_`, with a [warning], when the target function is not found, when `siCallIndex`
-#'   exceeds the number of `maps_dynamic.compile.basemap.seafo()` calls it contains, or when an arg is invalid.
-#' * `NULL` (invisibly) when the function is neither in DEBUG mode nor forced via
-#'   `sbRunByForce = TRUE` - in that case no search is performed at all.
+#' A `leaflet` `htmlwidget` object - i.e. the fully compiled and interactive SEAFO BaseMap. The
+#' widget is handed back to the calling R function (or to the console), where it is auto-printed
+#' when not assigned, so it may either be inspected on the spot or stored in an R object for
+#' later use (e.g. `coMap <- maps_dynamic.compile.basemap.seafo()`).
 #'
 #'
 #' @details
-#' The CELN is an ABSOLUTE code-editor line number only while the target function carries a
-#' source reference (`srcref`) - i.e. under `devtools::load_all()`, or for an install performed
-#' with `R CMD INSTALL --with-keep.source`. Without it the line number is relative to the
-#' de-parsed function body, and a warning is raised instead of silently returning it.
+#' ### BaseMap source
+#' The tile provider is selected with `snMapSRC`: a value of `1` maps to the "ESRI Ocean
+#' BaseMap" provider, and any other value (i.e. the default `2`) maps to the "ESRI NatGeo World
+#' Map" provider. Both provider definitions are pulled from the `leaflet.providers` package, and
+#' the selected provider name is written to the console via [SEAFO::info.post.note()] as the
+#' BaseMap is compiled.
+#'
+#' ### Spatial layers
+#' The SEAFO spatial layers are read at run-time (i.e. with `base::load()`) from the package's
+#' `./data/` folder, which is resolved with `here::here()`. The function therefore expects to be
+#' run from the R Project (i.e. package source) root - i.e. the directory that holds the `data/`
+#' folder. The layers, in the order they are added, are:
+#'
+#' * **EEZs** - the SEAFO Exclusive Economic Zones (`dfSEAFO_EEZv11.rda`), added when
+#'   `sbShowEEZs = TRUE`;
+#' * **SEAFO CA** - the SEAFO Convention Area (`dfSEAFO_CA.rda`), added when
+#'   `sbShowCA = TRUE`;
+#' * **SEAFO Labels** - the eight SEAFO area tags (`A`, `A1`, `B`, `B1`, `C`, `C1`, `D` and
+#'   `D1`), added when both `sbShowCA = TRUE` and `sbShowLabels = TRUE`;
+#' * **SEAFO Closed Areas** - the SEAFO VME Closures (`dfSEAFO_ClosedAreas.rda`), added when
+#'   both `sbShowCA = TRUE` and `sbShowClosedAreas = TRUE`.
+#'
+#' ### Map controls
+#' The BaseMap is compiled with a measuring tool (top-left), a map scale bar (bottom-left) and,
+#' when `sbHideWCL = TRUE`, a non-collapsed Layer Control box (top-left) whose caption is
+#' supplied via `ssHeaderWCL`. The initial map view is fitted to the SEAFO Convention Area
+#' bounding box (i.e. longitudes `-25.25` to `31.25` and latitudes `2.75` to `-52.05`).
+#'
+#' ### Self-identification
+#' The function also brackets its own execution with "Function Self-ID" console notifications
+#' (i.e. via [SEAFO::info.post.func.self.id()]), reported against its START and STOP Code Editor
+#' Line Numbers (CELN). These notifications are only printed when `sbRunSelfID = TRUE` is passed
+#' through the `...` argument.
 #'
 #'
 #' @examples
-#' ### Easily debug custom R function code with this <cool> helper function ...
+#' \dontrun{
+#' ### Compile the DEFAULT SEAFO BaseMap (ESRI NatGeo World Map tiles) ...
 #' library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally.
 #'
+#' coMap <- SEAFO::maps_dynamic.compile.basemap.seafo()
+#' coMap            # <- Renders the interactive BaseMap in the RStudio Viewer pane !!!
 #'
 #'
-#' ### Use with any custom R function as follows ...
-#' "my.custom.r.func" <- function(x=7, y=3, z=28) {
+#' ### Compile the ESRI Ocean BaseMap without the EEZ & Closed Areas layers ...
+#' SEAFO::maps_dynamic.compile.basemap.seafo(
+#'   snMapSRC          = 1,               # <- Select the ESRI Ocean BaseMap tiles ...
+#'   sbShowEEZs        = FALSE,           # <- Skip the SEAFO EEZ layer ...
+#'   sbShowClosedAreas = FALSE,           # <- Skip the SEAFO VME Closures layer ...
+#'   ssHeaderWCL       = "SEAFO Layers",  # <- Custom Layer Control box caption ...
+#'   sbNotifyRunTimeF  = TRUE             # <- Audible START & STOP notification ...
+#' )
 #'
-#'   RCT_TAG_FUNC_ID <- "my.custom.r.func";  # <- ALWAYS TAG (ID) Custom R Functions accordingly !!!
 #'
-#'   valSUM <- sum(x, y, z);
-#'   cat(
-#'     paste0(
-#'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::maps_dynamic.compile.basemap.seafo(
-#'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-#'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         1L                 # <- Define the call order <call sequence> for the
-#'       ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-#'                            #    function code. This is the 1st time the
-#'                            #    `maps_dynamic.compile.basemap.seafo()` function is called inside this custom
-#'                            #    function so the `siCallIndex` value here should == `1L`.
-#'       " | Summed all 3 input values < result: ", valSUM," > !!! \n"
-#'     )
-#'   );
-#'
-#'   valMEAN <- mean(x, y, z);
-#'   cat(
-#'     paste0(
-#'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::maps_dynamic.compile.basemap.seafo(
-#'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-#'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         2L                 # <- Define the call order <call sequence> for the
-#'       ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-#'                            #    function code. This is the 2nd time `maps_dynamic.compile.basemap.seafo()`
-#'                            #    function is called inside this custom function so the
-#'                            #    `siCallIndex` value here should == `2L`.
-#'       " | Averaged the 3 input values < result: ", round(valMEAN, 1)," > !!! \n"
-#'     )
-#'   );
-#'
-#'   # Notify function's SUCCESSFUL COMPLETION ( <- is only needed for code illustration) ...
-#'   cat(
-#'     paste0(
-#'       " \u279C ", RCT_TAG_FUNC_ID, " " ,
-#'       SEAFO::maps_dynamic.compile.basemap.seafo(
-#'         RCT_TAG_FUNC_ID,   # <- Provide the Function ID (tag) for the Custom R Function ...
-#'         TRUE,              # <- <force> Run function even if DEBUG tracking is not activated !!!
-#'         3L                 # <- Define the call order <call sequence> for the
-#'       ),                   #    `maps_dynamic.compile.basemap.seafo()` function calls inside the custom
-#'                            #    function code. This is the 3rd time the
-#'                            #    `maps_dynamic.compile.basemap.seafo()` function is called inside this custom
-#'                            #    function so the `siCallIndex` value here should == `3L`.
-#'       " | CUSTOM R-FUNC `", tolower(RCT_TAG_FUNC_ID), "()` SUCESSFULLY EXECUTED !!! \n\n"
-#'     )
-#'   );
-#'
-#'   return(
-#'     list("SUM" = valSUM, "MEAN" = valMEAN)
-#'   );
+#' ### Compile a "clean" CA BaseMap (no overlays, no labels) with Self-ID notes ...
+#' SEAFO::maps_dynamic.compile.basemap.seafo(
+#'   sbShowEEZs     = FALSE,
+#'   sbShowLabels   = FALSE,
+#'   snZoomMin      = 3,
+#'   snZoomMax      = 8,
+#'   sbRunSelfID    = TRUE,                # <- <DotsArg> prints the Self-ID notifications ...
+#'   ssFuncCallerID = "my.custom.r.func"   # <- <DotsArg> tags the calling function ...
+#' )
 #' }
 #'
-#' ## Execute the custom R Function ...
-#' my.custom.r.func()
-#'
-#' ## Outputs from "my.custom.r.func()" should be as follows ...
-#' # ➜ my.custom.r.func 9 | Summed all 3 input values < result: 38 > !!!
-#' # ➜ my.custom.r.func 24 | Averaged the 3 input values < result: 12.7 > !!!
-#' # ➜ my.custom.r.func 39 | CUSTOM R-FUNC `my.custom.r.func()` SUCESSFULLY EXECUTED !!!
-#'
-#' # $SUM
-#' # [1] 38
-#'
-#' # $MEAN
-#' # [1] 12.66667
 #'
 #'
 #' @export
@@ -152,8 +159,8 @@
   RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::Basemap.SEAFO";                        # <- FuncID - SHORT
   RCT_TAG_FUNC_ID_121_   <- "maps_dynamic.compile.basemap.seafo";          # <- FuncID - 1:1 (121)
   RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_Dynamic.Compile.Basemap.SEAFO";   # <- FuncID - LONG
-  RCT_FUNC_CELN_START_   <- 140L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
-  RCT_FUNC_CELN_STOP_    <- 427L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
+  RCT_FUNC_CELN_START_   <- 147L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
+  RCT_FUNC_CELN_STOP_    <- 489L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
 
 
 
@@ -267,7 +274,7 @@
       )
     );
 
-  coBaseMapLM_ <- rasLeafletAddMEASURE(                         # <- Add a Measuring Tool Control ...
+  coBaseMapLM_ <- rasLeafletAddMEASURE(                         # <- Add Measuring Tool Control ...
     map = coBaseMapLM_, localization = "na", position = "topleft", activeColor = "#3D535D",
     completedColor = "#7D4479", primaryAreaUnit = "hectares", secondaryAreaUnit = "sqmeters",
     primaryLengthUnit = "kilometers"
@@ -440,8 +447,8 @@
     );
 
     coBaseMapLM_ <- rasLeafletAddLayersCONTROL(
-      # baseGroups = vsBaseLayers,       # The BASE Layers Control Vector (with 3 BASE Layers included)
-      overlayGroups = vsCntrlLayers_,     # The Layers Control Vector (with all active layers included)
+      # baseGroups = vsBaseLayers,       # <- BASE Layers Control Vector (3 BASE Layers included).
+      overlayGroups = vsCntrlLayers_,     # <- Layers Control Vector (all active layers included).
       map = coBaseMapLM_, position = "topleft",
       options = rasLeafletLayersControlOPTIONS(collapsed = FALSE),
     ) |>
