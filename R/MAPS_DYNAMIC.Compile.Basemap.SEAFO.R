@@ -100,8 +100,11 @@
 #' ### Map controls
 #' The BaseMap is compiled with a measuring tool (top-left), a map scale bar (bottom-left) and,
 #' when `sbHideWCL = TRUE`, a non-collapsed Layer Control box (top-left) whose caption is
-#' supplied via `ssHeaderWCL`. The initial map view is fitted to the SEAFO Convention Area
-#' bounding box (i.e. longitudes `-25.25` to `31.25` and latitudes `2.75` to `-52.05`).
+#' supplied via `ssHeaderWCL`. The measuring tool is localised with `localization = "en"`,
+#' because the underlying `leaflet-measure` plugin falls back to English SILENTLY for an
+#' unrecognised locale key (i.e. only valid keys such as `"fr"`, `"pt_PT"` or `"es"` are safe).
+#' The initial map view is fitted to the SEAFO Convention Area bounding box (i.e. longitudes
+#' `-25.25` to `31.25` and latitudes `2.75` to `-52.05`).
 #'
 #' ### Self-identification
 #' The function also brackets its own execution with "Function Self-ID" console notifications
@@ -159,8 +162,8 @@
   RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::Basemap.SEAFO";                        # <- FuncID - SHORT
   RCT_TAG_FUNC_ID_121_   <- "maps_dynamic.compile.basemap.seafo";          # <- FuncID - 1:1 (121)
   RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_Dynamic.Compile.Basemap.SEAFO";   # <- FuncID - LONG
-  RCT_FUNC_CELN_START_   <- 147L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
-  RCT_FUNC_CELN_STOP_    <- 489L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
+  RCT_FUNC_CELN_START_   <- 150L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
+  RCT_FUNC_CELN_STOP_    <- 496L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
 
 
 
@@ -274,8 +277,12 @@
       )
     );
 
+  ### NB: `localization` must carry a <valid> 'leaflet-measure' locale key (i.e. one of "ca",
+  ###     "cn", "da", "de", "de_CH", "en", "en_UK", "es", "fa", "fil_PH", "fr", "it", "nl",
+  ###     "pl", "pt_BR", "pt_PT", "ru", "sv" or "tr"). An unknown key does NOT raise an
+  ###     error - the plugin SILENTLY falls back to "en" (its `devMode` is disabled) !!!
   coBaseMapLM_ <- rasLeafletAddMEASURE(                         # <- Add Measuring Tool Control ...
-    map = coBaseMapLM_, localization = "na", position = "topleft", activeColor = "#3D535D",
+    map = coBaseMapLM_, localization = "en", position = "topleft", activeColor = "#3D535D",
     completedColor = "#7D4479", primaryAreaUnit = "hectares", secondaryAreaUnit = "sqmeters",
     primaryLengthUnit = "kilometers"
   );
@@ -439,12 +446,14 @@
 
 
   ###  5.5 - Compile the SEAFO Controls Layer   ####
-  if (sbHideWCL_ != FALSE) {   # <- ONLY RUN this code block if 'sbHideWCL' is set to 'FALSE' !!!
+  if (sbHideWCL_ == FALSE) {   # <- Displays the Leaflet Controls Widget (on map) if 'FALSE' !!!
 
     ## Re-order the Control Layers <logically> ...
-    vsCntrlLayers_ <- rasBaseC(
-      vsCntrlLayers_[2], vsCntrlLayers_[3], vsCntrlLayers_[4], vsCntrlLayers_[1]
-    );
+    if (sbShowCA_ && sbShowLabels_ && sbShowClosedAreas_ && sbShowEEZs_) {
+      vsCntrlLayers_ <- rasBaseC(
+        vsCntrlLayers_[2], vsCntrlLayers_[3], vsCntrlLayers_[4], vsCntrlLayers_[1]
+      );
+    }
 
     coBaseMapLM_ <- rasLeafletAddLayersCONTROL(
       # baseGroups = vsBaseLayers,       # <- BASE Layers Control Vector (3 BASE Layers included).

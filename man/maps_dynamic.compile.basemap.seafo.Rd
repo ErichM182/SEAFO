@@ -132,8 +132,11 @@ both \code{sbShowCA = TRUE} and \code{sbShowClosedAreas = TRUE}.
 
 The BaseMap is compiled with a measuring tool (top-left), a map scale bar (bottom-left) and,
 when \code{sbHideWCL = TRUE}, a non-collapsed Layer Control box (top-left) whose caption is
-supplied via \code{ssHeaderWCL}. The initial map view is fitted to the SEAFO Convention Area
-bounding box (i.e. longitudes \code{-25.25} to \code{31.25} and latitudes \code{2.75} to \code{-52.05}).
+supplied via \code{ssHeaderWCL}. The measuring tool is localised with \code{localization = "en"},
+because the underlying \code{leaflet-measure} plugin falls back to English SILENTLY for an
+unrecognised locale key (i.e. only valid keys such as \code{"fr"}, \code{"pt_PT"} or \code{"es"} are safe).
+The initial map view is fitted to the SEAFO Convention Area bounding box (i.e. longitudes
+\code{-25.25} to \code{31.25} and latitudes \code{2.75} to \code{-52.05}).
 }
 
 \subsection{Self-identification}{
