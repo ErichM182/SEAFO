@@ -179,17 +179,56 @@ my.custom.r.func()
 ###   file = "./data/01_EEZ_v11_(2019)_WGS84_Transformed_(HIGH_RES)_AFRICA.rds"
 ### )
 ### utils::head(dfSEAFO_EEZv11); base::class(dfSEAFO_EEZv11); base::typeof(dfSEAFO_EEZv11)
-### base::save(
-###   dfSEAFO_EEZv11, file = base::file.path(
-###     ".", "data", base::paste0("dfSEAFO_EEZv11", ".rda")
-###   ), compress = "xz"
+### base::format(utils::object.size(dfSEAFO_EEZv11), units = "auto")
+###
+### #### Save file as new output ...
+### ssFilePath_ <- base::file.path(
+###   ".", "data", base::paste0("dfSEAFO_EEZv11", ".rda")
 ### )
+###
+### #### Read file as new input ...
+### base::load(file = ssFilePath_)
+###
+### base::save(
+###   dfSEAFO_EEZv11, file = ssFilePath_, compress = "xz"
+### )
+###
+### base::format(utils::object.size(dfSEAFO_EEZv11), units = "auto")
+###
+### ### Read file Size -> Format into readable units (KB, MB, GB)
+### utils:::format.object_size(
+###   x = base::file.size(ssFilePath_), units = "auto"
+### )
+###
+### ### Preserve topology while reducing vertex density (adjust dTolerance in degrees/meters as needed)
+### base::names(dfSEAFO_EEZv11)
+### base::levels(base::as.factor(dfSEAFO_EEZv11$ISO_TER1))
+### base::levels(base::as.factor(dfSEAFO_EEZv11$ISO_SOV1))
+### base::levels(base::as.factor(dfSEAFO_EEZv11$TERRITORY1))
+### base::levels(base::as.factor(dfSEAFO_EEZv11$SOVEREIGN1))
+### ## base::table(dfSEAFO_EEZv11$SOVEREIGN1 == dfSEAFO_EEZv11$TERRITORY1)
+### base::levels(base::as.factor(dfSEAFO_EEZv11$ISO_SOV1))[1:39] ==
+### base::levels(base::as.factor(dfSEAFO_EEZv11$ISO_TER1))[1:39]
+###
+###
+### #### Reduce SIZE of EEZ File ...
+### dfSEAFO_EEZv11 <- dfSEAFO_EEZv11[
+###   !(dfSEAFO_EEZv11$TERRITORY1 %in%
+###       base::c(
+###         "Comores", "Madagascar", "Seychelles", "Cape Verde", "Western Sahara", "Morocco",
+###         "Canary Islands", "Algeria", "Tunisia", "Egypt", "Libya"
+###       )
+###    ),
+### ]
+### base::levels(base::as.factor(dfSEAFO_EEZv11_v02$TERRITORY1))
+###
+### base::save(
+###   dfSEAFO_EEZv11, file = ssFilePath_, compress = "xz"
+### )
+
 ### #### -> Check which data compression works best (i.e. is recommended) ...
 ### tools::checkRdaFiles("data/")
-
-
-
-
+### tools::resaveRdaFiles(paths = "./data", compress = "xz")
 
 
 
