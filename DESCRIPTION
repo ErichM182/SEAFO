@@ -25,6 +25,11 @@ Imports:
     beepr,
     desc,
     devtools,
+    htmlwidgets,
     jsonlite,
+    leafem,
+    leaflet,
+    leaflet.providers,
+    sfheaders,
     stringr,
     usethis

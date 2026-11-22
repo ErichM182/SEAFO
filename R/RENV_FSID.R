@@ -68,6 +68,7 @@
       F_ARGS_BOOL_NEW_LINE_PRE_ONE  = "sbPrePend1NL",
       F_ARGS_BOOL_NEW_LINE_POST_ONE = "sbPostPend1NL",
       F_ARGS_BOOL_NEW_LINE_POST_TWO = "sbPostPend2NLs",
+      F_ARGS_BOOL_AUDIO_NOTE        = "sbAudioNote",
 
       ### R Function & Project Constants ('CONSTS') -> for the Function Self-Id (FSID) Process ...
       CONSTS_LIBR_ID             = "RCT_TAG_R_LIBR_ID_",
