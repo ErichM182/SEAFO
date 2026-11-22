@@ -147,4 +147,8 @@ my.custom.r.func()
 
 
 }
+\seealso{
+Other CODE Functions (\code{SEAFO}):
+\code{\link[=maps_dynamic.compile.basemap.seafo]{maps_dynamic.compile.basemap.seafo()}}
+}
 \concept{CODE Functions (\code{SEAFO})}

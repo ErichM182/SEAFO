@@ -138,12 +138,12 @@
 #' @export
 #? ### ### ###
 "maps_dynamic.compile.basemap.seafo" <- function(
-    snMapSRC=2, ssHeaderWCL="SEAFO Convention Area", snZoomMin=2, snZoomMax=10, sbShowEEZs=TRUE,
-    sbShowCA=TRUE, sbShowClosedAreas=TRUE, sbShowFishFootPrint=TRUE, sbShowLabels=TRUE,
-    sbHideWCL=FALSE, sbNotifyRunTimeF=FALSE, ...
+  snMapSRC=2, ssHeaderWCL="SEAFO Convention Area (CA)", snZoomMin=2, snZoomMax=10,
+  sbShowEEZs=TRUE, sbShowCA=TRUE, sbShowClosedAreas=TRUE, sbShowFishFootPrint=TRUE,
+  sbShowLabels=TRUE, sbHideWCL=TRUE, sbNotifyRunTimeF=FALSE, ...
 ) {
 
-  if (sbNotifyRunTimeF) beepr::beep(1);   # <- Notify user of Function Run-Time START (audio cue) ...
+  if (sbNotifyRunTimeF) beepr::beep(1);   # <- Notify user of Function Run-Time START (audio cue).
   RCT_FUNC_RUNTIME_START_ <- base::Sys.time();   # <- Captures <active> Date Time !!!
 
 
@@ -161,23 +161,43 @@
   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
   ###           external functions used in this R function; while at the same time shielding these
   ###           calls from R's infamous search-path (name) masking behaviour.
-  rasBaseC       <- base::c;
-  rasBaseCAT     <- base::cat;
-  rasBaseLIST    <- base::list;
-  rasBaseIfELSE  <- base::ifelse;
-  rasBasePASTE0  <- base::paste0;
-  rasBaseRETURN  <- base::return;
-  rasBaseMESSAGE <- base::message;
+  rasBaseC                <- base::c;
+  rasBaseCAT              <- base::cat;
+  rasBaseLIST             <- base::list;
+  rasBaseLOAD             <- base::load;
+  rasBaseNCHAR            <- base::nchar;
+  rasBaseORDER            <- base::order;
+  rasBaseIfELSE           <- base::ifelse;
+  rasBasePASTE0           <- base::paste0;
+  rasBaseRETURN           <- base::return;
+  rasBaseAPPEND           <- base::append;
+  rasBaseMESSAGE          <- base::message;
+  rasBaseSysTIME          <- base::Sys.time;
+  rasBaseDiffTIME         <- base::difftime;
+  rasBaseSuppressWARNINGS <- base::suppressWarnings;
 
-  rasLeafletLEAFLET             <- leaflet::leaflet;
-  rasLeafletFitBOUNDS           <- leaflet::fitBounds;
-  rasLeafletAddMEASURE          <- leaflet::addMeasure;
-  rasLeafletAddScaleBAR         <- leaflet::addScaleBar;
-  rasLeafletOPTIONS             <- leaflet::leafletOptions;
-  rasLeafletAddProviderTILES    <- leaflet::addProviderTiles;
-  rasLeafletProviderTileOPTIONS <- leaflet::providerTileOptions;
+  rasBeeprBEEP <- beepr::beep;
+
+  rasHereHERE <- here::here;
+
+  rasHtmlWidgetsOnRENDER <- htmlwidgets::onRender;
+
+  rasLeafletLEAFLET              <- leaflet::leaflet;
+  rasLeafletFitBOUNDS            <- leaflet::fitBounds;
+  rasLeafletAddMEASURE           <- leaflet::addMeasure;
+  rasLeafletAddPOLYGONS          <- leaflet::addPolygons;
+  rasLeafletAddScaleBAR          <- leaflet::addScaleBar;
+  rasLeafletLabelOPTIONS         <- leaflet::labelOptions;
+  rasLeafletOPTIONS              <- leaflet::leafletOptions;
+  rasLeafletAddLayersCONTROL     <- leaflet::addLayersControl;
+  rasLeafletAddProviderTILES     <- leaflet::addProviderTiles;
+  rasLeafletProviderTileOPTIONS  <- leaflet::providerTileOptions;
+  rasLeafletAddLabelOnlyMARKERS  <- leaflet::addLabelOnlyMarkers;
+  rasLeafletLayersControlOPTIONS <- leaflet::layersControlOptions;
 
   rasLeafletProvidersLOADED <- leaflet.providers::providers_loaded;
+
+  rasSfHeadersSF_POLYGON <- sfheaders::sf_polygon;
 
   `%??%`                     <- SEAFO::`%??%`;   # <- VERY COOL Alias <NCO> !!!
   rasSeafoDEVS               <- SEAFO::RENV_DEVS;
@@ -205,7 +225,7 @@
 
   vsDotsArgs_     <- rasBaseLIST(...);
   sbPrintPretty_  <- vsDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_PRINT_PRETTY]] %??% TRUE;
-  sbAudioNote_    <- vsDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_AUDIO_NOTE]]   %??% FALSE;
+  ### sbAudioNote_    <- vsDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_AUDIO_NOTE]]   %??% FALSE;
   sbRunSelfID_    <- vsDotsArgs_[[rasSeafoFSID$F_ARGS_BOOL_RUN_SELF_ID]]  %??% FALSE;
   ssFuncCallerID_ <- vsDotsArgs_[[rasSeafoFSID$F_ARGS_FUNC_CALLER]] %??% "TOP-LVL (rsProjMAIN)";
 
@@ -224,13 +244,13 @@
 
   ####   STEP 05 - Compile Base Map Components   ####
   ###  5.1 - Compile the SEAFO CA BaseMap Layer   ####
-  vsCntrlLayers_ <- rasBaseC(ssHeaderWCL_);   # <- Prime the Control Layers vector ...
-  ssBaseMapSRC_  <- rasBaseIfELSE(            # <- Prime the BaseMap Source Identifier Tag ...
+  vsCntrlLayers_ <- rasBaseC();      # <- Prime the Control Layers vector (with a NULL value) ...
+  ssBaseMapSRC_  <- rasBaseIfELSE(   # <- Prime the BaseMap Source Identifier Tag ...
     snMapSRC_ == 1, "ESRI Ocean BaseMap", "ESRI NatGeo World Map"
   );
   rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
     sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
-    ssBody = rasBasePASTE0("Source Selected = `", ssBaseMapSRC_, "` !!!")
+    ssBody = rasBasePASTE0("Base Layer Selected = '", ssBaseMapSRC_, "' !!!")
   );
 
   lsProviders_ <- rasLeafletProvidersLOADED()[["providers"]];   # <- Extract the Tile Providers ...
@@ -264,228 +284,172 @@
   coBaseMapLM_ <- rasLeafletFitBOUNDS(                          # <- Set OnStart ZOOM Level ...
     map = coBaseMapLM_, lng1 = -25.25, lat1 = 2.75, lng2 = 31.25, lat2 = -52.05
   );
+  rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
+    sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
+    ssBody = rasBasePASTE0("SEAFO Base Layer Added !!!")
+  );
 
 
+  ###  5.2 - Compile the SEAFO Exclusive Economic Zone (EEZ) Layer   ####
+  if (sbShowEEZs_) {
 
-
-
-
-
-
-  ####--- < ============================ > ---####
-  ####--- STEP 2 - Do whatever processes and/or code logic that need to be done here ---####
-  ####--- 3.1 - Read Key SEAFO CA Basemap Data Layers into R Session Memory ---####
-  base::message(crayon::blue(
-    base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54),' | READING KEY BASEMAP LAYERS INTO R SESSION MEMORY for INIT-RUN SCRIPT PRIMING PROCESS !!')
-  ))
-
-  if (sbShowCA) {
-    ####--- 3.1.1 - Read the SEAFO Convention Area (SEAFO CA) Data Frame into R Session Memory ---####
-    seafoCAFile <- base::file.path(ssDirMapsData, 'SEAFO_Convention_Area_WGS84_Transformed.rds')
-    if (!base::file.exists(seafoCAFile)) base::stop(base::paste0('File not found: ', seafoCAFile))
-    dfSeafoCA <- base::readRDS(file = seafoCAFile)
-
-    ####--- 3.1.2 - Read the SEAFO Closed Areas Data Frame into R Session Memory ---####
-    if (sbShowClosedAreas) {
-      closedAreasFile <- base::file.path(ssDirMapsData, 'SEAFO_Closed_Areas_WGS84_Transformed.rds')
-      if (!base::file.exists(closedAreasFile)) base::stop(base::paste0('File not found: ', closedAreasFile))
-      dfSeafoClosedAreas <- base::readRDS(file = closedAreasFile)
-    }
-  }
-
-  if (sbShowEEZs) {
-    ####--- 3.1.3 - Read the African EEZ Data Frame into R Session Memory ---####
-    eezAfricaFile <- base::file.path(ssDirMapsData, '01_EEZ_v11_(2019)_WGS84_Transformed_(HIGH_RES)_AFRICA.rds')
-    if (!base::file.exists(eezAfricaFile)) base::stop(base::paste0('File not found: ', eezAfricaFile))
-    dfEezAfrica <- base::readRDS(file = eezAfricaFile)
-  }
-
-  base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54),' | BASEMAP LAYERS SECCESSFULLY READ INTO R SESSION MEMORY !!')))
-
-
-  ####--- 3.2 - Prime Key Basemap Data Layers Accordingly ---####
-  base::message(crayon::blue(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54),' | PRIMING KEY BASEMAP LAYERS ( as required by INIT-RUN SCRIPT PROCESS ) !!')))
-
-  if (sbShowCA) {
-
-    ####--- 3.2.1 - Sort the SEAFO CA Data Layer by Area ID ---####
-    dfSeafoCA <- dfSeafoCA[base::order(dfSeafoCA$ET_ID), ]   # Sorts the row data in Alpha-Numeric (ascending order) based on the 'ET_ID' Variable [column] Values !!
-
-    ####--- 3.2.2 - Add 'Special Variable Tags' as required ---####
-    dfSeafoCA$AreaTag <- base::ifelse(nchar(dfSeafoCA$ET_ID) == 1, base::paste0('SEAFO CA - Sub-Area ', dfSeafoCA$ET_ID), base::paste0('SEAFO CA - Division ', dfSeafoCA$ET_ID))
-
-
-    # SEAFO Convention Area (SEAFO CA) ...
-    sfLyrSEAFO_CA <- base::suppressWarnings(
-      sfheaders::sf_polygon(
-        obj = dfSeafoCA,
-        x = "long",
-        y = "lat",
-        polygon_id = 'group', # "id",
-        keep = TRUE   # Preserves ALL the columns from the original input data frame (into the output 'sf' data object) !!
+    ### 5.2a - Import the SEAFO Exclusive Economic Zone (EEZ) Layer Data ...
+    rasBaseLOAD(
+      file = rasHereHERE(
+        "data", "dfSEAFO_EEZv11.rda"     # <- Read into <active> R Memory as "dfSEAFO_EEZv11" !!!
       )
-    )
+    );
+    dfSEAFO_EEZv11_ <- dfSEAFO_EEZv11;   # <- Assign to a local <func-intern> R Object ...
 
-
-    # SEAFO Closed Areas (SEAFO Closures) ...
-    if (sbShowClosedAreas) {
-
-      sfLyrSEAFO_Closed_Areas <- base::suppressWarnings(
-        sfheaders::sf_polygon(
-          obj = dfSeafoClosedAreas,
-          x = "long",
-          y = "lat",
-          polygon_id = 'group', # "id",
-          keep = TRUE   # Preserves ALL the columns from the original input data frame (into the output 'sf' data object) !!
-        )
-      )
-
-    }
-
-
-    ####--- 3.2.4 - Prime the SEAFO CA Sub-Area and Division Tags ---####
-    if (sbShowLabels) {
-      SeafoTags <- rasBaseC(   'A',   'A1',    'B',   'B1',    'C',   'C1',    'D',   'D1');
-      LatsTags  <- rasBaseC(-01.15, -06.15, -21.15, -21.15, -29.15, -29.15, -41.15, -45.85);
-      LonsTags  <- rasBaseC(-19.50,  -4.35, -19.50,   3.35, -19.50,   3.35, -19.50,   7.45);
-    }
-
-  }
-
-  if (sbShowEEZs) {
-
-    ####--- 3.2.3 - Add 'SF' Headers to Polygon Shapefile Data Frames ---####
-    # Benguela Current Convention - BCC - Member States ONLY !!
-    sfLyrEEZs_Africa <- base::suppressWarnings(
-      sfheaders::sf_polygon(
-        obj = dfEezAfrica,
-        x = "long",
-        y = "lat",
+    ### 5.2b - Convert SEAFO Exclusive Economic Zone (EEZ) layer into correct format ...
+    sfLyrEEZs_SEAFO_ <- base::suppressWarnings(
+      sfheaders::sf_polygon(             # <- Add 'SF' Headers to Polygon Shapefile Data Frames ...
+        obj = dfSEAFO_EEZv11_, x = "long", y = "lat",
         polygon_id = 'group',   # "id",
-        keep = TRUE   # Preserves ALL the columns from the original input data frame (into the output 'sf' data object) !!
+        keep = TRUE                      # <- Preserves ALL columns from original input data frame
+      )                                  #    (into the output 'sf' data object) !!!
+    );
+
+    ### 5.2c - Plot <add> Spatial <data> Layer to Leaflet BaseMap ...
+    ssLyrId_EEZs_ <- "EEZs - Africa & SEAFO (v11, 2019)";
+    vsCntrlLayers_ <- rasBaseAPPEND(vsCntrlLayers_, ssLyrId_EEZs_);
+    coBaseMapLM_ <- rasLeafletAddPOLYGONS(
+      map = coBaseMapLM_, data = sfLyrEEZs_SEAFO_,
+      weight = 1.5, color = 'grey', opacity = 0.5, fillColor = 'white',
+      fillOpacity = 0.28, label = ~EezTag, popup = ~EezTag, group = ssLyrId_EEZs_
+    );
+
+    rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
+      sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
+      ssBody = rasBasePASTE0("SEAFO EEZ Layer Added !!!")
+    );
+
+  }
+
+
+  ###  5.3 - Compile the SEAFO Convention Area (CA) Layer   ####
+  if (sbShowCA_) {
+
+    ### 5.3a - Import the SEAFO Convention Area (CA) Layer Data ...
+    rasBaseLOAD(
+      file = rasHereHERE(
+        "data", "dfSEAFO_CA.rda"   # <- Read into <active> R Memory as "dfSEAFO_CA" !!!
       )
+    );
+    dfSEAFO_CA_ <- dfSEAFO_CA;   # <- Assign to a local <func-intern> R Object ...
+
+    ### 5.3b - Sort SEAFO CA Data Layer by Area IDs ...
+    dfSEAFO_CA_ <- dfSEAFO_CA_[               # <- Sort entire data set Alpha-Numerically (ascending
+      rasBaseORDER(dfSEAFO_CA_[["ET_ID"]]),   #     order) on the 'ET_ID' Variable [column] values.
+    ];
+
+    ### 5.3c - Add 'Special Variable Tags' as required ...
+    dfSEAFO_CA_[["AreaTag"]] <- rasBaseIfELSE(
+      rasBaseNCHAR(dfSEAFO_CA_[["ET_ID"]]) == 1,
+      rasBasePASTE0("SEAFO CA - Sub-Area ", dfSEAFO_CA_[["ET_ID"]]),
+      rasBasePASTE0("SEAFO CA - Division ", dfSEAFO_CA_[["ET_ID"]])
+    );
+
+    ### 5.3d - Convert SEAFO Convention Area (CA) layer into correct format ...
+    sfLyrSEAFO_CA_ <- rasBaseSuppressWARNINGS(
+      rasSfHeadersSF_POLYGON(
+        obj = dfSEAFO_CA_, x = "long", y = "lat",
+        polygon_id = "group", # "id",
+        keep = TRUE                     # <- Preserves ALL columns from original input data frame
+      )                                 #    (into the output 'sf' data object) !!!
+    );
+
+    ### 5.3e - Plot <add> Spatial <data> Layer to Leaflet BaseMap ...
+    ssLyrId_SEAFO_CA_ <- "SEAFO CA";
+    vsCntrlLayers_ <- rasBaseAPPEND(vsCntrlLayers_, ssLyrId_SEAFO_CA_);
+    coBaseMapLM_ <- rasLeafletAddPOLYGONS(
+      map = coBaseMapLM_, data = sfLyrSEAFO_CA_, weight = 1.5, color = 'black',
+      fillOpacity = 0, label = ~AreaTag, popup = ~AreaTag, group = ssLyrId_SEAFO_CA_
+    );
+
+    ### 5.3f - Add Layer - SEAFO Area Tags ...
+    if (sbShowCA_ && sbShowLabels_) {
+
+      ### 5.3fi - Compile Data for SEAFO Area Tags ...
+      vsSeafoTags_ <- rasBaseC(   "A",   "A1",    "B",   "B1",    "C",   "C1",    "D",   "D1");
+      vnLatsTags_  <- rasBaseC(-01.15, -06.15, -21.15, -21.15, -29.15, -29.15, -41.15, -45.85);
+      vnLonsTags_  <- rasBaseC(-19.50,  -4.35, -19.50,   3.35, -19.50,   3.35, -19.50,   7.45);
+
+      ### 5.3fii - Compile Data for SEAFO Area Tags ...
+      ssLyrId_AreaTags_ <- "SEAFO Labels";
+      vsCntrlLayers_ <- rasBaseAPPEND(vsCntrlLayers_, ssLyrId_AreaTags_);
+      coBaseMapLM_ <- rasLeafletAddLabelOnlyMARKERS(
+        map = coBaseMapLM_, lng = vnLonsTags_, lat = vnLatsTags_, label = vsSeafoTags_,
+        group = ssLyrId_AreaTags_, labelOptions = rasLeafletLabelOPTIONS(
+          noHide = TRUE, textOnly = TRUE, textsize = 85
+        )
+      );
+    }
+
+    rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
+      sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
+      ssBody = rasBasePASTE0("SEAFO Convention Area (CA) Layer Added !!!")
+    );
+
+  }
+
+
+  ###  5.4 - Compile the SEAFO VME Closures (VMECs) Layer   ####
+  if (sbShowCA_ && sbShowClosedAreas_) {
+
+    ### 5.4a - Import the SEAFO VME Closures (VMECs) Layer Data ...
+    rasBaseLOAD(
+      file = rasHereHERE(
+        "data", "dfSEAFO_ClosedAreas.rda"   # <- Read into R Memory as "dfSEAFO_ClosedAreas" !!!
+      )
+    );
+    dfSEAFO_ClosedAreas_ <- dfSEAFO_ClosedAreas;   # <- Assign to local <func-intern> R Object ...
+
+    ### 5.4b - Convert SEAFO Convention Area (CA) layer into correct format ...
+    sfLyrSEAFO_Closed_Areas_ <- rasBaseSuppressWARNINGS(
+      rasSfHeadersSF_POLYGON(
+        obj = dfSEAFO_ClosedAreas_, x = "long", y = "lat",
+        polygon_id = 'group', # "id",
+        keep = TRUE                     # <- Preserves ALL columns from original input data frame
+      )                                 #    (into the output 'sf' data object) !!!
     )
 
-  }
-
-  ### beepr::beep(2)   # Notify user of task completion with an audio cue...
-  base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54),' | BASEMAP LAYERS SUCCESSFULLY PRIMED FOR INIT-RUN SCRIPT PROCESS !!')))
-
-
-  ####--- 3.3 - Compile the SEAFO CA Leaflet ( Interactive ) Map ---####
-
-  ####--- 3.3.1 - Initialize the Map Control Layers Vector ---####
-  vsCntrlLayers <- c('SEAFO CA')   # Prime the vector with a 'NULL' entry !!!
-  # vsBaseLayers <- c('ESRI Topo', 'ESRI Aerial', 'ESRI OceanBaseMap')   # Prime the Base Layers Vector -> 'SEAFO CA' !!
-
-
-  ####--- 3.3.2 - Create the SEAFO CA Basemap ---####
-  leafMap <- leaflet::leaflet(options = leaflet::leafletOptions(zoomSnap = 0.25, zoomDelta=0.25));
-
-  leafMap <- leaflet::addScaleBar(map = leafMap, "bottomleft")
-
-  # Define the BaseMap Source Information ...
-  # SOURCE 01 -> 'ESRI OceanBaseMap'
-  grpBaseMap_Source_01 <- 'ESRI Ocean BaseMap'
-  urlBaseMap_Source_01 <- "https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}"
-  attrBaseMap_Source_01 <- "Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri"
-
-  # SOURCE 02 -> 'ESRI OceanBaseMap'
-  grpBaseMap_Source_02 <- 'ESRI NatGeo World Map'
-  urlBaseMap_Source_02 <- 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}'
-  attrBaseMap_Source_02 <- 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
-
-  # Define the actual Base map attributes & sources to use ...
-  grpBaseMap <- grpBaseMap_Source_02;
-  urlBaseMap <- urlBaseMap_Source_02;
-  attrBaseMap <- attrBaseMap_Source_02;
-  leafMap <- leaflet::addTiles(
-    map = leafMap, group = grpBaseMap, urlTemplate = urlBaseMap, attribution = attrBaseMap,
-    options = providerTileOptions(minZoom = snZoomMin, maxZoom = snZoomMax)
-  );
-
-  # Only add the Measure Control the the Main Leaflet Map - no need to add it to the 'sansZoom' map...
-  leafMap <- leaflet::addMeasure(
-    map = leafMap, localization = "na", position = "topleft", activeColor = "#3D535D",
-    completedColor = "#7D4479", primaryAreaUnit = "hectares", secondaryAreaUnit = "sqmeters",
-    primaryLengthUnit = "kilometers"
-  );
-
-  # setView(lng = 5.00114, lat = -24.97204, zoom = 3.49)
-  leafMap <- leaflet::fitBounds(
-    map = leafMap, lng1 = -25.25, lat1 = 2.75, lng2 = 31.25, lat2 = -52.05
-  );
-
-
-  ####--- 3.3.3 - Add Layer - SEAFO Convention Area ---####
-  if (sbShowCA) {
-    lyrId_SEAFO_CA <- 'SEAFO CA';
-    vsCntrlLayers <- base::append(vsCntrlLayers, lyrId_SEAFO_CA);
-    leafMap <- leaflet::addPolygons(
-      map = leafMap, data = sfLyrSEAFO_CA, weight = 1.5, color = 'black', fillOpacity = 0,
-      label = ~AreaTag, popup = ~AreaTag, group = lyrId_SEAFO_CA
+    ### 5.4c - Plot <add> Spatial <data> Layer to Leaflet BaseMap ...
+    ssLyrId_ClosedAreas_ <- "SEAFO Closed Areas";
+    vsCntrlLayers_ <- rasBaseAPPEND(vsCntrlLayers_, ssLyrId_ClosedAreas_);
+    coBaseMapLM_ <- rasLeafletAddPOLYGONS(
+      map = coBaseMapLM_, data = sfLyrSEAFO_Closed_Areas_, weight = 1.5, color = 'red',
+      opacity = 0.5, fillColor = 'red', fillOpacity = 0.21, label = ~Name,
+      popup = ~Name, group = ssLyrId_ClosedAreas_
     );
-  }
 
-  ####--- 3.3.4 - Add Layer - SEAFO Area Tags ---####
-  if (sbShowCA && sbShowLabels) {
-    lyrId_AreaTags <- 'SEAFO Labels'
-    vsCntrlLayers <- base::append(vsCntrlLayers, lyrId_AreaTags)
-    leafMap <- leaflet::addLabelOnlyMarkers(
-      map = leafMap, lng = LonsTags, lat = LatsTags, label = SeafoTags, group = lyrId_AreaTags,
-      labelOptions = leaflet::labelOptions(noHide = T, textOnly = T, textsize = 85)
+    rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
+      sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
+      ssBody = rasBasePASTE0("SEAFO Closed Areas (VMECs) Layer Added !!!")
     );
+
   }
 
 
-  # Export the SEAFO CA Basemap to the R Session Global Environment ( for use outside this custom function ) !!
-  # baseMapSeafoCA <<- leafMap
+  ###  5.5 - Compile the SEAFO Controls Layer   ####
+  if (sbHideWCL_ != FALSE) {   # <- ONLY RUN this code block if 'sbHideWCL' is set to 'FALSE' !!!
 
-
-  ####--- 3.3.5 - Add Layer - SEAFO Closed Areas ---####
-  if (sbShowCA && sbShowClosedAreas) {
-    lyrId_ClosedAreas <- "SEAFO Closed Areas";
-    vsCntrlLayers <- base::append(vsCntrlLayers, lyrId_ClosedAreas);
-    leafMap <- leaflet::addPolygons(
-      map = leafMap, data = sfLyrSEAFO_Closed_Areas, weight = 1.5, color = 'red', opacity = 0.5,
-      fillColor = 'red', fillOpacity = 0.21, label = ~Name, popup = ~Name, group = lyrId_ClosedAreas
+    ## Re-order the Control Layers <logically> ...
+    vsCntrlLayers_ <- rasBaseC(
+      vsCntrlLayers_[2], vsCntrlLayers_[3], vsCntrlLayers_[4], vsCntrlLayers_[1]
     );
-  }
 
-
-  ####--- 3.3.6 - Add Layer - Africa & SEAFO EEZs ---####
-  if (sbShowEEZs) {
-    lyrId_EEZs <- "EEZs - Africa & SEAFO (v11, 2019)";
-    vsCntrlLayers <- base::append(vsCntrlLayers, lyrId_EEZs);
-    leafMap <- leaflet::addPolygons(
-      map = leafMap, data = sfLyrEEZs_Africa, weight = 1.5, color = 'grey', opacity = 0.5,
-      fillColor = 'white', fillOpacity = 0.28, label = ~EezTag, popup = ~EezTag, group = lyrId_EEZs
-    );
-  }
-
-  # This is the interactive (fully customizable) Leaflet Map for use only inside this custom function !!
-  # leafMapSeafoCA <- leafMap
-
-  base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54),' | SEAFO CA BASEMAP SUCCESSFULLY COMPILED !!')))
-
-  # Add the Mouse Point Co-ordinate Real-time Tracking Information...
-  leafMap <- leafMap |>   # The '<<-' outputs this map to the Global R Environment ...
-    leafem::addMouseCoordinates(epsg = "EPSG:4326", proj4string = "+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-
-
-  ####--- 3.4 - Add User-Requested Map Features to Basemap ---####
-  # print(vsCntrlLayers)
-  if (sbHideWCL == FALSE) {   # <- ONLY RUN this code block if 'sbHideWCL' is set to 'FALSE' !!!
-    leafMap <- addLayersControl(
+    coBaseMapLM_ <- rasLeafletAddLayersCONTROL(
       # baseGroups = vsBaseLayers,       # The BASE Layers Control Vector (with 3 BASE Layers included)
-      overlayGroups = vsCntrlLayers,     # The Layers Control Vector (with all active layers included)
-      map = leafMap, position = 'topleft',
-      options = layersControlOptions(collapsed = FALSE),
-    ) %>%
-      htmlwidgets::onRender(   # Adds a Header ( title ) to the Layer Control Box !!
-        base::paste0(
+      overlayGroups = vsCntrlLayers_,     # The Layers Control Vector (with all active layers included)
+      map = coBaseMapLM_, position = "topleft",
+      options = rasLeafletLayersControlOPTIONS(collapsed = FALSE),
+    ) |>
+      rasHtmlWidgetsOnRENDER(   # Adds a Header ( title ) to the Layer Control Box !!
+        rasBasePASTE0(
           " function() {
-              $('.leaflet-control-layers-overlays').prepend('<label style=\"text-align:center\">", ssHeaderWCL, "</label>');
+              $('.leaflet-control-layers-overlays').prepend('<label style=\"text-align:center\">",
+              ssHeaderWCL_, "</label>');
             } "
         )
       )
@@ -493,169 +457,26 @@
 
 
 
-  # base::print(leafMap)   # Prints the Leaflet Maps to the Interactive Viewer of the R-Studio IDE !!
+  ####   STEP 06 - Run Function SELF-ID <EXIT> (if requested)   ####
+  RCT_FUNC_RUNTIME_STOP_ <- rasBaseSysTIME();
+  ### ssFuncRT_ <- rasBaseDiffTIME(
+  ###   RCT_FUNC_RUNTIME_STOP_, RCT_FUNC_RUNTIME_START_, units = 'secs'
+  ### );
+  ### base::message(crayon::yellow(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54), ' | FUNCTION EXECUTION DURATION: ', base::round(funcExeDur, 3), ' seconds.')))
+  ### base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 55), ' | ', 'EXECUTION of CUSTOM FUNCTION [ ', TAG_FUNC_ID_FULL, ' ] ', ' STOPPED on ', base::format(endDateTime, formatDateTime), ' .')))
 
 
+  ####   STEP 07 - Run Function SELF-ID <EXIT> (if requested)   ####
+  rasSeafoInfoPostFuncSelfID(
+    ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
+    siFuncMode01 = 0L, ssFuncCallerID = ssFuncCallerID_,
+    sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
+    siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
+    csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_STOP_
+  );
 
-  ####--- 3.5 - Save Maps to Working Directory ---####
-  ####--- < ============================ > ---####
-  ####--- STEP 4 - FUNCTION OUTPUTS - Define any required function outputs here ---####
-  ####--- Capture Function END DateTime   ####
-  endDateTime <- base::Sys.time()
-  funcExeDur <- base::difftime(endDateTime, startDateTime, units = 'secs')
-  base::message(crayon::yellow(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 54), ' | FUNCTION EXECUTION DURATION: ', base::round(funcExeDur, 3), ' seconds.')))
-  base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 55), ' | ', 'EXECUTION of CUSTOM FUNCTION [ ', TAG_FUNC_ID_FULL, ' ] ', ' STOPPED on ', base::format(endDateTime, formatDateTime), ' .')))
-
-  beepr::beep(2);   # Notify user of FUNCTION CODE EXECUTION COMPLETION with an audio cue...
-  base::return(base::list(MAP = leafMap));
+  ####   STEP 07 - EXIT Functions (results hand-over)   ####
+  if (sbNotifyRunTimeF) rasBeeprBEEP(2);   # <- Notify user of Function Run-Time STOP (audio cue).
+  rasBaseRETURN(coBaseMapLM_);             # <- Hand-over Function Ouputs to Function Call !!!
 
 }
-
-
-
-
-### function(
-###   ssFuncName="maps_dynamic.compile.basemap.seafo", sbRunByForce=FALSE,
-###   siCallIndex=1L, sbUseAlias=FALSE, ssAliasValue="rasSeafoFetchCELN\\("
-### ) {
-###
-###
-###   ####   STEP 01 - Define "Function Self-ID" R Objects   ####
-###   RCT_RUNTIME_FUNC_START_ <- base::Sys.time();                  # <- Captures <active> Date Time !!!
-###   RCT_TAG_FUNC_LIBR_ID_   <- "SEAFO";                           # <- R Library Identifier !!!
-###   RCT_TAG_FUNC_ID_SHORT_  <- "SEAFO::Fetch.CELN";               # <- Function ID - SHORT !!!
-###   RCT_TAG_FUNC_ID_121_    <- "maps_dynamic.compile.basemap.seafo";          # <- Function ID - 1:1 (121) !!!
-###   RCT_TAG_FUNC_ID_LONG_   <- "SEAFO::CODE_Editor.Fetch.CELN";   # <- Function ID - LONG !!!
-###
-###
-###
-###   ####   STEP 02 - Define "Local Aliases" for Key Functions   ####
-###   ###    NOTES: Local aliases enable greppable names. This also serves as a concise inventory of
-###   ###           external functions used in this R function; while at the same time shielding these
-###   ###           calls from R's infamous search-path (name) masking behaviour.
-###   rasBaseC           <- base::c;
-###   rasBaseLIST        <- base::list;
-###   rasBaseNROW        <- base::nrow;
-###   rasBaseORDER       <- base::order;
-###   rasBaseRETURN      <- base::return;
-###   rasBaseIfELSE      <- base::ifelse;
-###   rasBaseToLOWER     <- base::tolower;
-###   rasBaseSeqLEN      <- base::seq_len;
-###   rasBasePASTE0      <- base::paste0;
-###   rasBaseWARNING     <- base::warning;
-###   rasBaseLENGTH      <- base::length;
-###   rasBaseIsNA        <- base::is.na;
-###   rasBaseAsINTEGER   <- base::as.integer;
-###   rasBaseAsNUMERIC   <- base::as.numeric;
-###   rasBaseIsNUMERIC   <- base::is.numeric;
-###   rasBaseAsCHARACTER <- base::as.character;
-###   rasBaseIsCHARACTER <- base::is.character;
-###
-###   rasSeafoFindCODE   <- SEAFO::devs.find.code.instances;
-###   rasSeafoPollRTMODE <- SEAFO::code.poll.r.runtime.mode;
-###
-###   ## SPECIAL - Constant - TAG - Aliases ...
-###
-###
-###
-###   ####   STEP 03 - Internalize ALL Function Arguments   ####
-###   ssFuncName_   <- ssFuncName;
-###   siCallIndex_  <- siCallIndex;
-###   sbRunByForce_ <- sbRunByForce;
-###   sbUseAlias_   <- sbUseAlias;
-###   ssAliasValue_ <- ssAliasValue;
-###
-###   ## SPECIAL: Try to locate & extract the 'isDebugMode' logical (boolean) variable
-###   ##          <if set or primed elsewhere> in the current <active> R Project ...
-###   RCT_RCO_RT_MODE_ <- rasSeafoPollRTMODE();   # <- R Run-Time Mode/State !!!
-###   sbIsDEBUG_       <- RCT_RCO_RT_MODE_$IS_DEBUG;
-###   if (sbRunByForce_ || sbIsDEBUG_) {   # <- Run standard code logic if either of these is TRUE !!!
-###
-###     ####   STEP 04 - Trace Function Call Stack Location   ####
-###     ## 4.1 - Validate the <caller-supplied> search parameters up-front (fail soft with `NA`) ...
-###     ssFindText_ <- rasBaseIfELSE(
-###       sbUseAlias_,
-###       ssAliasValue_,                    # <- The user-specified "Alias" value to search for !!!
-###       "code_editor\\.fetch\\.celn\\("   # <- NEVER CHANGE THIS (100% CORRECT default value) !!!
-###     );
-###
-###     if (!rasBaseIsCHARACTER(ssFuncName_) || rasBaseLENGTH(ssFuncName_) != 1L ||
-###         rasBaseIsNA(ssFuncName_)) {
-###       rasBaseWARNING(" `ssFuncName` must be a single <non-NA> string -> returning NA !!!");
-###       rasBaseRETURN(NA_integer_);
-###     }
-###
-###     if (!rasBaseIsNUMERIC(siCallIndex_) || rasBaseLENGTH(siCallIndex_) != 1L ||
-###         rasBaseIsNA(siCallIndex_) || siCallIndex_ < 1L) {
-###       rasBaseWARNING(" `siCallIndex` must be a single positive integer -> returning NA !!!");
-###       rasBaseRETURN(NA_integer_);
-###     }
-###     siCallIndex_ <- rasBaseAsINTEGER(siCallIndex_);
-###
-###     if (!rasBaseIsCHARACTER(ssFindText_) || rasBaseLENGTH(ssFindText_) != 1L ||
-###         rasBaseIsNA(ssFindText_)) {
-###       rasBaseWARNING(" `ssAliasValue` must be a single <non-NA> char string -> returning NA !!!");
-###       rasBaseRETURN(NA_integer_);
-###     }
-###
-###     ## 4.2 - Run an R Function Code Search to locate all instances of this `maps_dynamic.compile.basemap.seafo()`
-###     ##       function in the specified <active> R Function <internal function code> ...
-###     ##       NOTE: `coRENVs` is emptied because the Global Environment is already searched via
-###     ##             `sbIncludeGlobal` - searching it twice would duplicate every single match.
-###     rdfFuncCalls_ <- rasSeafoFindCODE(
-###       vsTargetLibs = rasBaseC(RCT_TAG_FUNC_LIBR_ID_), coRENVs = rasBaseLIST(),
-###       sbVerboseSearch = FALSE, sbIgnoreCase = FALSE, sbWarnNoSrcRef = TRUE,
-###       ssFindText = ssFindText_
-###     );
-###
-###     ## 4.3 - Extract only results that match the specified Function ID ...
-###     ##       NOTE: BOTH sides are case-folded - `FUNC_NAME` keeps the <declared> source case,
-###     ##             so folding only the <argument> would miss every mixed-case function name.
-###     rdfFuncCalls_v02_ <- rdfFuncCalls_[
-###       rasBaseToLOWER(rasBaseAsCHARACTER(rdfFuncCalls_[["FUNC_NAME"]])) ==
-###         rasBaseToLOWER(ssFuncName_), ,
-###       drop = FALSE
-###     ];
-###
-###     ## 4.4 - NO MATCH -> return `NA` (never let `seq_len(0)`/`1:0` build an empty INDEX) ...
-###     ##       NOTE: <exact> duplicate rows are already prevented structurally (step 4.2 empties
-###     ##             `coRENVs`), so NO de-duplication is done here - de-duplicating on the line
-###     ##             number would wrongly collapse two genuine calls that share a source line.
-###     if (rasBaseNROW(rdfFuncCalls_v02_) == 0L) {
-###       rasBaseWARNING(rasBasePASTE0(
-###         " `", ssFuncName_, "()` not found in the ", RCT_TAG_FUNC_LIBR_ID_,
-###         " R Library or Global Environment -> returning NA !!!"
-###       ));
-###       rasBaseRETURN(NA_integer_);
-###     }
-###
-###     ## 4.5 - Order the matches by their <source file> position & prime the INDEX variable ...
-###     rdfFuncCalls_v03_ <- rdfFuncCalls_v02_[
-###       rasBaseORDER(rasBaseAsNUMERIC(rdfFuncCalls_v02_[["MATCH_ID"]]), decreasing = FALSE), ,
-###       drop = FALSE
-###     ];
-###     rdfFuncCalls_v03_[["INDEX"]] <- rasBaseSeqLEN(rasBaseNROW(rdfFuncCalls_v03_));
-###
-###     ## 4.6 - An OUT-OF-RANGE <call index> returns `NA` (never a silent `numeric(0)`) ...
-###     if (siCallIndex_ > rasBaseNROW(rdfFuncCalls_v03_)) {
-###       rasBaseWARNING(rasBasePASTE0(
-###         " `siCallIndex` = ", siCallIndex_, " but only ", rasBaseNROW(rdfFuncCalls_v03_),
-###         " `", ssFuncName_, "()` call(s) found -> returning NA !!!"
-###       ));
-###       rasBaseRETURN(NA_integer_);
-###     }
-###
-###     ## 4.7 - Extract the Code Editor Line Number (CELN) accordingly ...
-###     rdfAtCELN_ <- rdfFuncCalls_v03_[
-###       rdfFuncCalls_v03_[["INDEX"]] == siCallIndex_, ,
-###       drop = FALSE
-###     ];
-###
-###
-###     ####   STEP 05 - Return Function Outputs   ####
-###     rasBaseRETURN(rasBaseAsINTEGER(rdfAtCELN_[["LINE_NUMBER"]]));
-###
-###   }
-###
-### }
-###

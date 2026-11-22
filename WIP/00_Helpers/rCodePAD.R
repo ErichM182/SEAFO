@@ -231,7 +231,7 @@ my.custom.r.func()
 ### tools::resaveRdaFiles(paths = "./data", compress = "xz")
 
 
-
+SEAFO::maps_dynamic.compile.basemap.seafo()
 
 
 
