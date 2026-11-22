@@ -174,7 +174,18 @@ my.custom.r.func()
 
 
 
-
+### #### -> Re-save <compressed> versions of legacy data sets !!!  ####
+### dfSEAFO_EEZv11 <- base::readRDS(
+###   file = "./data/01_EEZ_v11_(2019)_WGS84_Transformed_(HIGH_RES)_AFRICA.rds"
+### )
+### utils::head(dfSEAFO_EEZv11); base::class(dfSEAFO_EEZv11); base::typeof(dfSEAFO_EEZv11)
+### base::save(
+###   dfSEAFO_EEZv11, file = base::file.path(
+###     ".", "data", base::paste0("dfSEAFO_EEZv11", ".rda")
+###   ), compress = "xz"
+### )
+### #### -> Check which data compression works best (i.e. is recommended) ...
+### tools::checkRdaFiles("data/")
 
 
 
