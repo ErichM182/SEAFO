@@ -19,7 +19,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 <br/>
 
-**Current Release (STABLE): `0.0.3`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.3.07`**
+**Current Release (STABLE): `0.0.4`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.4.12`**
 
 </div>
 
