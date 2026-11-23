@@ -15,8 +15,8 @@
 #' The version bump <along with the TRCKR and DESCRIPTION file updates> is withheld when
 #' `sbPatchVers` is set to `FALSE` and no change in the package code base is detected. The
 #' function records a "Code Base Fingerprint" (i.e. an md5 hash over the package asset trees:
-#' "./R", "./src", "./data", "./tests" & "./inst") in the TRCKR file, which allows it to detect a
-#' code base delta since the last code push.
+#' "./R", "./src", "./data", "./tests", "./inst" & "./man/figures", plus the "./README.md"
+#' file) in the TRCKR file, which allows it to detect a code base delta since the last code push.
 #'
 #'
 #' @param sbIsProdRel ([logical]) A boolean value that defines whether the code-check and/or code
@@ -28,10 +28,11 @@
 #' @param sbPatchVers ([logical]) A boolean value that specifies whether the R Library version
 #'                    number should be incremented (i.e. patched) as part of the tracker update.
 #'                    When set to `FALSE` the version is still bumped if a CODE BASE delta is
-#'                    detected (i.e. the files in the "./R", "./src", "./data", "./tests" and
-#'                    "./inst" asset trees differ from the fingerprint recorded at the last code
-#'                    push); otherwise the current (i.e. regent) version numbers are returned
-#'                    without rewriting the tracker or the DESCRIPTION file.
+#'                    detected (i.e. the files in the "./R", "./src", "./data", "./tests",
+#'                    "./inst" and "./man/figures" asset trees, or the "./README.md" file, differ
+#'                    from the fingerprint recorded at the last code push); otherwise the current
+#'                    (i.e. regent) version numbers are returned without rewriting the tracker or
+#'                    the DESCRIPTION file.
 #'
 #'
 #' @returns
@@ -192,10 +193,15 @@
   }
 
 
-  ####   STEP 04C - Compile CURRENT "Code Base FINGERPRINT" (Asset Trees)   ####
+  ####   STEP 04C - Compile CURRENT "Code Base FINGERPRINT" (Asset Trees & Files)   ####
   # NB: The package asset trees below are fingerprinted RECURSIVELY (i.e. all files) !!!
-  rvsCodeTREES_ <- rasBaseC("./R", "./src", "./data", "./tests", "./inst");
-  rvsCodeSrcFILES_ <- rasBaseC();
+  #     The documentation ASSETS are fingerprinted TOO (i.e. the "./README.md" file & the
+  #     "./man/figures" image tree) so that README & logo edits also gate the version bump.
+  #     NB: The "./man/*.Rd" help pages & "NAMESPACE" are NOT part of this fingerprint - they
+  #         are handled separately by the DOCUMENTATION delta detected in the calling function !!!
+  rvsCodeTREES_ <- rasBaseC("./R", "./src", "./data", "./tests", "./inst", "./man/figures");
+  rvsCodeFILES_ <- rasBaseC("./README.md");
+  rvsCodeSrcFILES_ <- rvsCodeFILES_[rasBaseFileEXISTS(rvsCodeFILES_)];
   for (rssCodeTREE_ in rvsCodeTREES_) {
     if (rasBaseFileEXISTS(rssCodeTREE_)) {
       rvsCodeSrcFILES_ <- rasBaseC(
@@ -491,7 +497,7 @@
     "> Code Push TIME  ==>  ", rcoCodePushDateTIME_, "\n",
     "> Code Push PRODUCTION VERSION #  ==>  ", rssVersNewPROD_, "     (prod-release)", "\n",
     "> Code Push ACTIVE-DEV VERSION #  ==>  ", rssVersNewDEVS_, "  (devs-release)", "\n",
-    "> Code Base FINGERPRINT  ==>  ", rssCodeHASHNOW_, "   (md5: pkg asset trees)", "\n"
+    "> Code Base FINGERPRINT  ==>  ", rssCodeHASHNOW_, "   (md5: pkg assets + docs assets)", "\n"
   );
   RCT_ACT_DEV_INFO_BODY_LVL_02_ <- rasBasePASTE0(   # -> Compiles R Version Information ...
     "-> R SOFTWARE: Specifics on `R-core` [as PROG-LANG for R Library Development] ... ", "\n",

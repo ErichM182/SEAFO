@@ -41,10 +41,10 @@ R functions (i.e. R functions used within this main R function): \if{html}{\out{
 number for the active R Library Project as a list of character objects.
 \item The version number is only incremented when a delta is detected in the documentation (i.e. a
 changed "./man/*.Rd" or "NAMESPACE" artefact) and/or in the package code base (i.e. a changed
-file in the "./R", "./src", "./data", "./tests" or "./inst" asset trees, detected via the
-"Code Base Fingerprint" recorded in the tracker file). When neither delta is found the
-current version number is returned unchanged and both the "ACT-DEV" tracker file and the
-project DESCRIPTION file are left untouched.
+file in the "./R", "./src", "./data", "./tests", "./inst" or "./man/figures" asset trees, or
+a changed "./README.md" file, detected via the "Code Base Fingerprint" recorded in the tracker
+file). When neither delta is found the current version number is returned unchanged and both
+the "ACT-DEV" tracker file and the project DESCRIPTION file are left untouched.
 \item This function creates a Work-In-Progress (WIP) directory at the root of the active R-Libs
 Project (i.e. "./WIP" <- if not already exists). The "./WIP" folder and all of its contents
 are included in GIT push-&-pull processes. You must MANUALLY ADD the following code stub
@@ -59,9 +59,10 @@ A Helper Function that executes the CRAN pre-requisite Code Checking Procedure d
 Package Development. This function programmatically regenerates the package documentation and
 then updates the package version number in the R Project DESCRIPTION file only when a delta is
 detected in the documentation (i.e. a change in the "./man/*.Rd" files or the "NAMESPACE" file)
-and/or in the package code base (i.e. a change in the "./R", "./src", "./data", "./tests" or
-"./inst" asset trees), before running the required CRAN Package Pre-Submission Code Requirement
-Checks (i.e. CRAN Code Validation) during iterative development cycles. This Helper Function was
+and/or in the package code base (i.e. a change in the "./R", "./src", "./data", "./tests",
+"./inst" or "./man/figures" asset trees, or in the "./README.md" file), before running the
+required CRAN Package Pre-Submission Code Requirement Checks (i.e. CRAN Code Validation)
+during iterative development cycles. This Helper Function was
 originally crafted as a technical support tool for the "SEAFO Suite of R Libraries" (aka
 "SuiteSeafo"), but may also be helpful as a support tool during the R Package Development Cycle
 of other (3rd Party) R Projects.

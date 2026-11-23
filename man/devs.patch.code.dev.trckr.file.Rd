@@ -22,10 +22,11 @@ File").}
 \item{sbPatchVers}{(\link{logical}) A boolean value that specifies whether the R Library version
 number should be incremented (i.e. patched) as part of the tracker update.
 When set to \code{FALSE} the version is still bumped if a CODE BASE delta is
-detected (i.e. the files in the "./R", "./src", "./data", "./tests" and
-"./inst" asset trees differ from the fingerprint recorded at the last code
-push); otherwise the current (i.e. regent) version numbers are returned
-without rewriting the tracker or the DESCRIPTION file.}
+detected (i.e. the files in the "./R", "./src", "./data", "./tests",
+"./inst" and "./man/figures" asset trees, or the "./README.md" file, differ
+from the fingerprint recorded at the last code push); otherwise the current
+(i.e. regent) version numbers are returned without rewriting the tracker or
+the DESCRIPTION file.}
 }
 \value{
 \itemize{
@@ -47,8 +48,8 @@ By default this helper function also increments (i.e. patches) the R Library ver
 The version bump \if{html}{\out{<along with the TRCKR and DESCRIPTION file updates>}} is withheld when
 \code{sbPatchVers} is set to \code{FALSE} and no change in the package code base is detected. The
 function records a "Code Base Fingerprint" (i.e. an md5 hash over the package asset trees:
-"./R", "./src", "./data", "./tests" & "./inst") in the TRCKR file, which allows it to detect a
-code base delta since the last code push.
+"./R", "./src", "./data", "./tests", "./inst" & "./man/figures", plus the "./README.md"
+file) in the TRCKR file, which allows it to detect a code base delta since the last code push.
 }
 \examples{
 \dontrun{   ### <- This function constitutes a development utility !!! This function requires a
