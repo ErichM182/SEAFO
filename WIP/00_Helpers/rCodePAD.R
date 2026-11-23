@@ -10,7 +10,7 @@ RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker .
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
-  sbCheckCRAN = T,   # <- Set this to `FALSE` if you only want to update the documentation !!!
+  sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
   sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
@@ -233,6 +233,41 @@ my.custom.r.func()
 
 SEAFO::maps_dynamic.compile.basemap.seafo()
 
+
+
+### Set up a HexSticker for the SEAFO R Package Project ...
+sysfonts::font_add_google("Montserrat", "montserrat");
+showtext::showtext_auto();
+hexSticker::sticker(
+  subplot  = "./WIP/00_Helpers/SEAFO_icon.png",   # Your ggplot object OR "path/to/image.png"
+  package  = "SEAFO",                             # Package name displayed on the sticker
+
+  # Package title styling
+  p_size   = 22,                                  # Font size of "SEAFO"
+  p_color  = "#FFFFFF",                           # Text color
+  p_family = "montserrat",                        # Font family (remove if not using showtext)
+  p_y      = 1.45,                                # Vertical position of title (1 = center)
+
+  # Subplot sizing & placement
+  s_x      = 1,                                   # Horizontal center of graphic (1 = center)
+  s_y      = 0.85,                                # Vertical center of graphic
+  s_width  = 1.3,                                 # Width of graphic (use ~0.5 for external PNGs)
+  s_height = 0.8,                                 # Height of graphic (only needed for ggplot objects)
+
+  # Hexagon background & border
+  h_fill   = "#023E8A",                           # Deep ocean navy fill
+  h_color  = "#00B4D8",                           # Bright cyan border
+  h_size   = 1.5,                                 # Border thickness
+
+  # Optional: Add your GitHub or pkgdown URL along the bottom edge
+  url      = "https://github.com/ErichM182/SEAFO",
+  u_size   = 4.5,
+  u_color  = "#CAF0F8",
+
+  # Output settings
+  filename = "./WIP/00_Helpers/seafo_hex_raw.png",
+  dpi      = 300                                  # High resolution for clean scaling
+)
 
 
 
