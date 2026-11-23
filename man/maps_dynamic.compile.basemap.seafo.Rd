@@ -180,4 +180,8 @@ SEAFO::maps_dynamic.compile.basemap.seafo(
 
 
 }
+\seealso{
+Other MAPS Functions (SEAFO):
+\code{\link[=maps_static.compile.basemap.seafo]{maps_static.compile.basemap.seafo()}}
+}
 \concept{MAPS Functions (SEAFO)}

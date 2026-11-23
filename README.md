@@ -2,7 +2,7 @@
 
 <img src="man/figures/logo.png" width="103" alt="SEAFO logo" />
 
-# 🌊 SEAFO
+# SEAFO
 
 **The SEAFO Scientific Committee Data-Analysis & Mapping R Library**
 
@@ -19,7 +19,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 <br/>
 
-**Current Release (STABLE): `0.0.3`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.3.04`** &nbsp;•&nbsp; **R `≥ 4.1.0`**
+**Current Release (STABLE): `0.0.3`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.3.05`**
 
 </div>
 
@@ -27,9 +27,9 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 ## 📖 What is SEAFO?
 
-`SEAFO` is an R package comprised of user-friendly functions that assist with the routine data-analysis work
-conducted by the Scientific Committee (SC) of the **South East Atlantic Fisheries Organisation**.
-It ships three things in one library:
+`SEAFO` is an R package comprised of user-friendly functions that assist with the routine data-analysis 
+work conducted by the Scientific Committee (SC) of the **South East Atlantic Fisheries Organisation**.
+It ships three main tool sets in one library:
 
 | | Component | What it gives you |
 |:--|:--|:--|
@@ -290,7 +290,7 @@ SEAFO/
 │   ├── CODE*.R             #   code & file helpers
 │   ├── DEVS.*.R            #   development & release tooling
 │   ├── INFO.*.R            #   standardised console notifications
-│   ├── MAPS_DYNAMIC.*.R    #   mapping functions
+│   ├── MAPS_*.R            #   mapping functions
 │   ├── RENV_*.R            #   environment-locked constant lists
 │   └── data.R              #   dataset documentation
 ├── data/                   # 3 lazily-loaded spatial datasets (.rda)
