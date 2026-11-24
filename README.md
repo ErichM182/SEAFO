@@ -14,7 +14,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 [![R](https://img.shields.io/badge/R-%E2%89%A5%204.1.0-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-orange)](https://github.com/ErichM182/SEAFO)
-[![Exports](https://img.shields.io/badge/Exports-21%20Objects-blueviolet)](man/)
+[![Exports](https://img.shields.io/badge/Exports-22%20Objects-blueviolet)](man/)
 [![Docs](https://img.shields.io/badge/Roxygen2-8.1.0-informational)](https://roxygen2.r-lib.org/)
 
 <br/>
@@ -47,6 +47,10 @@ Everything is `roxygen2`-documented, and the package currently passes `R CMD che
 - **`maps_dynamic.compile.basemap.seafo()`** — one call returns a fully assembled Leaflet widget:
   ESRI Ocean or ESRI NatGeo tiles, SEAFO Convention Area (CA), African EEZ v11, SEAFO VME closures,
   CA area labels, a measuring tool, a scale bar and a layer-control box.
+- **`maps_static.compile.basemap.seafo()`** — the same base map as a publication-ready static
+  figure: identical arguments, layers, extent and labels, drawn with base R `graphics` over a
+  `maps` coastline, with a graticule, labelled axes, a 500 km scale bar and an optional legend
+  (no tiles, no `leaflet`, no `sf`).
 - **`%??%`** — a null-coalescing operator that also treats zero-length and `NA` values as "missing".
 - **Environment-locked constants** — `RENV_COLOURS`, `RENV_FORMATS`, `RENV_ICONS`, `RENV_FSID`
   and `RENV_DEVS` are immutable once loaded, so they cannot be clobbered mid-session.
@@ -178,8 +182,9 @@ coMap                          # renders in the RStudio Viewer pane
 | | Change | Detail |
 |:--|:--|:--|
 | 🗺️ **New** | `maps_dynamic.compile.basemap.seafo()` | Full Leaflet basemap: tile-provider selection, CA + EEZ + VME-closure overlays, CA area labels (`A`, `A1` … `D1`), measuring tool, scale bar, captioned layer control |
+| ✨ **New** | `maps_static.compile.basemap.seafo()` | The same base map as a **static** figure: identical arguments, layers, extent and labels, painted with base R `graphics` over a `maps` coastline, plus graticule, labelled axes, 500 km scale bar and optional legend (no tiles, no `leaflet`, no `sf`) |
 | 📦 **New data** | 3 documented spatial datasets | `dfSEAFO_CA`, `dfSEAFO_ClosedAreas`, `dfSEAFO_EEZv11` — lazily loaded (`xz`-compressed) |
-| 🔁 **Release tooling** | Delta-gated version bumping | `devs.check.code.specs()` now bumps on a **documentation delta** *or* a **code-base delta**, and writes a "Code Base Fingerprint" (md5 over `R/`, `src/`, `data/`, `tests/` and `inst/`) into the tracker |
+| 🔁 **Release tooling** | Delta-gated version bumping | `devs.check.code.specs()` now bumps on a **documentation delta** *or* a **code-base delta**, and writes a "Code Base Fingerprint" (md5 over `R/`, `src/`, `data/`, `tests/`, `inst/` and `man/figures/`, plus `README.md`) into the tracker |
 | 🔧 **Refactor** | `sbPatchVers` argument | `devs.patch.libr.vers.number()` can suppress its own increments so the caller decides when to bump |
 | 📚 **Docs** | Complete basemap reference | Title, all 12 parameters, layer-by-layer `@details`, runnable examples |
 | 🧹 **Housekeeping** | Clean CRAN result | Imports pruned (`here` added, `leafem`/`usethis` removed); `utils::globalVariables()` registered for lazily `load()`ed data; Leaflet measure tool now uses the **valid** locale key `"en"` (the previous `"na"` was silently ignored by the plugin) |
@@ -223,6 +228,7 @@ A run with no delta is a true no-op — no version churn, no tracker rewrite.
 | Function | Description |
 |:--|:--|
 | `maps_dynamic.compile.basemap.seafo()` | Compile an interactive SEAFO Leaflet base map (CA, EEZ, VME closures, labels, controls) |
+| `maps_static.compile.basemap.seafo()` | Compile the same SEAFO base map as a static figure - base R `graphics`, `maps` coastline, graticule, 500 km scale bar, optional legend |
 
 ### 🧰 CODE — code & file helpers
 

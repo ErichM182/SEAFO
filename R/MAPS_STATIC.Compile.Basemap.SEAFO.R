@@ -10,13 +10,13 @@
 #' context. The map is drawn on the ACTIVE GRAPHICS DEVICE with the base R `graphics` package,
 #' using the SAME spatial layers, layer toggles and area labels as the interactive
 #' [SEAFO::maps_dynamic.compile.basemap.seafo()] function (i.e. the SEAFO Convention Area, the
-#' SEAFO Exclusive Economic Zones and the SEAFO VME Closures), and equips the resulting figure
-#' with a legend, a map scale bar and a graticule. This function was created to support the
-#' routine data-analysis work conducted by the Scientific Committee (SC) of the SEAFO - most
-#' notably the publication-ready figures needed in reports and working documents - but may also
-#' be used as a quick "situational awareness" BaseMap in other (3rd Party) R libraries and custom
-#' R functions, as long as the `SEAFO` library is linked (i.e. previously installed and/or
-#' specified as a library dependency).
+#' SEAFO Exclusive Economic Zones and the SEAFO VME Closures), over a landmass & coastline drawn
+#' from the `maps` library, and equips the resulting figure with a legend, a map scale bar and a
+#' graticule. This function was created to support the routine data-analysis work conducted by
+#' the Scientific Committee (SC) of the SEAFO - most notably the publication-ready figures needed
+#' in reports and working documents - but may also be used as a quick "situational awareness"
+#' BaseMap in other (3rd Party) R libraries and custom R functions, as long as the `SEAFO`
+#' library is linked (i.e. previously installed and/or specified as a library dependency).
 #'
 #'
 #' @param snMapSRC ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
@@ -24,7 +24,8 @@
 #'                BaseMap" palette (i.e. dark bathymetric blue); any other value (i.e. the
 #'                default `2`) selects the "ESRI NatGeo World Map" palette (i.e. pale,
 #'                land-and-sea pastel). NB: a static map carries NO tile imagery, so the
-#'                selector chooses the colour palette that emulates the named provider.
+#'                selector chooses the colour palette that emulates the named provider - that
+#'                is, the sea, landmass, coastline and map-furniture tones.
 #' @param ssHeaderWCL ([character]) a String or Text (i.e. [character]) value that
 #'                    specifies the caption (i.e. header title) of the map legend (i.e. the
 #'                    STATIC counterpart of the interactive Layer Control box), which lists
@@ -93,9 +94,10 @@
 #' the SAME spatial layers; only the OUTPUT differs. The dynamic version returns a `leaflet`
 #' `htmlwidget` that is panned, zoomed, measured and toggled in a browser, whereas this static
 #' version paints a fixed figure with base R `graphics`, which is what is needed for reports,
-#' Working Documents, posters and other print media. The static figure is deliberately
-#' dependency-free (i.e. it needs NO `leaflet`, NO `sf`, NO `ggplot2` and NO tile server) so it
-#' also works in an offline environment.
+#' Working Documents, posters and other print media. The static figure needs NO `leaflet`, NO
+#' `sf`, NO `ggplot2` and NO tile server: its single additional dependency is the `maps` library,
+#' which ships its "world" outline INSIDE the package, so the figure also works in an offline
+#' environment.
 #'
 #' ### BaseMap source
 #' A static map carries no tile imagery, so `snMapSRC` selects the colour palette that emulates
@@ -105,12 +107,21 @@
 #' The selected provider name is still written to the console via [SEAFO::info.post.note()], so
 #' the run-time narrative matches the dynamic function exactly.
 #'
+#' ### Landmass & coastline
+#' The dynamic version draws its landmass and coastline from the selected ESRI tile provider. A
+#' static map has no tiles, so the same information is painted from `maps::map()` (i.e. the
+#' "world" database that ships with the `maps` library), filled with the palette's land tone and
+#' outlined with its coastline tone - no download and no tile server are involved. The land layer
+#' is part of the BaseMap itself (i.e. it is always drawn, exactly like the tiles of the dynamic
+#' version) and therefore does NOT appear as a toggleable layer or as a legend entry.
+#'
 #' ### Spatial layers
 #' The SEAFO spatial layers are read at run-time (i.e. with `base::load()`) from the package's
 #' `./data/` folder, which is resolved with `here::here()`. The function therefore expects to be
 #' run from the R Project (i.e. package source) root - i.e. the directory that holds the `data/`
-#' folder. The layers, in the order they are drawn (i.e. back-to-front, so that the smallest
-#' features end up on top), are:
+#' folder. The canvas is painted sea-first (i.e. the sea fill, then the landmass & coastline, then
+#' the graticule), after which the SEAFO layers are drawn in the order below (i.e. back-to-front,
+#' so that the smallest features end up on top):
 #'
 #' * **EEZs** - the SEAFO Exclusive Economic Zones (`dfSEAFO_EEZv11.rda`), drawn when
 #'   `sbShowEEZs = TRUE`;
@@ -194,8 +205,8 @@
   RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::Basemap.SEAFO";                      # <- FuncID - SHORT
   RCT_TAG_FUNC_ID_121_   <- "maps_static.compile.basemap.seafo";         # <- FuncID - 1:1 (121)
   RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_Static.Compile.Basemap.SEAFO";  # <- FuncID - LONG
-  RCT_FUNC_CELN_START_   <- 182L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
-  RCT_FUNC_CELN_STOP_    <- 557L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
+  RCT_FUNC_CELN_START_   <- 193L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
+  RCT_FUNC_CELN_STOP_    <- 622L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
 
 
 
@@ -208,8 +219,10 @@
   rasBaseLOAD      <- base::load;
   rasBaseLENGTH    <- base::length;
   rasBaseORDER     <- base::order;
-  rasBaseMATCH     <- base::match;
-  rasBaseUNIQUE    <- base::unique;
+  rasBaseSPLIT     <- base::split;
+  rasBaseUNLIST    <- base::unlist;
+  rasBaseLAAPPLY   <- base::lapply;
+  rasBaseSEQ_ALONG <- base::seq_along;
   rasBaseIfELSE    <- base::ifelse;
   rasBasePASTE0    <- base::paste0;
   rasBaseRETURN    <- base::return;
@@ -225,6 +238,8 @@
   rasBeeprBEEP <- beepr::beep;
 
   rasHereHERE <- here::here;
+
+  rasMapsMAP <- maps::map;   # <- STATIC <landmass> coastline (ships with the `maps` library) !!!
 
   rasGraphicsPLOTNEW    <- graphics::plot.new;
   rasGraphicsPLOTWINDOW <- graphics::plot.window;
@@ -268,11 +283,45 @@
   ####   STEP 04 - Run Function SELF-ID <ENTRY> (if requested)   ####
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
-    siFuncMode01 = 1L, ssFuncCallerID = ssFuncCallerID_,
+    siFuncMode01L = 1L, ssFuncCallerID = ssFuncCallerID_,
     sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_START_
   );
+
+
+
+  ####   ### Compile Useful <internal> Custom Functions here !!!   ####
+  ##  Define a custom function that converts a <multi-ring> spatial layer into a SINGLE
+  ##  NA-separated coordinate pair for 'graphics::polypath()' ...
+  # NB: R (>= 4.1) 'polypath()' has NO 'pathId' argument - NA values break the path into
+  #     several sub-paths (and close each one), so polygon HOLES are honoured by the
+  #     "evenodd" fill rule while multi-part features remain separate rings !!!
+  "rcf_split.rings" <- function(rnLONG, rnLAT, vsGROUP) {
+
+    lsRings_ <- rasBaseSPLIT(          # <- One index vector per ring (empty levels dropped) !!!
+      rasBaseSEQ_ALONG(rnLONG), vsGROUP, drop = TRUE
+    );
+    vnSizes_ <- rasBaseUNLIST(rasBaseLAAPPLY(lsRings_, rasBaseLENGTH), use.names = FALSE);
+    lsRings_ <- lsRings_[vnSizes_ >= 3L];   # <- Keep VALID rings only (a path needs >= 3 pts) !!!
+
+    rnPathX_ <- rasBaseUNLIST(                                     # <- Ring coords + NA <gap> !!!
+      rasBaseLAAPPLY(lsRings_, function(vnIdx_) rasBaseC(rnLONG[vnIdx_], NA)),
+      use.names = FALSE
+    );
+    rnPathY_ <- rasBaseUNLIST(
+      rasBaseLAAPPLY(lsRings_, function(vnIdx_) rasBaseC(rnLAT[vnIdx_], NA)),
+      use.names = FALSE
+    );
+
+    snPathLEN_ <- rasBaseLENGTH(rnPathX_);
+    if (snPathLEN_ > 0L) {             # <- 'polypath()' REJECTS a path that ENDS on a break !!!
+      rnPathX_ <- rnPathX_[-snPathLEN_];
+      rnPathY_ <- rnPathY_[-snPathLEN_];
+    }
+
+    rasBaseLIST("x" = rnPathX_, "y" = rnPathY_);
+  }
 
 
 
@@ -290,13 +339,15 @@
   ### 5.1a - Compile the STATIC palette that emulates the <selected> ESRI provider ...
   lsPalette_ <- if (snMapSRC_ == 1) {
     rasBaseLIST(                # <- "ESRI Ocean BaseMap" look (dark bathymetric blue) !!!
-      SEA     = "#0B2237", GRID = "#2E5A78", NOTE = "#BBD6E6",
+      SEA     = "#0B2237", LAND = "#173A55", COAST = "#4E7FA0",
+      GRID = "#2E5A78", NOTE = "#BBD6E6",
       EEZ_FILL = "#7FA6C4", EEZ_BORD = "#C9DEEB", CA_BORD = "#FFFFFF",
       VMEC_FILL = "#D64545", VMEC_BORD = "#F08C8C", LABEL = "#FFFFFF"
     )
   } else {
     rasBaseLIST(                # <- "ESRI NatGeo World Map" look (pale pastel) !!!
-      SEA     = "#D6E6F2", GRID = "#9EB6C6", NOTE = "#2F4858",
+      SEA     = "#D6E6F2", LAND = "#EDE6D2", COAST = "#8C7B5E",
+      GRID = "#9EB6C6", NOTE = "#2F4858",
       EEZ_FILL = "#FCF8EE", EEZ_BORD = "#8C7B5E", CA_BORD = "#1A1A1A",
       VMEC_FILL = "#D64545", VMEC_BORD = "#A32020", LABEL = "#1A1A1A"
     )
@@ -321,9 +372,10 @@
   rasGraphicsPLOTWINDOW(                    # <- Define the map extent & aspect ratio !!!
     xlim = rnXLIM_, ylim = rnYLIM_, asp = rnASPECT_, xaxs = "i", yaxs = "i"
   );
+  rnUSR_ <- rasGraphicsPAR("usr");          # <- The ACTUAL window ('asp' pads one dimension) !!!
   rasGraphicsRECT(                         # <- Fill the plot region with the <sea> colour !!!
-    xleft = rnXLIM_[1], ybottom = rnYLIM_[1],
-    xright = rnXLIM_[2], ytop = rnYLIM_[2],
+    xleft = rnUSR_[1], ybottom = rnUSR_[3],
+    xright = rnUSR_[2], ytop = rnUSR_[4],
     col = lsPalette_[["SEA"]], border = NA
   );
 
@@ -355,6 +407,16 @@
   rasGraphicsBOX(col = lsPalette_[["NOTE"]], lwd = 1);
 
 
+  ### 5.1f - Paint the <landmass> layer (i.e. the STATIC <tile> coastline) ...
+  # NB: The dynamic version gets its landmass & coastline from the ESRI tiles - a static map has
+  #     no tiles, so the country outlines are drawn from the `maps` library "world" database
+  #     (which ships INSIDE the package, i.e. no download & no tile server required) !!!
+  rasMapsMAP(                  # <- The <return> value (a map object) is NOT needed here !!!
+    database = "world", add = TRUE, fill = TRUE,
+    col = lsPalette_[["LAND"]], border = lsPalette_[["COAST"]], lwd = 0.6
+  );
+
+
   ###  5.2 - Compile the SEAFO Exclusive Economic Zone (EEZ) Layer   ####
   if (sbShowEEZs_) {
 
@@ -367,11 +429,11 @@
     dfSEAFO_EEZv11_ <- dfSEAFO_EEZv11;   # <- Assign to a local <func-intern> R Object ...
 
     ### 5.2b - Paint the EEZ rings (even-odd fill rule honours the <hole> column) ...
+    lsEEZPATHS_ <- rcf_split.rings(          # <- Break the rings into NA-separated sub-paths !!!
+      dfSEAFO_EEZv11_[["long"]], dfSEAFO_EEZv11_[["lat"]], dfSEAFO_EEZv11_[["group"]]
+    );
     rasGraphicsPOLYPATH(
-      x = dfSEAFO_EEZv11_[["long"]], y = dfSEAFO_EEZv11_[["lat"]],
-      pathId = rasBaseMATCH(                  # <- Normalise the 'group' factor into 1..n IDs !!!
-        dfSEAFO_EEZv11_[["group"]], rasBaseUNIQUE(dfSEAFO_EEZv11_[["group"]])
-      ),
+      x = lsEEZPATHS_[["x"]], y = lsEEZPATHS_[["y"]],
       rule = "evenodd", lwd = 0.7,
       col = rasGrDevicesAdjustCOLOR(lsPalette_[["EEZ_FILL"]], alpha.f = 0.28),
       border = rasGrDevicesAdjustCOLOR(lsPalette_[["EEZ_BORD"]], alpha.f = 0.50)
@@ -403,9 +465,11 @@
     ];
 
     ### 5.3c - Paint the CA rings (i.e. OUTLINE ONLY - the dynamic 'fillOpacity = 0') ...
+    lsCAPATHS_ <- rcf_split.rings(           # <- Break the rings into NA-separated sub-paths !!!
+      dfSEAFO_CA_[["long"]], dfSEAFO_CA_[["lat"]], dfSEAFO_CA_[["group"]]
+    );
     rasGraphicsPOLYPATH(
-      x = dfSEAFO_CA_[["long"]], y = dfSEAFO_CA_[["lat"]],
-      pathId = rasBaseMATCH(dfSEAFO_CA_[["group"]], rasBaseUNIQUE(dfSEAFO_CA_[["group"]])),
+      x = lsCAPATHS_[["x"]], y = lsCAPATHS_[["y"]],
       rule = "evenodd", col = NA, border = lsPalette_[["CA_BORD"]], lwd = 1.5
     );
     vsLayersDRAWN_ <- rasBaseC(vsLayersDRAWN_, "SEAFO CA");
@@ -447,11 +511,12 @@
     dfSEAFO_ClosedAreas_ <- dfSEAFO_ClosedAreas;   # <- Assign to local <func-intern> R Object ...
 
     ### 5.4b - Paint the SEAFO Closed Areas rings ...
+    lsVMECPATHS_ <- rcf_split.rings(         # <- Break the rings into NA-separated sub-paths !!!
+      dfSEAFO_ClosedAreas_[["long"]], dfSEAFO_ClosedAreas_[["lat"]],
+      dfSEAFO_ClosedAreas_[["group"]]
+    );
     rasGraphicsPOLYPATH(
-      x = dfSEAFO_ClosedAreas_[["long"]], y = dfSEAFO_ClosedAreas_[["lat"]],
-      pathId = rasBaseMATCH(
-        dfSEAFO_ClosedAreas_[["group"]], rasBaseUNIQUE(dfSEAFO_ClosedAreas_[["group"]])
-      ),
+      x = lsVMECPATHS_[["x"]], y = lsVMECPATHS_[["y"]],
       rule = "evenodd", lwd = 0.7,
       col = rasGrDevicesAdjustCOLOR(lsPalette_[["VMEC_FILL"]], alpha.f = 0.21),
       border = rasGrDevicesAdjustCOLOR(lsPalette_[["VMEC_BORD"]], alpha.f = 0.50)
@@ -534,7 +599,7 @@
   RCT_FUNC_RUNTIME_STOP_ <- rasBaseSYSTIME();
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
-    siFuncMode01 = 0L, ssFuncCallerID = ssFuncCallerID_,
+    siFuncMode01L = 0L, ssFuncCallerID = ssFuncCallerID_,
     sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_STOP_

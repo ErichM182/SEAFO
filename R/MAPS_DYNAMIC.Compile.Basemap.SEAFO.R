@@ -244,7 +244,7 @@
   ####   STEP 04 - Run Function SELF-ID <ENTRY> (if requested)   ####
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
-    siFuncMode01 = 1L, ssFuncCallerID = ssFuncCallerID_,
+    siFuncMode01L = 1L, ssFuncCallerID = ssFuncCallerID_,
     sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_START_
@@ -485,7 +485,7 @@
   ####   STEP 07 - Run Function SELF-ID <EXIT> (if requested)   ####
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
-    siFuncMode01 = 0L, ssFuncCallerID = ssFuncCallerID_,
+    siFuncMode01L = 0L, ssFuncCallerID = ssFuncCallerID_,
     sbRunSelfID = sbRunSelfID_, sbPrintPretty = sbPrintPretty_,
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_STOP_

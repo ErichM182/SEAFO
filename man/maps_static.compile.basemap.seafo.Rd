@@ -25,7 +25,8 @@ BaseMap source \if{html}{\out{<selector>}}. A value of \code{1} selects the "ESR
 BaseMap" palette (i.e. dark bathymetric blue); any other value (i.e. the
 default \code{2}) selects the "ESRI NatGeo World Map" palette (i.e. pale,
 land-and-sea pastel). NB: a static map carries NO tile imagery, so the
-selector chooses the colour palette that emulates the named provider.}
+selector chooses the colour palette that emulates the named provider - that
+is, the sea, landmass, coastline and map-furniture tones.}
 
 \item{ssHeaderWCL}{(\link{character}) a String or Text (i.e. \link{character}) value that
 specifies the caption (i.e. header title) of the map legend (i.e. the
@@ -104,13 +105,13 @@ Atlantic Fisheries Organisation (SEAFO) Convention Area (CA) and its surrounding
 context. The map is drawn on the ACTIVE GRAPHICS DEVICE with the base R \code{graphics} package,
 using the SAME spatial layers, layer toggles and area labels as the interactive
 \code{\link[=maps_dynamic.compile.basemap.seafo]{maps_dynamic.compile.basemap.seafo()}} function (i.e. the SEAFO Convention Area, the
-SEAFO Exclusive Economic Zones and the SEAFO VME Closures), and equips the resulting figure
-with a legend, a map scale bar and a graticule. This function was created to support the
-routine data-analysis work conducted by the Scientific Committee (SC) of the SEAFO - most
-notably the publication-ready figures needed in reports and working documents - but may also
-be used as a quick "situational awareness" BaseMap in other (3rd Party) R libraries and custom
-R functions, as long as the \code{SEAFO} library is linked (i.e. previously installed and/or
-specified as a library dependency).
+SEAFO Exclusive Economic Zones and the SEAFO VME Closures), over a landmass & coastline drawn
+from the \code{maps} library, and equips the resulting figure with a legend, a map scale bar and a
+graticule. This function was created to support the routine data-analysis work conducted by
+the Scientific Committee (SC) of the SEAFO - most notably the publication-ready figures needed
+in reports and working documents - but may also be used as a quick "situational awareness"
+BaseMap in other (3rd Party) R libraries and custom R functions, as long as the \code{SEAFO}
+library is linked (i.e. previously installed and/or specified as a library dependency).
 }
 \details{
 \subsection{Static vs. dynamic output}{
@@ -120,9 +121,10 @@ two functions share the same signature (i.e. arguments, defaults and semantics) 
 the SAME spatial layers; only the OUTPUT differs. The dynamic version returns a \code{leaflet}
 \code{htmlwidget} that is panned, zoomed, measured and toggled in a browser, whereas this static
 version paints a fixed figure with base R \code{graphics}, which is what is needed for reports,
-Working Documents, posters and other print media. The static figure is deliberately
-dependency-free (i.e. it needs NO \code{leaflet}, NO \code{sf}, NO \code{ggplot2} and NO tile server) so it
-also works in an offline environment.
+Working Documents, posters and other print media. The static figure needs NO \code{leaflet}, NO
+\code{sf}, NO \code{ggplot2} and NO tile server: its single additional dependency is the \code{maps} library,
+which ships its "world" outline INSIDE the package, so the figure also works in an offline
+environment.
 }
 
 \subsection{BaseMap source}{
@@ -135,13 +137,24 @@ The selected provider name is still written to the console via \code{\link[=info
 the run-time narrative matches the dynamic function exactly.
 }
 
+\subsection{Landmass & coastline}{
+
+The dynamic version draws its landmass and coastline from the selected ESRI tile provider. A
+static map has no tiles, so the same information is painted from \code{maps::map()} (i.e. the
+"world" database that ships with the \code{maps} library), filled with the palette's land tone and
+outlined with its coastline tone - no download and no tile server are involved. The land layer
+is part of the BaseMap itself (i.e. it is always drawn, exactly like the tiles of the dynamic
+version) and therefore does NOT appear as a toggleable layer or as a legend entry.
+}
+
 \subsection{Spatial layers}{
 
 The SEAFO spatial layers are read at run-time (i.e. with \code{base::load()}) from the package's
 \verb{./data/} folder, which is resolved with \code{here::here()}. The function therefore expects to be
 run from the R Project (i.e. package source) root - i.e. the directory that holds the \verb{data/}
-folder. The layers, in the order they are drawn (i.e. back-to-front, so that the smallest
-features end up on top), are:
+folder. The canvas is painted sea-first (i.e. the sea fill, then the landmass & coastline, then
+the graticule), after which the SEAFO layers are drawn in the order below (i.e. back-to-front,
+so that the smallest features end up on top):
 \itemize{
 \item \strong{EEZs} - the SEAFO Exclusive Economic Zones (\code{dfSEAFO_EEZv11.rda}), drawn when
 \code{sbShowEEZs = TRUE};
