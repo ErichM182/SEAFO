@@ -283,7 +283,8 @@ coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(); coBaseMapLM_
 dfSEAFO_VMS_ <- utils::read.csv("./data/dfSEAFO_GPS_VMS.csv");
 base::names(dfSEAFO_VMS_);
 coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
-  lmMapObj = coBaseMapLM_, snSpeedCutOff = 1.25
+  lmMapObj = coBaseMapLM_, snSpeedSplit = 1.25, sbPlotOnlyFishingVMS = T,
+  ## vsShipColors = base::c("black", "red", "magenta", "orange", "yellow")
 ); coBaseMapLM_VMS_
 
 

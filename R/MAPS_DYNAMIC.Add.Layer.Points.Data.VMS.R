@@ -148,11 +148,13 @@
 #' @export
 #? ### ### ###
 "maps_dynamic.add.layer.points.data.vms" <- function(
-  lmMapObj=NULL, dfVMS=NULL, snSpeedCutOff=1.15,
-  ssVarShipIDs="Ship_Name_Anon", ssLabelVarShipIDs="Vessel ID",
-  ssVarYear="VMS_Year", ssLabelVarYear="VMS Years", ssVarShipCourse="CO",
-  ssVarLATs="LAT_DeciDegree", ssVarLONs="LON_DeciDegree", sbPlotKeyVMS=FALSE,
+  lmMapObj=NULL, dfVMS=NULL, snSpeedSplit=1.15, ssVarShipCourse="CO",
+  ssVarYear="VMS_Year", ssLabelVarYear="VMS Years", sbShowToggleYear=TRUE,
+  ssVarMonth="VMS_Month", ssLabelVarMonth="VMS Month", sbShowToggleMonth=FALSE,
+  ssVarShipIDs="Ship_Name_Anon", ssLabelVarShipIDs="Vessel ID", vsShipColors=NULL,
   ssVarShipSpeed="Speed_Corr_kt", ssLabelVarSpeed="Vessel State (speed in knots)",
+  ssVarShipFlag="Flag_Anon", ssLabelVarShipFlag="Vessel Flag", sbShowShipFlag=FALSE,
+  ssVarLATs="LAT_DeciDegree", ssVarLONs="LON_DeciDegree", sbPlotOnlyFishingVMS=FALSE,
   ssVarTime="VMS_Time", ssLabelVarTime="VMS Time", ssVarDate="VMS_Date", ssLabelVarDate="VMS Date"
 ) {
 
@@ -160,9 +162,9 @@
   #   FUNCTION ARGUMENTS:                                                                                  ####
   #    - lmMapObj      : [leaflet] a Leaflet map object to which VMS data will be added as the top layer.      #
   #    - dfVMS_        : [data.frame] VMS data with coordinate columns: Lat_DD, Lon_DD.                        #
-  #    - snSpeedCutOff : [numeric] speed threshold (knots). Points >= cutoff are drawn as heading arrows;      #
+  #    - snSpeedSplit : [numeric] speed threshold (knots). Points >= cutoff are drawn as heading arrows;      #
   #                                points < cutoff are drawn as dots. Default 3.0.                                      #
-  #    - sbPlotKeyVMS  : [logical] TRUE = plot only stationary records (speed < cutoff). FALSE = plot all records. Default TRUE.
+  #    - sbPlotOnlyFishingVMS  : [logical] TRUE = plot only stationary records (speed < cutoff). FALSE = plot all records. Default TRUE.
   #                                Default TRUE.                                                                        #
   #    - ssVarYear     : [character] column used for the VMS Years control. Default 'Year_Parsed'.             #
   #    - ssVarShipSpeed   : [character] column used for Vessel State filtering. Default 'Speed_Num'.              #
@@ -324,13 +326,22 @@
     vesselCounts <- base::prettyNum(vesselCountsRaw, big.mark = ",", scientific = FALSE)
 
     # Vessel color palette (categorical, handles any number of vsLevelsShipIDs_)
-    vesselColors <- base::suppressWarnings(
-      grDevices::colorRampPalette(
-        RColorBrewer::brewer.pal(9, 'Set1')
-      )(base::length(vsLevelsShipIDs_))
-    )
-    names(vesselColors) <- vsLevelsShipIDs_
-    vesselPal <- leaflet::colorFactor(palette = vesselColors, domain = vsLevelsShipIDs_)
+    vsShipColors_ <- NULL;
+    if (base::is.null(vsShipColors)) {
+      vsShipColors_ <- base::suppressWarnings(
+        grDevices::colorRampPalette(
+          RColorBrewer::brewer.pal(9, "Set1")
+        )(base::length(vsLevelsShipIDs_))
+      );
+    } else {
+      vsShipColors_ <- vsShipColors;
+    }
+    base::names(vsShipColors_) <- vsLevelsShipIDs_;
+    ### cfShipPAL_ <- leaflet::colorFactor(
+    ###   palette = vsShipColors_, domain = vsLevelsShipIDs_
+    ### );
+    tpColorPTS_ <- vsShipColors_[base::as.character(dfVMS_[[ssVarShipIDs_]])];
+    tpColorPTS_[base::is.na(tpColorPTS_)] <- "#333333";
 
     # Year shape: use different circle radii (older -> smaller, recent -> larger)
     yrNumeric <- base::as.numeric(vsLevelsYears_)
@@ -365,12 +376,12 @@
     stateLooksExplicit <- base::grepl('state|status|condition', ssVarShipSpeed_, ignore.case = TRUE)
     hasStateText <- (hasNonNumericState || stateLooksExplicit) && base::any(stateCode != '')
 
-    # Compute actual plot count based on sbPlotKeyVMS
-    if (sbPlotKeyVMS) {
+    # Compute actual plot count based on sbPlotOnlyFishingVMS
+    if (sbPlotOnlyFishingVMS) {
       if (hasStateText) {
         plotCount <- base::sum(stateCode == "stationary", na.rm = TRUE)
       } else if (sbHasSpeed_) {
-        plotCount <- base::sum(speedNum < snSpeedCutOff, na.rm = TRUE)
+        plotCount <- base::sum(speedNum < snSpeedSplit, na.rm = TRUE)
       } else {
         plotCount <- base::nrow(dfVMS_)
       }
@@ -381,8 +392,7 @@
       ' --> ', TAG_FUNC_ID, ' 201 | Plotting ', plotCount, ' VMS points (records) ...'
     ));
 
-    ptColors <- vesselColors[base::as.character(dfVMS_[[ssVarShipIDs_]])]
-    ptColors[base::is.na(ptColors)] <- "#333333"
+
     csVMS_JSON_ <- jsonlite::toJSON(
       base::data.frame(
         v   = base::as.character(dfVMS_[[ssVarShipIDs_]]),
@@ -397,7 +407,7 @@
         r   = base::as.numeric(dfVMS_$ptRadius),
         w   = base::as.numeric(dfVMS_$ptWeight),
         o   = base::as.numeric(dfVMS_$ptOpacity),
-        c   = ptColors,
+        c   = tpColorPTS_,
         stringsAsFactors = FALSE
       ),
       dataframe = "rows",
@@ -439,7 +449,7 @@
     }
 
     csYearHTML_RAW_   <- rfc_BuildItems_HTML(vsLevelsYears_, NULL, yearCounts);
-    csVesselsHTML_RAW_ <- rfc_BuildItems_HTML(vsLevelsShipIDs_, vesselColors, vesselCounts);
+    csVesselsHTML_RAW_ <- rfc_BuildItems_HTML(vsLevelsShipIDs_, vsShipColors_, vesselCounts);
 
     # Escape characters for JS string embedding
     rcf_Escape_JS <- function(s) {
@@ -480,13 +490,13 @@
       var vmsData = ', csVMS_JSON_, ';
 
       // --- Speed-based rendering parameters ---
-      var snSpeedCutOff = ', snSpeedCutOff, ';
-      var initSteaming = ', base::tolower(base::as.character(!sbPlotKeyVMS)), ';  // initial Steaming checkbox state
-      var sbPlotKeyVMS = ', base::tolower(base::as.character(sbPlotKeyVMS)), ';  // static filter: when TRUE, never draw steaming points
+      var snSpeedSplit = ', snSpeedSplit, ';
+      var initSteaming = ', base::tolower(base::as.character(!sbPlotOnlyFishingVMS)), ';  // initial Steaming checkbox state
+      var sbPlotOnlyFishingVMS = ', base::tolower(base::as.character(sbPlotOnlyFishingVMS)), ';  // static filter: when TRUE, never draw steaming points
 
       function getIsSteaming(d) {
         if (d.st) return d.st === "steaming";
-        if (d.s != null && !isNaN(d.s)) return d.s >= snSpeedCutOff;
+        if (d.s != null && !isNaN(d.s)) return d.s >= snSpeedSplit;
         return false;
       }
 
@@ -545,8 +555,8 @@
             if (d.lat < sw.lat || d.lat > ne.lat || d.lng < sw.lng || d.lng > ne.lng) continue;
             // Vessel State filter: skip based on Steaming/Stationary checkboxes
             var isSteaming = getIsSteaming(d);
-            // sbPlotKeyVMS: static filter, skips all steaming points regardless of checkbox
-            if (sbPlotKeyVMS && isSteaming) continue;
+            // sbPlotOnlyFishingVMS: static filter, skips all steaming points regardless of checkbox
+            if (sbPlotOnlyFishingVMS && isSteaming) continue;
             if (isSteaming && !this._filterSteaming) continue;
             if (!isSteaming && !this._filterStationary) continue;
             var pt = map.latLngToContainerPoint(L.latLng(d.lat, d.lng));
@@ -611,12 +621,12 @@
 
       var stateHtml =
                 \'<div style="font-size:12px;color:#888;margin-top:-4px;margin-bottom:4px;padding-bottom:3px;">\' +
-        \'Steaming &ge; \' + snSpeedCutOff + \' kts &nbsp;|&nbsp; Stationary &lt; \' + snSpeedCutOff + \' kts\' +
+        \'Steaming &ge; \' + snSpeedSplit + \' kts &nbsp;|&nbsp; Stationary &lt; \' + snSpeedSplit + \' kts\' +
         \'</div>\' +
-        \'<label style="display:flex;align-items:center;\' + (sbPlotKeyVMS ? \'gap:8px;\' : \'gap:5px;\') + \'white-space:nowrap;line-height:1.35;\' + (sbPlotKeyVMS ? \'opacity:0.55;cursor:default;\' : \'cursor:pointer;\') + \'">\' +
+        \'<label style="display:flex;align-items:center;\' + (sbPlotOnlyFishingVMS ? \'gap:8px;\' : \'gap:5px;\') + \'white-space:nowrap;line-height:1.35;\' + (sbPlotOnlyFishingVMS ? \'opacity:0.55;cursor:default;\' : \'cursor:pointer;\') + \'">\' +
         \'<span style="position:relative;display:inline-flex;align-items:center;justify-content:center;">\' +
-        \'<input type="checkbox" class="vms-cb-state" data-val="steaming" style="margin:0;vertical-align:baseline;" \' + (initSteaming ? \'checked\' : \'\') + (sbPlotKeyVMS ? \' disabled\' : \'\') + \'> \' +
-        (sbPlotKeyVMS ? \'<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;line-height:1;pointer-events:none;">\\u2717</span>\' : \'\') +
+        \'<input type="checkbox" class="vms-cb-state" data-val="steaming" style="margin:0;vertical-align:baseline;" \' + (initSteaming ? \'checked\' : \'\') + (sbPlotOnlyFishingVMS ? \' disabled\' : \'\') + \'> \' +
+        (sbPlotOnlyFishingVMS ? \'<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;line-height:1;pointer-events:none;">\\u2717</span>\' : \'\') +
         \'</span>\' +
         \'Steaming <span class="vms-count" style="font-weight:normal;color:#888;"></span></label>\' +
         \'<label style="display:flex;align-items:center;gap:5px;white-space:nowrap;line-height:1.35;cursor:pointer;">\' +
@@ -656,7 +666,7 @@
           if (yFilter && yFilter.indexOf(d.y) < 0) continue;
           if (vFilter && vFilter.indexOf(d.v) < 0) continue;
           var isSteaming = getIsSteaming(d);
-          if (sbPlotKeyVMS && isSteaming) continue;
+          if (sbPlotOnlyFishingVMS && isSteaming) continue;
           if (isSteaming) steamCnt++; else statCnt++;
         }
         if (steamingCb) {
@@ -681,7 +691,7 @@
           if (!vCounts.hasOwnProperty(d.v)) continue;
           if (yFilter && yFilter.indexOf(d.y) < 0) continue;
           var isSteaming = getIsSteaming(d);
-          if (sbPlotKeyVMS && isSteaming) continue;
+          if (sbPlotOnlyFishingVMS && isSteaming) continue;
           if (isSteaming && !steamingChecked) continue;
           if (!isSteaming && !stationaryChecked) continue;
           vCounts[d.v]++;
@@ -814,7 +824,7 @@
                 if (fV && fV.indexOf(d.v) < 0) continue;
                 if (fY && fY.indexOf(d.y) < 0) continue;
                 var isSteaming = getIsSteaming(d);
-                if (sbPlotKeyVMS && isSteaming) continue;
+                if (sbPlotOnlyFishingVMS && isSteaming) continue;
                 if (isSteaming && !fSt) continue;
                 if (!isSteaming && !fSg) continue;
                 var pt = map.latLngToContainerPoint(L.latLng(d.lat, d.lng));
