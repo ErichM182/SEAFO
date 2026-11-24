@@ -1,6 +1,6 @@
 #? ### ### ### ### ### ### ###
 #' @title Compile the SEAFO Static BaseMap (Base Graphics)
-#' @name maps_static.compile.basemap.seafo
+#' @name maps_static.compile.basemap
 #' @family MAPS Functions (SEAFO)
 #'
 #'
@@ -9,7 +9,7 @@
 #' Atlantic Fisheries Organisation (SEAFO) Convention Area (CA) and its surrounding geographic
 #' context. The map is drawn on the ACTIVE GRAPHICS DEVICE with the base R `graphics` package,
 #' using the SAME spatial layers, layer toggles and area labels as the interactive
-#' [SEAFO::maps_dynamic.compile.basemap.seafo()] function (i.e. the SEAFO Convention Area, the
+#' [SEAFO::maps_dynamic.compile.basemap()] function (i.e. the SEAFO Convention Area, the
 #' SEAFO Exclusive Economic Zones and the SEAFO VME Closures), over a landmass & coastline drawn
 #' from the `maps` library, and equips the resulting figure with a legend, a map scale bar and a
 #' graticule. This function was created to support the routine data-analysis work conducted by
@@ -34,11 +34,11 @@
 #' @param snZoomMin ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
 #'                minimum zoom level of the BaseMap (default: `2`). NB: a static map has no
 #'                zoom concept, so this argument is accepted for SIGNATURE PARITY with
-#'                [SEAFO::maps_dynamic.compile.basemap.seafo()] and is otherwise unused.
+#'                [SEAFO::maps_dynamic.compile.basemap()] and is otherwise unused.
 #' @param snZoomMax ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
 #'                maximum zoom level of the BaseMap (default: `10`). NB: a static map has no
 #'                zoom concept, so this argument is accepted for SIGNATURE PARITY with
-#'                [SEAFO::maps_dynamic.compile.basemap.seafo()] and is otherwise unused.
+#'                [SEAFO::maps_dynamic.compile.basemap()] and is otherwise unused.
 #' @param sbShowEEZs ([logical]) a Boolean value that specifies whether the SEAFO Exclusive
 #'                  Economic Zones (EEZs) layer must be drawn on the BaseMap (default: `TRUE`).
 #'                  The layer is sourced from `./data/dfSEAFO_EEZv11.rda` (v11, 2019).
@@ -89,7 +89,7 @@
 #'
 #' @details
 #' ### Static vs. dynamic output
-#' This function is the STATIC sibling of [SEAFO::maps_dynamic.compile.basemap.seafo()]. The
+#' This function is the STATIC sibling of [SEAFO::maps_dynamic.compile.basemap()]. The
 #' two functions share the same signature (i.e. arguments, defaults and semantics) and consume
 #' the SAME spatial layers; only the OUTPUT differs. The dynamic version returns a `leaflet`
 #' `htmlwidget` that is panned, zoomed, measured and toggled in a browser, whereas this static
@@ -161,13 +161,13 @@
 #' ### Compile the DEFAULT SEAFO Static BaseMap (ESRI NatGeo palette) ...
 #' library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally.
 #'
-#' coMap <- SEAFO::maps_static.compile.basemap.seafo()
+#' coMap <- SEAFO::maps_static.compile.basemap()
 #' coMap            # <- Draws the static BaseMap on the ACTIVE graphics device !!!
 #'
 #'
 #' ### Save the static BaseMap to a PNG file (i.e. for a report or working document) ...
 #' grDevices::png(filename = "SEAFO_BaseMap.png", width = 1600, height = 1500, res = 200);
-#'   SEAFO::maps_static.compile.basemap.seafo(
+#'   SEAFO::maps_static.compile.basemap(
 #'     snMapSRC = 1,                        # <- Select the ESRI Ocean palette ...
 #'     ssHeaderWCL = "SEAFO Layers"         # <- Custom legend caption ...
 #'   );
@@ -176,7 +176,7 @@
 #'
 #' ### ... and the same map as a publication-ready PDF (no legend, no labels) ...
 #' grDevices::pdf(file = "SEAFO_BaseMap.pdf", width = 7, height = 7);
-#'   SEAFO::maps_static.compile.basemap.seafo(
+#'   SEAFO::maps_static.compile.basemap(
 #'     sbShowEEZs   = FALSE,
 #'     sbShowLabels = FALSE,
 #'     sbHideWCL    = FALSE,
@@ -190,7 +190,7 @@
 #'
 #' @export
 #? ### ### ###
-"maps_static.compile.basemap.seafo" <- function(
+"maps_static.compile.basemap" <- function(
   snMapSRC=2, ssHeaderWCL="SEAFO Convention Area (CA)", snZoomMin=2, snZoomMax=10,
   sbShowEEZs=TRUE, sbShowCA=TRUE, sbShowClosedAreas=TRUE, sbShowFishFootPrint=TRUE,
   sbShowLabels=TRUE, sbHideWCL=TRUE, sbNotifyRunTimeF=FALSE, ...
@@ -201,12 +201,12 @@
 
 
   ####   STEP 01 - Define "Function Self-ID" R Objects   ####
-  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                                     # <- R Library Identifier
-  RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::Basemap.SEAFO";                      # <- FuncID - SHORT
-  RCT_TAG_FUNC_ID_121_   <- "maps_static.compile.basemap.seafo";         # <- FuncID - 1:1 (121)
-  RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_Static.Compile.Basemap.SEAFO";  # <- FuncID - LONG
+  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                               # <- R Library Identifier
+  RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::STATIC.Basemap";               # <- FuncID - SHORT
+  RCT_TAG_FUNC_ID_121_   <- "maps_static.compile.basemap";         # <- FuncID - 1:1 (121)
+  RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_STATIC.Compile.Basemap";  # <- FuncID - LONG
   RCT_FUNC_CELN_START_   <- 193L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
-  RCT_FUNC_CELN_STOP_    <- 622L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
+  RCT_FUNC_CELN_STOP_    <- 623L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
 
 
 
@@ -604,6 +604,7 @@
     siStartCELN = RCT_FUNC_CELN_START_, siStopCELN = RCT_FUNC_CELN_STOP_,
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_STOP_
   );
+
 
 
   ####   STEP 07 - EXIT Functions (results hand-over)   ####

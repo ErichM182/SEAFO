@@ -1,6 +1,6 @@
 #? ### ### ### ### ### ### ###
 #' @title Compile the SEAFO Dynamic BaseMap (Leaflet)
-#' @name maps_dynamic.compile.basemap.seafo
+#' @name maps_dynamic.compile.basemap
 #' @family MAPS Functions (SEAFO)
 #'
 #'
@@ -71,7 +71,7 @@
 #' A `leaflet` `htmlwidget` object - i.e. the fully compiled and interactive SEAFO BaseMap. The
 #' widget is handed back to the calling R function (or to the console), where it is auto-printed
 #' when not assigned, so it may either be inspected on the spot or stored in an R object for
-#' later use (e.g. `coMap <- maps_dynamic.compile.basemap.seafo()`).
+#' later use (e.g. `coMap <- maps_dynamic.compile.basemap()`).
 #'
 #'
 #' @details
@@ -118,12 +118,12 @@
 #' ### Compile the DEFAULT SEAFO BaseMap (ESRI NatGeo World Map tiles) ...
 #' library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally.
 #'
-#' coMap <- SEAFO::maps_dynamic.compile.basemap.seafo()
+#' coMap <- SEAFO::maps_dynamic.compile.basemap()
 #' coMap            # <- Renders the interactive BaseMap in the RStudio Viewer pane !!!
 #'
 #'
 #' ### Compile the ESRI Ocean BaseMap without the EEZ & Closed Areas layers ...
-#' SEAFO::maps_dynamic.compile.basemap.seafo(
+#' SEAFO::maps_dynamic.compile.basemap(
 #'   snMapSRC          = 1,               # <- Select the ESRI Ocean BaseMap tiles ...
 #'   sbShowEEZs        = FALSE,           # <- Skip the SEAFO EEZ layer ...
 #'   sbShowClosedAreas = FALSE,           # <- Skip the SEAFO VME Closures layer ...
@@ -133,7 +133,7 @@
 #'
 #'
 #' ### Compile a "clean" CA BaseMap (no overlays, no labels) with Self-ID notes ...
-#' SEAFO::maps_dynamic.compile.basemap.seafo(
+#' SEAFO::maps_dynamic.compile.basemap(
 #'   sbShowEEZs     = FALSE,
 #'   sbShowLabels   = FALSE,
 #'   snZoomMin      = 3,
@@ -147,7 +147,7 @@
 #'
 #' @export
 #? ### ### ###
-"maps_dynamic.compile.basemap.seafo" <- function(
+"maps_dynamic.compile.basemap" <- function(
   snMapSRC=2, ssHeaderWCL="SEAFO Convention Area (CA)", snZoomMin=2, snZoomMax=10,
   sbShowEEZs=TRUE, sbShowCA=TRUE, sbShowClosedAreas=TRUE, sbShowFishFootPrint=TRUE,
   sbShowLabels=TRUE, sbHideWCL=TRUE, sbNotifyRunTimeF=FALSE, ...
@@ -158,12 +158,12 @@
 
 
   ####   STEP 01 - Define "Function Self-ID" R Objects   ####
-  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                                     # <- R Library Identifier
-  RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::Basemap.SEAFO";                        # <- FuncID - SHORT
-  RCT_TAG_FUNC_ID_121_   <- "maps_dynamic.compile.basemap.seafo";          # <- FuncID - 1:1 (121)
-  RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_Dynamic.Compile.Basemap.SEAFO";   # <- FuncID - LONG
+  RCT_TAG_FUNC_LIBR_ID_  <- "SEAFO";                                 # <- R Library Identifier
+  RCT_TAG_FUNC_ID_SHORT_ <- "SEAFO::DYNAMIC.Basemap";                # <- FuncID - SHORT
+  RCT_TAG_FUNC_ID_121_   <- "maps_dynamic.compile.basemap";          # <- FuncID - 1:1 (121)
+  RCT_TAG_FUNC_ID_LONG_  <- "SEAFO::MAPS_DYNAMIC.Compile.Basemap";   # <- FuncID - LONG
   RCT_FUNC_CELN_START_   <- 150L;   # <- Function Self-ID Markers (Opening Curly Brace Line #)
-  RCT_FUNC_CELN_STOP_    <- 496L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
+  RCT_FUNC_CELN_STOP_    <- 500L;   # <- Function Self-ID Markers (Closing Curly Brace Line #)
 
 
 
@@ -482,6 +482,7 @@
   ### base::message(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' ', (segLNM01 + 55), ' | ', 'EXECUTION of CUSTOM FUNCTION [ ', TAG_FUNC_ID_FULL, ' ] ', ' STOPPED on ', base::format(endDateTime, formatDateTime), ' .')))
 
 
+
   ####   STEP 07 - Run Function SELF-ID <EXIT> (if requested)   ####
   rasSeafoInfoPostFuncSelfID(
     ssFuncSelfID = RCT_TAG_FUNC_ID_LONG_,
@@ -491,7 +492,8 @@
     csTimeStart = RCT_FUNC_RUNTIME_START_, csTimeStop = RCT_FUNC_RUNTIME_STOP_
   );
 
-  ####   STEP 07 - EXIT Functions (results hand-over)   ####
+
+  ####   STEP 08 - EXIT Functions (results hand-over)   ####
   if (sbNotifyRunTimeF) rasBeeprBEEP(2);   # <- Notify user of Function Run-Time STOP (audio cue).
   rasBaseRETURN(coBaseMapLM_);             # <- Hand-over Function Ouputs to Function Call !!!
 

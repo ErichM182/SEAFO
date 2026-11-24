@@ -231,9 +231,6 @@ my.custom.r.func()
 ### tools::resaveRdaFiles(paths = "./data", compress = "xz")
 
 
-SEAFO::maps_dynamic.compile.basemap.seafo()
-
-
 
 ### Set up a HexSticker for the SEAFO R Package Project ...
 sysfonts::font_add_google("Montserrat", "montserrat");
@@ -273,8 +270,21 @@ hexSticker::sticker(
 
 
 
+coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(); coBaseMapLM_
+
+### lmMapObj=NULL; dfVMS=NULL; snSpeedCutOff=1.00
+### ssVarShipIDs="Ship_Name_Anon"; ssLabelVarShipIDs="Vessel ID"
+### ssVarYear="VMS_Year"; ssLabelVarYear="VMS Years"; ssVarShipCourse="CO"
+### ssVarLATs="LAT_DeciDegree"; ssVarLONs="LON_DeciDegree"; sbPlotKeyVMS=FALSE
+### ssVarShipSpeed="Speed_Corr_kt"; ssLabelVarSpeed="Vessel State (speed in knots)"
+### ssVarTime="VMS_Time"; ssLabelVarTime="VMS Time"; ssVarDate="VMS_Date"; ssLabelVarDate="VMS Date"
 
 
+dfSEAFO_VMS_ <- utils::read.csv("./data/dfSEAFO_GPS_VMS.csv");
+base::names(dfSEAFO_VMS_);
+coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
+  lmMapObj = coBaseMapLM_, snSpeedCutOff = 1.25
+); coBaseMapLM_VMS_
 
 
 
