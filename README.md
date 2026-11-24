@@ -78,7 +78,7 @@ remotes::install_github("ErichM182/SEAFO")
 # 3) verify
 library(SEAFO)
 packageVersion("SEAFO")
-#> [1] '0.0.3'
+#> [1] '0.0.4'
 ```
 
 <details>
@@ -110,7 +110,7 @@ devtools::load_all("path/to/SEAFO")
 devtools::install("path/to/SEAFO")
 
 # From a built source tarball
-install.packages("SEAFO_0.0.3.tar.gz", repos = NULL, type = "source")
+install.packages("SEAFO_0.0.4.tar.gz", repos = NULL, type = "source")
 ```
 
 ### 4. Dependencies
@@ -173,7 +173,7 @@ coMap                          # renders in the RStudio Viewer pane
 
 ---
 
-## 🆕 What's new in `0.0.3`
+## 🆕 What's new in `0.0.4`
 
 | | Change | Detail |
 |:--|:--|:--|
@@ -202,8 +202,8 @@ coMap                          # renders in the RStudio Viewer pane
 
 | Level | Format | Example | Meaning |
 |:--|:--|:--|:--|
-| **Production** | `0.0.X` | `0.0.3` | public release cut |
-| **Active development** | `0.0.X.YY` | `0.0.3.00` | increments `.01`, `.02`, … per accepted change |
+| **Production** | `0.0.X` | `0.0.4` | public release cut |
+| **Active development** | `0.0.X.YY` | `0.0.4.00` | increments `.01`, `.02`, … per accepted change |
 
 Both `DESCRIPTION` and the tracker are only written **when something actually changed**:
 
@@ -344,7 +344,7 @@ Conventions used throughout the source:
   title  = {SEAFO: SEAFO Scientific Committee R Package},
   author = {MALETZKY, Erich},
   year   = {2026},
-  note   = {R package version 0.0.3},
+  note   = {R package version 0.0.4},
   url    = {https://github.com/ErichM182/SEAFO}
 }
 ```
