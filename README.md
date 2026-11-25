@@ -14,7 +14,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 [![R](https://img.shields.io/badge/R-%E2%89%A5%204.1.0-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-orange)](https://github.com/ErichM182/SEAFO)
-[![Exports](https://img.shields.io/badge/Exports-22%20Objects-blueviolet)](man/)
+[![Exports](https://img.shields.io/badge/Exports-23%20Objects-blueviolet)](man/)
 [![Docs](https://img.shields.io/badge/Roxygen2-8.1.0-informational)](https://roxygen2.r-lib.org/)
 
 <br/>
@@ -161,7 +161,7 @@ SEAFO::RENV_DEVS$PATH_TO_FOLDER_WIP_PROD
 SEAFO::RENV_FORMATS$ANSI_BOLD       #> "\033[1m"   (bold text; see ?RENV_FORMATS)
 
 ### 4. SEAFO Convention Area (CA) Base Map -----------------------------------------
-coMap <- SEAFO::maps_dynamic.compile.basemap.seafo(
+coMap <- SEAFO::maps_dynamic.compile.basemap(
   snMapSRC          = 1,       # 1 = ESRI Ocean, anything else = ESRI NatGeo World Map
   sbShowEEZs        = TRUE,    # African EEZ v11 overlay
   sbShowClosedAreas = TRUE     # SEAFO VME closures overlay
@@ -170,7 +170,7 @@ coMap <- SEAFO::maps_dynamic.compile.basemap.seafo(
 coMap                          # renders in the RStudio Viewer pane
 ```
 
-> **ℹ️ Base-map data path.** `maps_dynamic.compile.basemap.seafo()` reads its layers from
+> **ℹ️ Base-map data path.** `maps_dynamic.compile.basemap()` reads its layers from
 > `here::here("data", ...)`, so it expects the SEAFO project root (or any project that contains a
 > `data/` folder with the three `.rda` files) to be `here()`'s root. All other functions work from
 > anywhere.
@@ -181,8 +181,8 @@ coMap                          # renders in the RStudio Viewer pane
 
 | | Change | Detail |
 |:--|:--|:--|
-| 🗺️ **New** | `maps_dynamic.compile.basemap.seafo()` | Full Leaflet basemap: tile-provider selection, CA + EEZ + VME-closure overlays, CA area labels (`A`, `A1` … `D1`), measuring tool, scale bar, captioned layer control |
-| ✨ **New** | `maps_static.compile.basemap.seafo()` | The same base map as a **static** figure: identical arguments, layers, extent and labels, painted with base R `graphics` over a `maps` coastline, plus graticule, labelled axes, 500 km scale bar and optional legend (no tiles, no `leaflet`, no `sf`) |
+| 🗺️ **New** | `maps_dynamic.compile.basemap()` | Full Leaflet basemap: tile-provider selection, CA + EEZ + VME-closure overlays, CA area labels (`A`, `A1` … `D1`), measuring tool, scale bar, captioned layer control |
+| ✨ **New** | `maps_static.compile.basemap()` | The same base map as a **static** figure: identical arguments, layers, extent and labels, painted with base R `graphics` over a `maps` coastline, plus graticule, labelled axes, 500 km scale bar and optional legend (no tiles, no `leaflet`, no `sf`) |
 | 📦 **New data** | 3 documented spatial datasets | `dfSEAFO_CA`, `dfSEAFO_ClosedAreas`, `dfSEAFO_EEZv11` — lazily loaded (`xz`-compressed) |
 | 🔁 **Release tooling** | Delta-gated version bumping | `devs.check.code.specs()` now bumps on a **documentation delta** *or* a **code-base delta**, and writes a "Code Base Fingerprint" (md5 over `R/`, `src/`, `data/`, `tests/`, `inst/` and `man/figures/`, plus `README.md`) into the tracker |
 | 🔧 **Refactor** | `sbPatchVers` argument | `devs.patch.libr.vers.number()` can suppress its own increments so the caller decides when to bump |
@@ -227,8 +227,8 @@ A run with no delta is a true no-op — no version churn, no tracker rewrite.
 
 | Function | Description |
 |:--|:--|
-| `maps_dynamic.compile.basemap.seafo()` | Compile an interactive SEAFO Leaflet base map (CA, EEZ, VME closures, labels, controls) |
-| `maps_static.compile.basemap.seafo()` | Compile the same SEAFO base map as a static figure - base R `graphics`, `maps` coastline, graticule, 500 km scale bar, optional legend |
+| `maps_dynamic.compile.basemap()` | Compile an interactive SEAFO Leaflet base map (CA, EEZ, VME closures, labels, controls) |
+| `maps_static.compile.basemap()` | Compile the same SEAFO base map as a static figure - base R `graphics`, `maps` coastline, graticule, 500 km scale bar, optional legend |
 
 ### 🧰 CODE — code & file helpers
 

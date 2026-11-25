@@ -581,7 +581,7 @@
 
     if (rasBaseLENGTH(vsLeyLABELS_) > 0) {   # <- Draw the legend only if a layer was painted !!!
       rasGraphicsLEGEND(
-        x = "topleft", legend = vsLeyLABELS_, title = ssHeaderWCL_,
+        x = "bottomright", legend = vsLeyLABELS_, title = ssHeaderWCL_,
         fill = vsLeyFILL_, border = vsLeyBORD_,
         bty = "o", box.col = lsPalette_[["NOTE"]],
         bg = rasGrDevicesAdjustCOLOR(lsPalette_[["SEA"]], alpha.f = 0.85),

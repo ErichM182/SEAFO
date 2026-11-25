@@ -70,7 +70,7 @@
 #' info.post.func.self.id(
 #'  ssProjID = "rTestProject",
 #'  ssFuncSelfID = "rcfTextFUNC",
-#'  siFuncMode01 = 1L, sbRunSelfID = TRUE
+#'  siFuncMode01L = 1L, sbRunSelfID = TRUE
 #' )
 #'
 #'
