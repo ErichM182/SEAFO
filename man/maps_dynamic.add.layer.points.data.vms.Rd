@@ -75,25 +75,33 @@ the caption prepended to the Time control box (default: \code{"VMS Years"}). A
 trailing colon is appended automatically when the label does not already end
 in one.}
 
-\item{sbShowToggleYear}{(\link{logical}) a Boolean value that is RESERVED for a forthcoming
-per-year toggle switch (default: \code{TRUE}). The argument is currently
-internalized only: the Time control is always compiled with its check-boxes,
-so changing this value does NOT alter the map.}
+\item{sbShowToggleYear}{(\link{logical}) a Boolean value that specifies whether the Time control -
+i.e. the per-year check-boxes, which act as the MASTER CONTROL LAYER (MCL) -
+must be compiled (default: \code{TRUE}). When \code{TRUE} the control is the top-most
+control of the top-left corner and drives the toggle state of the Month, Flag
+and Vessel ID controls (see the \emph{Controls} section of \verb{@details}). When
+\code{FALSE} the control is omitted altogether, the Year filter is not applied and
+the remaining controls act independently of one another.}
 
 \item{ssVarMonth}{(\link{character}) a String or Text (i.e. \link{character}) value that specifies the
-VMS column that would drive a per-month selector (default: \code{"VMS_Month"}). The
-month selector is NOT yet implemented, so the argument is currently
-internalized only and does NOT alter the map.}
+VMS column that drives the per-month selector (default: \code{"VMS_Month"}).
+Resolution falls back to \code{"Month_Parsed"}, \code{"Month"}, \code{"MONTH"}, \code{"MON"} and
+\code{"Mon"}; the column is optional. When it cannot be found no Month control is
+compiled, whatever the value of \code{sbShowToggleMonth}. Each distinct value
+becomes one toggleable item; a missing or blank cell is presented as the
+single item \code{"(none)"} so that those records stay reachable. Month names are
+ordered calendar-wise, numeric months numerically.}
 
 \item{ssLabelVarMonth}{(\link{character}) a String or Text (i.e. \link{character}) value that specifies
-the caption that would be prepended to the month control box (default:
-\code{"VMS Month"}). The month selector is NOT yet implemented, so the argument is
-currently internalized only and does NOT alter the map.}
+the caption prepended to the Month control box (default: \code{"VMS Month"}). A
+trailing colon is appended automatically when the label does not already end
+in one.}
 
-\item{sbShowToggleMonth}{(\link{logical}) a Boolean value that is RESERVED for a forthcoming
-per-month toggle switch (default: \code{FALSE}). The month selector is NOT yet
-implemented, so the argument is currently internalized only and does NOT alter
-the map.}
+\item{sbShowToggleMonth}{(\link{logical}) a Boolean value that specifies whether the Month
+control must be compiled (default: \code{FALSE}). The control is added to the
+top-left corner BELOW the Time control, and is only compiled when the month
+column can also be resolved (see \code{ssVarMonth}). Its toggle state is
+live-linked to the Time control (i.e. the MCL).}
 
 \item{ssVarShipIDs}{(\link{character}) a String or Text (i.e. \link{character}) value that specifies
 the VMS column holding the vessel identifier (default: \code{"Ship_Name_Anon"}).
@@ -129,17 +137,22 @@ when the label does not already end in one.}
 
 \item{ssVarShipFlag}{(\link{character}) a String or Text (i.e. \link{character}) value that specifies
 the VMS column holding the vessel flag or nationality (default: \code{"Flag_Anon"}).
-The flag overlay is NOT yet implemented, so the argument is currently
-internalized only and does NOT alter the map.}
+Resolution falls back to \code{"Flag"}, \code{"FLAG"}, \code{"Nationality"}, \code{"Country"} and
+\code{"Flag_State"}; the column is optional. When it cannot be found no Flag control
+is compiled, whatever the value of \code{sbShowShipFlag}. Each distinct value
+becomes one toggleable item; a missing or blank cell is presented as the
+single item \code{"(none)"} so that those records stay reachable.}
 
 \item{ssLabelVarShipFlag}{(\link{character}) a String or Text (i.e. \link{character}) value that
-specifies the caption that would be prepended to the flag control box
-(default: \code{"Vessel Flag"}). The flag overlay is NOT yet implemented, so the
-argument is currently internalized only and does NOT alter the map.}
+specifies the caption prepended to the Flag control box (default:
+\code{"Vessel Flag"}). A trailing colon is appended automatically when the label does
+not already end in one.}
 
-\item{sbShowShipFlag}{(\link{logical}) a Boolean value that is RESERVED for a forthcoming vessel
-flag overlay (default: \code{FALSE}). The overlay is NOT yet implemented, so the
-argument is currently internalized only and does NOT alter the map.}
+\item{sbShowShipFlag}{(\link{logical}) a Boolean value that specifies whether the Vessel Flag
+control must be compiled (default: \code{FALSE}). The control is added to the
+top-right corner BETWEEN the Vessel State and the Vessel ID controls, and is
+only compiled when the flag column can also be resolved (see \code{ssVarShipFlag}).
+Its toggle state is live-linked to the Time control (i.e. the MCL).}
 
 \item{ssVarLATs}{(\link{character}) a String or Text (i.e. \link{character}) value that specifies the
 VMS column holding the latitudes (default: \code{"LAT_DeciDegree"}). The column is
@@ -184,7 +197,7 @@ internalized only and does NOT alter the map.}
 }
 \value{
 A \code{leaflet} \code{htmlwidget} object - i.e. the supplied map (\code{lmMapObj}) with the VMS \verb{<canvas>}
-overlay and its three controls attached through \code{htmlwidgets::onRender()}. Because the map is
+overlay and its controls attached through \code{htmlwidgets::onRender()}. Because the map is
 handed back, the call may be chained onto the BaseMap builder (i.e.
 \code{maps_dynamic.compile.basemap() |> maps_dynamic.add.layer.points.data.vms()}), or the result
 may be stored in an R object for later use (e.g.
@@ -195,11 +208,13 @@ A Helper Function that overlays the South East Atlantic Fisheries Organisation (
 Monitoring System (VMS) records on an \if{html}{\out{<already compiled>}} interactive \code{leaflet} BaseMap (i.e.
 one returned by \code{\link[=maps_dynamic.compile.basemap]{maps_dynamic.compile.basemap()}}). The position fixes are painted by a
 single HTML \verb{<canvas>} overlay rather than by one Leaflet layer per record, so very large
-tracks (i.e. hundreds of thousands of fixes) render smoothly. Three purpose-built controls are
-attached to the map so that the user can show/hide the points by Time (i.e. VMS Year), by
-Vessel State (i.e. steaming versus stationary) and by Vessel ID, each annotated with a live
-record count. This function was created to support the routine data-analysis work conducted by
-the Scientific Committee (SC) of the SEAFO, but may also be used as a quick "situational
+tracks (i.e. hundreds of thousands of fixes) render smoothly. Up to five purpose-built controls
+are attached to the map so that the user can show/hide the points by Time (i.e. VMS Year), by
+Month, by Vessel State (i.e. steaming versus stationary), by Vessel Flag and by Vessel ID, each
+annotated with a live record count. The Time control is the MASTER CONTROL LAYER (MCL): the
+toggle state and the counts of every other control are live-linked to the years that are
+currently active. This function was created to support the routine data-analysis work conducted
+by the Scientific Committee (SC) of the SEAFO, but may also be used as a quick "situational
 awareness" overlay in other (3rd Party) R libraries and custom R functions - as long as the
 \code{SEAFO} library is linked (i.e. previously installed and/or specified as a library dependency).
 }
@@ -209,9 +224,9 @@ awareness" overlay in other (3rd Party) R libraries and custom R functions - as 
 Every column is addressed by NAME. Each \verb{ssVar*} argument is resolved in three passes: an exact
 match, then a case-insensitive match, then a fixed list of common aliases. A 1-based column
 index supplied as text (i.e. \code{"3"}) is also accepted. Latitude, longitude, date, time, year and
-vessel identifier are mandatory; speed and heading are optional and degrade gracefully when
-absent. Rows with a missing latitude or longitude are discarded, and the function stops with an
-informative error when no usable row remains.
+vessel identifier are mandatory; speed, heading, month and flag are optional and degrade
+gracefully when absent. Rows with a missing latitude or longitude are discarded, and the
+function stops with an informative error when no usable row remains.
 }
 
 \subsection{Rendering model}{
@@ -235,20 +250,44 @@ filled circles.
 
 \subsection{Controls}{
 
-Three check-box controls are appended to the map, each with a live \code{(n: ...)} count. The Time
-and Vessel ID controls also carry a "Toggle ALL" master switch:
+Up to five check-box controls are appended to the map, each with a live \code{(n: ...)} count. The
+Time, Month, Flag and Vessel ID controls also carry a "Toggle ALL" master switch:
 \itemize{
-\item \strong{Time} (i.e. \code{ssVarYear}) - top-left, a master switch plus one check-box per year;
+\item \strong{Time} (i.e. \code{ssVarYear}) - top-left, top-most, a master switch plus one check-box per
+year. This is the \strong{MASTER CONTROL LAYER (MCL)}; it is compiled when
+\code{sbShowToggleYear = TRUE};
+\item \strong{Month} (i.e. \code{ssVarMonth}) - top-left, directly UNDER the Time control, a master switch
+plus one check-box per month. It is compiled only when \code{sbShowToggleMonth = TRUE} and the
+month column can be resolved;
 \item \strong{Vessel State} (i.e. \code{ssVarShipSpeed}) - top-right, one check-box for "Steaming" and one
 for "Stationary" (no master switch), together with the \code{snSpeedSplit} legend;
-\item \strong{Vessel ID} (i.e. \code{ssVarShipIDs}) - top-right, a master switch plus one check-box per
-vessel, prefixed with that vessel's colour swatch.
+\item \strong{Vessel Flag} (i.e. \code{ssVarShipFlag}) - top-right, BETWEEN Vessel State and Vessel ID, a
+master switch plus one check-box per flag. It is compiled only when
+\code{sbShowShipFlag = TRUE} and the flag column can be resolved;
+\item \strong{Vessel ID} (i.e. \code{ssVarShipIDs}) - top-right, bottom-most, a master switch plus one
+check-box per vessel, prefixed with that vessel's colour swatch.
 }
+}
+
+\subsection{Master Control Layer live-linkage}{
+
+The Time control is the MCL, and every other control is live-linked to it in two directions:
+\itemize{
+\item \strong{Toggle state (master to slaves)} - whenever a year check-box (or the Time master switch)
+changes, the Month, Flag and Vessel ID check-boxes are re-ticked so that only the months,
+flags and vessels actually recorded in the selected years remain active;
+\item \strong{Statistics (cross-filtering)} - every control reports each item's \code{(n: ...)} count against
+the current selection of all the OTHER controls, so switching a year re-computes the Month,
+Flag, State and Vessel ID counts at once.
+}
+
+A control whose items are ALL checked imposes no constraint, and a control with NO item checked
+hides every record. When \code{sbShowToggleYear = FALSE} the MCL is absent: the Year filter is not
+applied and the remaining controls act independently of one another.
 
 The controls are rendered as native DOM elements and do NOT overwrite any existing Leaflet
 layer control, so the map returned by \code{\link[=maps_dynamic.compile.basemap]{maps_dynamic.compile.basemap()}} keeps its own
-control box. Toggling a year re-synchronises the Vessel ID check-boxes to the vessels that were
-actually recorded in the selected years.
+control box.
 }
 
 \subsection{Tooltip}{
@@ -278,6 +317,15 @@ coMap <- SEAFO::maps_dynamic.add.layer.points.data.vms(lmMapObj = coMap)
 coMap            # <- Renders the BaseMap + the VMS overlay in the Viewer pane !!!
 
 
+### Compile & overlay in one go, with ALL five controls (Year drives the rest) ...
+SEAFO::maps_dynamic.compile.basemap() |>
+  SEAFO::maps_dynamic.add.layer.points.data.vms(
+    sbShowToggleYear  = TRUE,    # <- MASTER CONTROL LAYER (top-left) ...
+    sbShowToggleMonth = TRUE,    # <- Month CL, directly under the Year CL ...
+    sbShowShipFlag    = TRUE     # <- Flag CL, between Vessel State and Vessel ID ...
+  )
+
+
 ### Compile & overlay in one go, showing ONLY the stationary (fishing) records ...
 SEAFO::maps_dynamic.compile.basemap() |>
   SEAFO::maps_dynamic.add.layer.points.data.vms(sbPlotOnlyFishingVMS = TRUE)
@@ -291,6 +339,8 @@ SEAFO::maps_dynamic.add.layer.points.data.vms(
   ssVarLONs      = "Lon_DD",                   # <- Column holding the longitudes ...
   ssVarShipIDs   = "Vessel_Name",              # <- Column holding the vessel IDs ...
   ssVarShipSpeed = "Speed_Num",                # <- Column holding the speed (knots) ...
+  ssVarMonth     = "Month",                    # <- Column holding the months ...
+  ssVarShipFlag  = "Flag",                     # <- Column holding the flags ...
   snSpeedSplit   = 3.0,                        # <- Fishing / steaming threshold ...
   vsShipColors   = c("#1B9E77", "#D95F02", "#7570B3")
 )

@@ -9,11 +9,13 @@
 #' Monitoring System (VMS) records on an <already compiled> interactive `leaflet` BaseMap (i.e.
 #' one returned by [SEAFO::maps_dynamic.compile.basemap()]). The position fixes are painted by a
 #' single HTML `<canvas>` overlay rather than by one Leaflet layer per record, so very large
-#' tracks (i.e. hundreds of thousands of fixes) render smoothly. Three purpose-built controls are
-#' attached to the map so that the user can show/hide the points by Time (i.e. VMS Year), by
-#' Vessel State (i.e. steaming versus stationary) and by Vessel ID, each annotated with a live
-#' record count. This function was created to support the routine data-analysis work conducted by
-#' the Scientific Committee (SC) of the SEAFO, but may also be used as a quick "situational
+#' tracks (i.e. hundreds of thousands of fixes) render smoothly. Up to five purpose-built controls
+#' are attached to the map so that the user can show/hide the points by Time (i.e. VMS Year), by
+#' Month, by Vessel State (i.e. steaming versus stationary), by Vessel Flag and by Vessel ID, each
+#' annotated with a live record count. The Time control is the MASTER CONTROL LAYER (MCL): the
+#' toggle state and the counts of every other control are live-linked to the years that are
+#' currently active. This function was created to support the routine data-analysis work conducted
+#' by the Scientific Committee (SC) of the SEAFO, but may also be used as a quick "situational
 #' awareness" overlay in other (3rd Party) R libraries and custom R functions - as long as the
 #' `SEAFO` library is linked (i.e. previously installed and/or specified as a library dependency).
 #'
@@ -54,22 +56,30 @@
 #'                the caption prepended to the Time control box (default: `"VMS Years"`). A
 #'                trailing colon is appended automatically when the label does not already end
 #'                in one.
-#' @param sbShowToggleYear ([logical]) a Boolean value that is RESERVED for a forthcoming
-#'                per-year toggle switch (default: `TRUE`). The argument is currently
-#'                internalized only: the Time control is always compiled with its check-boxes,
-#'                so changing this value does NOT alter the map.
+#' @param sbShowToggleYear ([logical]) a Boolean value that specifies whether the Time control -
+#'                i.e. the per-year check-boxes, which act as the MASTER CONTROL LAYER (MCL) -
+#'                must be compiled (default: `TRUE`). When `TRUE` the control is the top-most
+#'                control of the top-left corner and drives the toggle state of the Month, Flag
+#'                and Vessel ID controls (see the *Controls* section of `@details`). When
+#'                `FALSE` the control is omitted altogether, the Year filter is not applied and
+#'                the remaining controls act independently of one another.
 #' @param ssVarMonth ([character]) a String or Text (i.e. [character]) value that specifies the
-#'                VMS column that would drive a per-month selector (default: `"VMS_Month"`). The
-#'                month selector is NOT yet implemented, so the argument is currently
-#'                internalized only and does NOT alter the map.
+#'                VMS column that drives the per-month selector (default: `"VMS_Month"`).
+#'                Resolution falls back to `"Month_Parsed"`, `"Month"`, `"MONTH"`, `"MON"` and
+#'                `"Mon"`; the column is optional. When it cannot be found no Month control is
+#'                compiled, whatever the value of `sbShowToggleMonth`. Each distinct value
+#'                becomes one toggleable item; a missing or blank cell is presented as the
+#'                single item `"(none)"` so that those records stay reachable. Month names are
+#'                ordered calendar-wise, numeric months numerically.
 #' @param ssLabelVarMonth ([character]) a String or Text (i.e. [character]) value that specifies
-#'                the caption that would be prepended to the month control box (default:
-#'                `"VMS Month"`). The month selector is NOT yet implemented, so the argument is
-#'                currently internalized only and does NOT alter the map.
-#' @param sbShowToggleMonth ([logical]) a Boolean value that is RESERVED for a forthcoming
-#'                per-month toggle switch (default: `FALSE`). The month selector is NOT yet
-#'                implemented, so the argument is currently internalized only and does NOT alter
-#'                the map.
+#'                the caption prepended to the Month control box (default: `"VMS Month"`). A
+#'                trailing colon is appended automatically when the label does not already end
+#'                in one.
+#' @param sbShowToggleMonth ([logical]) a Boolean value that specifies whether the Month
+#'                control must be compiled (default: `FALSE`). The control is added to the
+#'                top-left corner BELOW the Time control, and is only compiled when the month
+#'                column can also be resolved (see `ssVarMonth`). Its toggle state is
+#'                live-linked to the Time control (i.e. the MCL).
 #' @param ssVarShipIDs ([character]) a String or Text (i.e. [character]) value that specifies
 #'                the VMS column holding the vessel identifier (default: `"Ship_Name_Anon"`).
 #'                The column is REQUIRED. Resolution falls back to `"Vessel_Name"`, `"Name"` and
@@ -99,15 +109,20 @@
 #'                when the label does not already end in one.
 #' @param ssVarShipFlag ([character]) a String or Text (i.e. [character]) value that specifies
 #'                the VMS column holding the vessel flag or nationality (default: `"Flag_Anon"`).
-#'                The flag overlay is NOT yet implemented, so the argument is currently
-#'                internalized only and does NOT alter the map.
+#'                Resolution falls back to `"Flag"`, `"FLAG"`, `"Nationality"`, `"Country"` and
+#'                `"Flag_State"`; the column is optional. When it cannot be found no Flag control
+#'                is compiled, whatever the value of `sbShowShipFlag`. Each distinct value
+#'                becomes one toggleable item; a missing or blank cell is presented as the
+#'                single item `"(none)"` so that those records stay reachable.
 #' @param ssLabelVarShipFlag ([character]) a String or Text (i.e. [character]) value that
-#'                specifies the caption that would be prepended to the flag control box
-#'                (default: `"Vessel Flag"`). The flag overlay is NOT yet implemented, so the
-#'                argument is currently internalized only and does NOT alter the map.
-#' @param sbShowShipFlag ([logical]) a Boolean value that is RESERVED for a forthcoming vessel
-#'                flag overlay (default: `FALSE`). The overlay is NOT yet implemented, so the
-#'                argument is currently internalized only and does NOT alter the map.
+#'                specifies the caption prepended to the Flag control box (default:
+#'                `"Vessel Flag"`). A trailing colon is appended automatically when the label does
+#'                not already end in one.
+#' @param sbShowShipFlag ([logical]) a Boolean value that specifies whether the Vessel Flag
+#'                control must be compiled (default: `FALSE`). The control is added to the
+#'                top-right corner BETWEEN the Vessel State and the Vessel ID controls, and is
+#'                only compiled when the flag column can also be resolved (see `ssVarShipFlag`).
+#'                Its toggle state is live-linked to the Time control (i.e. the MCL).
 #' @param ssVarLATs ([character]) a String or Text (i.e. [character]) value that specifies the
 #'                VMS column holding the latitudes (default: `"LAT_DeciDegree"`). The column is
 #'                REQUIRED. Resolution falls back to `"Lat_DD"`, `"LATs"`, `"LAT"`, `"LATS"` and
@@ -146,7 +161,7 @@
 #'
 #' @returns
 #' A `leaflet` `htmlwidget` object - i.e. the supplied map (`lmMapObj`) with the VMS `<canvas>`
-#' overlay and its three controls attached through `htmlwidgets::onRender()`. Because the map is
+#' overlay and its controls attached through `htmlwidgets::onRender()`. Because the map is
 #' handed back, the call may be chained onto the BaseMap builder (i.e.
 #' `maps_dynamic.compile.basemap() |> maps_dynamic.add.layer.points.data.vms()`), or the result
 #' may be stored in an R object for later use (e.g.
@@ -158,9 +173,9 @@
 #' Every column is addressed by NAME. Each `ssVar*` argument is resolved in three passes: an exact
 #' match, then a case-insensitive match, then a fixed list of common aliases. A 1-based column
 #' index supplied as text (i.e. `"3"`) is also accepted. Latitude, longitude, date, time, year and
-#' vessel identifier are mandatory; speed and heading are optional and degrade gracefully when
-#' absent. Rows with a missing latitude or longitude are discarded, and the function stops with an
-#' informative error when no usable row remains.
+#' vessel identifier are mandatory; speed, heading, month and flag are optional and degrade
+#' gracefully when absent. Rows with a missing latitude or longitude are discarded, and the
+#' function stops with an informative error when no usable row remains.
 #'
 #' ### Rendering model
 #' The fixes are NOT created as individual Leaflet layers. Instead the whole frame is serialised
@@ -178,19 +193,40 @@
 #' filled circles.
 #'
 #' ### Controls
-#' Three check-box controls are appended to the map, each with a live `(n: ...)` count. The Time
-#' and Vessel ID controls also carry a "Toggle ALL" master switch:
+#' Up to five check-box controls are appended to the map, each with a live `(n: ...)` count. The
+#' Time, Month, Flag and Vessel ID controls also carry a "Toggle ALL" master switch:
 #'
-#' * **Time** (i.e. `ssVarYear`) - top-left, a master switch plus one check-box per year;
+#' * **Time** (i.e. `ssVarYear`) - top-left, top-most, a master switch plus one check-box per
+#'   year. This is the **MASTER CONTROL LAYER (MCL)**; it is compiled when
+#'   `sbShowToggleYear = TRUE`;
+#' * **Month** (i.e. `ssVarMonth`) - top-left, directly UNDER the Time control, a master switch
+#'   plus one check-box per month. It is compiled only when `sbShowToggleMonth = TRUE` and the
+#'   month column can be resolved;
 #' * **Vessel State** (i.e. `ssVarShipSpeed`) - top-right, one check-box for "Steaming" and one
 #'   for "Stationary" (no master switch), together with the `snSpeedSplit` legend;
-#' * **Vessel ID** (i.e. `ssVarShipIDs`) - top-right, a master switch plus one check-box per
-#'   vessel, prefixed with that vessel's colour swatch.
+#' * **Vessel Flag** (i.e. `ssVarShipFlag`) - top-right, BETWEEN Vessel State and Vessel ID, a
+#'   master switch plus one check-box per flag. It is compiled only when
+#'   `sbShowShipFlag = TRUE` and the flag column can be resolved;
+#' * **Vessel ID** (i.e. `ssVarShipIDs`) - top-right, bottom-most, a master switch plus one
+#'   check-box per vessel, prefixed with that vessel's colour swatch.
+#'
+#' ### Master Control Layer live-linkage
+#' The Time control is the MCL, and every other control is live-linked to it in two directions:
+#'
+#' * **Toggle state (master to slaves)** - whenever a year check-box (or the Time master switch)
+#'   changes, the Month, Flag and Vessel ID check-boxes are re-ticked so that only the months,
+#'   flags and vessels actually recorded in the selected years remain active;
+#' * **Statistics (cross-filtering)** - every control reports each item's `(n: ...)` count against
+#'   the current selection of all the OTHER controls, so switching a year re-computes the Month,
+#'   Flag, State and Vessel ID counts at once.
+#'
+#' A control whose items are ALL checked imposes no constraint, and a control with NO item checked
+#' hides every record. When `sbShowToggleYear = FALSE` the MCL is absent: the Year filter is not
+#' applied and the remaining controls act independently of one another.
 #'
 #' The controls are rendered as native DOM elements and do NOT overwrite any existing Leaflet
 #' layer control, so the map returned by [SEAFO::maps_dynamic.compile.basemap()] keeps its own
-#' control box. Toggling a year re-synchronises the Vessel ID check-boxes to the vessels that were
-#' actually recorded in the selected years.
+#' control box.
 #'
 #' ### Tooltip
 #' Hovering near a record (i.e. within 15 pixels) pops up a custom DOM tooltip reporting the
@@ -216,6 +252,15 @@
 #' coMap            # <- Renders the BaseMap + the VMS overlay in the Viewer pane !!!
 #'
 #'
+#' ### Compile & overlay in one go, with ALL five controls (Year drives the rest) ...
+#' SEAFO::maps_dynamic.compile.basemap() |>
+#'   SEAFO::maps_dynamic.add.layer.points.data.vms(
+#'     sbShowToggleYear  = TRUE,    # <- MASTER CONTROL LAYER (top-left) ...
+#'     sbShowToggleMonth = TRUE,    # <- Month CL, directly under the Year CL ...
+#'     sbShowShipFlag    = TRUE     # <- Flag CL, between Vessel State and Vessel ID ...
+#'   )
+#'
+#'
 #' ### Compile & overlay in one go, showing ONLY the stationary (fishing) records ...
 #' SEAFO::maps_dynamic.compile.basemap() |>
 #'   SEAFO::maps_dynamic.add.layer.points.data.vms(sbPlotOnlyFishingVMS = TRUE)
@@ -229,6 +274,8 @@
 #'   ssVarLONs      = "Lon_DD",                   # <- Column holding the longitudes ...
 #'   ssVarShipIDs   = "Vessel_Name",              # <- Column holding the vessel IDs ...
 #'   ssVarShipSpeed = "Speed_Num",                # <- Column holding the speed (knots) ...
+#'   ssVarMonth     = "Month",                    # <- Column holding the months ...
+#'   ssVarShipFlag  = "Flag",                     # <- Column holding the flags ...
 #'   snSpeedSplit   = 3.0,                        # <- Fishing / steaming threshold ...
 #'   vsShipColors   = c("#1B9E77", "#D95F02", "#7570B3")
 #' )
@@ -340,6 +387,12 @@
     ssVarShipCourse_ <- rcf_resolve.var.ids(
       ssVarShipCourse, base::c('Ships_CRS', 'Ship_Crs', 'Course (degrees)'), FALSE, 'Ship Course'
     );
+    ssVarMonth_ <- rcf_resolve.var.ids(
+      ssVarMonth, base::c('Month_Parsed', 'Month', 'MONTH', 'MON', 'Mon'), FALSE, 'VMS Month'
+    );
+    ssVarShipFlag_ <- rcf_resolve.var.ids(
+      ssVarShipFlag, base::c('Flag', 'FLAG', 'Nationality', 'Country', 'Flag_State'), FALSE, 'Vessel Flag'
+    );
 
     vsReqCols_ <- base::c(ssVarLATs_, ssVarLONs_);
     vsMissCols_ <- base::setdiff(vsReqCols_, base::names(dfVMS_));   # <- Identify mising Vars !!!
@@ -355,6 +408,10 @@
     sbHasTime_   <- ssVarTime_ %in% base::names(dfVMS_);
     sbHasSpeed_  <- ssVarShipSpeed_ %in% base::names(dfVMS_);
     sbHasCourse_ <- ssVarShipCourse_ %in% base::names(dfVMS_);
+
+    # Month & Flag Control Layer columns (optional; the CL is skipped when absent)
+    sbHasMonth_  <- !base::is.null(ssVarMonth_) && ssVarMonth_ %in% base::names(dfVMS_);
+    sbHasFlag_   <- !base::is.null(ssVarShipFlag_) && ssVarShipFlag_ %in% base::names(dfVMS_);
 
     # Filter to records with valid coordinates ...
     dfVMS_ <- dfVMS_[!base::is.na(dfVMS_[[ssVarLATs_]]) & !base::is.na(dfVMS_[[ssVarLONs_]]), ]
@@ -392,6 +449,57 @@
     vsTab <- base::table(dfVMS_[[ssVarShipIDs_]])
     vesselCountsRaw <- base::as.numeric(vsTab[base::as.character(vsLevelsShipIDs_)])
     vesselCounts <- base::prettyNum(vesselCountsRaw, big.mark = ",", scientific = FALSE)
+
+    ####--- Month & Flag Control Layer (CL) levels and counts ---####
+    # Source values for the two new CLs. Missing / blank cells collapse into a
+    # single '(none)' item so that every record stays reachable by the toggles.
+    rcf_Normalise_Level_Vals <- function(ssCol) {
+      vsVals_ <- base::as.character(dfVMS_[[ssCol]]);
+      vsVals_[base::is.na(vsVals_) | !base::nzchar(base::trimws(vsVals_))] <- '(none)';
+      vsVals_;
+    }
+
+    # Order levels calendar-wise for month names, numerically for numbers and
+    # alphabetically otherwise (so 'January' precedes 'February', not 'April').
+    # A '(none)' level is always placed last.
+    rcf_Sort_Levels <- function(vsVals_) {
+      vsU_ <- base::sort(base::unique(vsVals_));
+      if (base::length(vsU_) < 2) base::return(vsU_);
+      sbNone_ <- vsU_ == '(none)';
+      vsRest_ <- vsU_[!sbNone_];
+      vsTail_ <- vsU_[sbNone_];
+      if (base::length(vsRest_) > 0) {
+        vsThree_ <- base::tolower(base::substr(base::trimws(vsRest_), 1, 3));
+        vsMonKeys_ <- base::c('jan', 'feb', 'mar', 'apr', 'may', 'jun',
+                              'jul', 'aug', 'sep', 'oct', 'nov', 'dec');
+        vsMonIdx_ <- base::match(vsThree_, vsMonKeys_);
+        if (!base::any(base::is.na(vsMonIdx_))) {
+          base::return(base::c(vsRest_[base::order(vsMonIdx_)], vsTail_));
+        }
+        vnNum_ <- base::suppressWarnings(base::as.numeric(vsRest_));
+        if (!base::any(base::is.na(vnNum_))) {
+          base::return(base::c(vsRest_[base::order(vnNum_)], vsTail_));
+        }
+      }
+      base::c(vsRest_, vsTail_);
+    }
+
+    vsMonthVals_ <- base::rep('(none)', base::nrow(dfVMS_));
+    vsFlagVals_  <- base::rep('(none)', base::nrow(dfVMS_));
+    if (sbHasMonth_) vsMonthVals_ <- rcf_Normalise_Level_Vals(ssVarMonth_);
+    if (sbHasFlag_)  vsFlagVals_  <- rcf_Normalise_Level_Vals(ssVarShipFlag_);
+
+    vsLevelsMonths_ <- rcf_Sort_Levels(vsMonthVals_);
+    vsLevelsFlags_  <- rcf_Sort_Levels(vsFlagVals_);
+
+    monthCounts <- base::prettyNum(
+      base::as.numeric(base::table(vsMonthVals_)[vsLevelsMonths_]),
+      big.mark = ",", scientific = FALSE
+    )
+    flagCounts <- base::prettyNum(
+      base::as.numeric(base::table(vsFlagVals_)[vsLevelsFlags_]),
+      big.mark = ",", scientific = FALSE
+    )
 
     # Vessel color palette (categorical, handles any number of vsLevelsShipIDs_)
     vsShipColors_ <- NULL;
@@ -465,6 +573,8 @@
       base::data.frame(
         v   = base::as.character(dfVMS_[[ssVarShipIDs_]]),
         y   = base::as.character(dfVMS_[[ssVarYear_]]),
+        m   = vsMonthVals_,
+        f   = vsFlagVals_,
         lat = base::as.numeric(dfVMS_[[ssVarLATs_]]),
         lng = base::as.numeric(dfVMS_[[ssVarLONs_]]),
         t   = if (sbHasTime_) base::as.character(dfVMS_[[ssVarTime_]]) else "",
@@ -501,6 +611,7 @@
       for (j in base::seq_along(items)) {
         item <- items[j]
         safeItem <- base::gsub("'", "\\'", base::as.character(item))
+        safeItem <- base::gsub('"', '&quot;', safeItem)   # <- keep the "data-val" attribute well-formed
         dot <- if (!base::is.null(colors) && j <= base::length(colors) && !base::is.na(colors[j])) {
           base::paste0('<span style="color:', colors[j], ';">&#9679;</span>')
         } else ''
@@ -517,6 +628,8 @@
     }
 
     csYearHTML_RAW_   <- rfc_BuildItems_HTML(vsLevelsYears_, NULL, yearCounts);
+    csMonthHTML_RAW_  <- rfc_BuildItems_HTML(vsLevelsMonths_, NULL, monthCounts);
+    csFlagHTML_RAW_   <- rfc_BuildItems_HTML(vsLevelsFlags_, NULL, flagCounts);
     csVesselsHTML_RAW_ <- rfc_BuildItems_HTML(vsLevelsShipIDs_, vsShipColors_, vesselCounts);
 
     # Escape characters for JS string embedding
@@ -543,11 +656,47 @@
     }
 
     csLabelTime_  <- rcf_Escape_JS_String(rcf_Append_Control_Colon(ssLabelVarYear));
+    csLabelMonth_ <- rcf_Escape_JS_String(rcf_Append_Control_Colon(ssLabelVarMonth));
     csLabelVesselState_ <- rcf_Escape_JS_String(rcf_Append_Control_Colon(ssLabelVarSpeed));
+    csLabelVesselFlag_  <- rcf_Escape_JS_String(rcf_Append_Control_Colon(ssLabelVarShipFlag));
     csLabelVesselID_  <- rcf_Escape_JS_String(rcf_Append_Control_Colon(ssLabelVarShipIDs));
 
     csYearHTML_CLEAN_    <- rcf_Escape_JS(csYearHTML_RAW_);
+    csMonthHTML_CLEAN_   <- rcf_Escape_JS(csMonthHTML_RAW_);
+    csFlagHTML_CLEAN_    <- rcf_Escape_JS(csFlagHTML_RAW_);
     csVesselsHTML_CLEAN_ <- rcf_Escape_JS(csVesselsHTML_RAW_);
+
+    ####--- Assemble the Control Layer (CL) creation calls ---####
+    # Placement order matters: Leaflet stacks controls of the same corner in the
+    # order they are added, so the Month CL lands UNDER the Year CL (topleft) and
+    # the Flag CL lands BETWEEN Vessel State and Vessel ID (topright).
+    csControlCalls_ <- base::paste0(
+      if (base::isTRUE(sbShowToggleYear)) {
+        base::paste0(
+          'makeControl("ctrl-vms-time", "', csLabelTime_, '", "',
+          csYearHTML_CLEAN_, '", "topleft");\n'
+        )
+      } else '',
+      if (base::isTRUE(sbShowToggleMonth) && sbHasMonth_) {
+        base::paste0(
+          'makeControl("ctrl-vms-month", "', csLabelMonth_, '", "',
+          csMonthHTML_CLEAN_, '", "topleft");\n'
+        )
+      } else '',
+      base::paste0(
+        'makeControl("ctrl-vms-state", "', csLabelVesselState_, '", stateHtml, "topright");\n'
+      ),
+      if (base::isTRUE(sbShowShipFlag) && sbHasFlag_) {
+        base::paste0(
+          'makeControl("ctrl-vms-flag", "', csLabelVesselFlag_, '", "',
+          csFlagHTML_CLEAN_, '", "topright");\n'
+        )
+      } else '',
+      base::paste0(
+        'makeControl("ctrl-vms-vessel-id", "', csLabelVesselID_, '", "',
+        csVesselsHTML_CLEAN_, '", "topright");\n'
+      )
+    );
 
     ####--- Inject JS that creates Canvas-based VMS renderer + native controls ---####
     jsCode <- base::paste0('
@@ -568,12 +717,119 @@
         return false;
       }
 
+      // --- Control Layer (CL) registry ---
+      // The YEAR CL is the MASTER CONTROL LAYER (MCL): its toggle state drives the
+      // toggle state of every other CL, and every CL reports counts against the
+      // current selection of all the OTHER CLs (live cross-filtering).
+      var vmsCLs = [
+        { id: "ctrl-vms-time",      key: "y",  sel: ".vms-cb",       master: true  },
+        { id: "ctrl-vms-month",     key: "m",  sel: ".vms-cb",       derived: true },
+        { id: "ctrl-vms-state",     key: "st", sel: ".vms-cb-state", master: false },
+        { id: "ctrl-vms-flag",      key: "f",  sel: ".vms-cb",       derived: true },
+        { id: "ctrl-vms-vessel-id", key: "v",  sel: ".vms-cb",       derived: true }
+      ];
+
+      // Value of record `d` in the dimension represented by the CL `cl`.
+      function clValue(cl, d) {
+        if (cl.id === "ctrl-vms-state") return getIsSteaming(d) ? "steaming" : "stationary";
+        return d[cl.key];
+      }
+
+      // Read the checked items of one CL. Returns null when the CL is absent or
+      // when every item is checked (i.e. "no constraint"); otherwise a hash.
+      function readSelection(cl) {
+        var root = document.getElementById(cl.id);
+        if (!root) return null;
+        var cbs = root.querySelectorAll(cl.sel);
+        var sel = Object.create(null), n = 0, k = 0;
+        for (var i = 0; i < cbs.length; i++) {
+          n++;
+          if (cbs[i].checked) { sel[cbs[i].getAttribute("data-val")] = true; k++; }
+        }
+        if (n === 0 || k === n) return null;
+        return sel;
+      }
+
+      // Snapshot of every CL selection; `excludeId` is ignored (used when a CL
+      // reports its own per-item counts against the other CLs only).
+      function computeSelections(excludeId) {
+        var out = Object.create(null);
+        for (var i = 0; i < vmsCLs.length; i++) {
+          out[vmsCLs[i].id] = (vmsCLs[i].id === excludeId) ? null : readSelection(vmsCLs[i]);
+        }
+        return out;
+      }
+
+      // Snapshot used when `cl` reports its OWN per-item counts. A CL never filters
+      // its own counts, and the MASTER also ignores the CLs that it drives (Month,
+      // Flag and Vessel ID mirror the master\'s own year selection, so including
+      // them would make the master\'s counts circular - unticking a year would
+      // drive that year\'s own count to zero).
+      function selectionsFor(cl) {
+        var out = Object.create(null);
+        for (var i = 0; i < vmsCLs.length; i++) {
+          var o = vmsCLs[i];
+          if (o.id === cl.id || (cl.master && o.derived)) { out[o.id] = null; continue; }
+          out[o.id] = readSelection(o);
+        }
+        return out;
+      }
+
+      // Does record `d` survive every CL in the snapshot `sels`?
+      function passesLayers(d, sels) {
+        for (var i = 0; i < vmsCLs.length; i++) {
+          var cl = vmsCLs[i];
+          // Static filter: sbPlotOnlyFishingVMS excludes steaming records outright.
+          if (cl.id === "ctrl-vms-state" && sbPlotOnlyFishingVMS && getIsSteaming(d)) return false;
+          var s = sels ? sels[cl.id] : null;
+          if (s == null) continue;
+          var v = clValue(cl, d);
+          if (v == null || s[v] !== true) return false;
+        }
+        return true;
+      }
+
+      // Re-tick the slave CLs so that they mirror the year selection exactly:
+      // only the months / flags / vessels actually recorded in the selected
+      // years stay active. This is the MASTER -> SLAVE live-link.
+      function relinkToMaster() {
+        var root = document.getElementById("ctrl-vms-time");
+        if (!root) return;
+        var yCbs = root.querySelectorAll(".vms-cb");
+        if (yCbs.length === 0) return;
+        var selYears = Object.create(null), allYears = true;
+        for (var i = 0; i < yCbs.length; i++) {
+          if (yCbs[i].checked) selYears[yCbs[i].getAttribute("data-val")] = true;
+          else allYears = false;
+        }
+        var live = { m: Object.create(null), f: Object.create(null), v: Object.create(null) };
+        for (var j = 0; j < vmsData.length; j++) {
+          var d = vmsData[j];
+          if (!allYears && selYears[d.y] !== true) continue;
+          if (d.m != null) live.m[d.m] = true;
+          if (d.f != null) live.f[d.f] = true;
+          if (d.v != null) live.v[d.v] = true;
+        }
+        var slaves = [
+          { id: "ctrl-vms-month",      k: "m" },
+          { id: "ctrl-vms-flag",       k: "f" },
+          { id: "ctrl-vms-vessel-id",  k: "v" }
+        ];
+        for (var s = 0; s < slaves.length; s++) {
+          var sRoot = document.getElementById(slaves[s].id);
+          if (!sRoot) continue;
+          var sCbs = sRoot.querySelectorAll(".vms-cb");
+          for (var c = 0; c < sCbs.length; c++) {
+            sCbs[c].checked = live[slaves[s].k][sCbs[c].getAttribute("data-val")] === true;
+          }
+        }
+      }
+
       // --- Canvas-based rendering layer for 208k+ points ---
       var VMSCanvas = L.Layer.extend({
         initialize: function(data) {
           this._data = data;
-          this._filterVessels = null;
-          this._filterYears = null;
+          this._sel = null;              // <- per-Control-Layer selection map (null = no constraint)
           this._filterSteaming = true;
           this._filterStationary = true;
         },
@@ -615,18 +871,15 @@
 
           ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-          var fV = this._filterVessels, fY = this._filterYears;
+          var sels = this._sel, fSt = this._filterSteaming, fSg = this._filterStationary;
           for (var i = 0, n = data.length; i < n; i++) {
             var d = data[i];
-            if (fV && fV.indexOf(d.v) < 0) continue;
-            if (fY && fY.indexOf(d.y) < 0) continue;
             if (d.lat < sw.lat || d.lat > ne.lat || d.lng < sw.lng || d.lng > ne.lng) continue;
-            // Vessel State filter: skip based on Steaming/Stationary checkboxes
+            // Per-Control-Layer selection (Year = master, Month, State, Flag, Vessel ID)
+            if (!passesLayers(d, sels)) continue;
             var isSteaming = getIsSteaming(d);
-            // sbPlotOnlyFishingVMS: static filter, skips all steaming points regardless of checkbox
-            if (sbPlotOnlyFishingVMS && isSteaming) continue;
-            if (isSteaming && !this._filterSteaming) continue;
-            if (!isSteaming && !this._filterStationary) continue;
+            if (isSteaming && !fSt) continue;
+            if (!isSteaming && !fSg) continue;
             var pt = map.latLngToContainerPoint(L.latLng(d.lat, d.lng));
             ctx.fillStyle = d.c;
             ctx.globalAlpha = d.o;
@@ -658,9 +911,8 @@
           }
         },
 
-        setFilter: function(vsLevelsShipIDs_, vsLevelsYears_, steaming, stationary) {
-          this._filterVessels = vsLevelsShipIDs_;
-          this._filterYears = vsLevelsYears_;
+        setFilter: function(sels, steaming, stationary) {
+          this._sel = sels;
           if (steaming !== undefined) this._filterSteaming = steaming;
           if (stationary !== undefined) this._filterStationary = stationary;
           this._draw();
@@ -702,90 +954,64 @@
         \'<input type="checkbox" class="vms-cb-state" data-val="stationary" style="margin:0;vertical-align:baseline;" checked> \' +
         \'</span>\' +
         \'Stationary <span class="vms-count" style="font-weight:normal;color:#888;"></span></label>\';
-      makeControl("ctrl-vms-state", "', csLabelVesselState_, '", stateHtml, "topright");
-      makeControl("ctrl-vms-time", "', csLabelTime_, '", "', csYearHTML_CLEAN_, '", "topleft");
-      makeControl("ctrl-vms-vessel-id", "', csLabelVesselID_, '", "', csVesselsHTML_CLEAN_, '", "topright");
+      ', csControlCalls_, '
 
-      // --- Apply filter: collect active values and redraw canvas ---
+      // --- Apply the current CL selection to the canvas and refresh every CL ---
       function applyFilters() {
-        var vList = [], yList = [];
-        var vCbs = document.querySelectorAll("#ctrl-vms-vessel-id .vms-cb:checked");
-        for (var i = 0; i < vCbs.length; i++) vList.push(vCbs[i].getAttribute("data-val"));
-        var yCbs = document.querySelectorAll("#ctrl-vms-time .vms-cb:checked");
-        for (var i = 0; i < yCbs.length; i++) yList.push(yCbs[i].getAttribute("data-val"));
-        var vTotal = document.querySelectorAll("#ctrl-vms-vessel-id .vms-cb").length;
-        var yTotal = document.querySelectorAll("#ctrl-vms-time .vms-cb").length;
-        var steamingCb = document.querySelector("#ctrl-vms-state .vms-cb-state[data-val=steaming]");
-        var stationaryCb = document.querySelector("#ctrl-vms-state .vms-cb-state[data-val=stationary]");
+        var steamCb = document.querySelector("#ctrl-vms-state .vms-cb-state[data-val=steaming]");
+        var statCb  = document.querySelector("#ctrl-vms-state .vms-cb-state[data-val=stationary]");
         vmsLayer.setFilter(
-          vList.length === vTotal ? null : (vList.length > 0 ? vList : []),
-          yList.length === yTotal ? null : (yList.length > 0 ? yList : []),
-          steamingCb ? steamingCb.checked : true,
-          stationaryCb ? stationaryCb.checked : true
+          computeSelections(null),
+          steamCb ? steamCb.checked : true,
+          statCb  ? statCb.checked  : true
         );
         syncMasters();
+        updateCounts();
+      }
 
-        // --- Update State-CL counts (filtered by Time + Vessel-ID) ---
-        var vFilter = vList.length === vTotal ? null : (vList.length > 0 ? vList : []);
-        var yFilter = yList.length === yTotal ? null : (yList.length > 0 ? yList : []);
-        var steamCnt = 0, statCnt = 0;
-        for (var j = 0; j < vmsData.length; j++) {
-          var d = vmsData[j];
-          if (yFilter && yFilter.indexOf(d.y) < 0) continue;
-          if (vFilter && vFilter.indexOf(d.v) < 0) continue;
-          var isSteaming = getIsSteaming(d);
-          if (sbPlotOnlyFishingVMS && isSteaming) continue;
-          if (isSteaming) steamCnt++; else statCnt++;
-        }
-        if (steamingCb) {
-          var sl = steamingCb.closest("label");
-          if (sl) { var ss = sl.querySelector(".vms-count"); if (ss) ss.textContent = "(n: " + fmtNum(steamCnt) + ")"; }
-        }
-        if (stationaryCb) {
-          var sl2 = stationaryCb.closest("label");
-          if (sl2) { var ss2 = sl2.querySelector(".vms-count"); if (ss2) ss2.textContent = "(n: " + fmtNum(statCnt) + ")"; }
-        }
-
-        // --- Update Vessel-ID-CL counts (filtered by Time + State) ---
-        var steamingChecked = steamingCb ? steamingCb.checked : true;
-        var stationaryChecked = stationaryCb ? stationaryCb.checked : true;
-        var vesselCbsAll = document.querySelectorAll("#ctrl-vms-vessel-id .vms-cb");
-        var vCounts = {};
-        for (var i = 0; i < vesselCbsAll.length; i++) {
-          vCounts[vesselCbsAll[i].getAttribute("data-val")] = 0;
-        }
-        for (var j = 0; j < vmsData.length; j++) {
-          var d = vmsData[j];
-          if (!vCounts.hasOwnProperty(d.v)) continue;
-          if (yFilter && yFilter.indexOf(d.y) < 0) continue;
-          var isSteaming = getIsSteaming(d);
-          if (sbPlotOnlyFishingVMS && isSteaming) continue;
-          if (isSteaming && !steamingChecked) continue;
-          if (!isSteaming && !stationaryChecked) continue;
-          vCounts[d.v]++;
-        }
-        for (var i = 0; i < vesselCbsAll.length; i++) {
-          var cb = vesselCbsAll[i];
-          var vesselVal = cb.getAttribute("data-val");
-          var countSpan = cb.parentNode.querySelector(".vms-count");
-          if (countSpan) countSpan.textContent = "(n: " + fmtNum(vCounts[vesselVal] || 0) + ")";
+      // --- Live per-item counts: every CL reports against all the OTHER CLs ---
+      function updateCounts() {
+        for (var c = 0; c < vmsCLs.length; c++) {
+          var cl = vmsCLs[c];
+          var root = document.getElementById(cl.id);
+          if (!root) continue;
+          var cbs = root.querySelectorAll(cl.sel);
+          if (cbs.length === 0) continue;
+          var sels = selectionsFor(cl);
+          var acc = Object.create(null);
+          for (var i = 0; i < cbs.length; i++) acc[cbs[i].getAttribute("data-val")] = 0;
+          for (var j = 0; j < vmsData.length; j++) {
+            var d = vmsData[j];
+            if (!passesLayers(d, sels)) continue;
+            var v = clValue(cl, d);
+            if (v == null || acc[v] === undefined) continue;
+            acc[v]++;
+          }
+          for (var k = 0; k < cbs.length; k++) {
+            // The Vessel State control nests its <input> inside a <span>, so the
+            // count is located from the enclosing <label>, not the parent node.
+            var host = cbs[k].closest("label") || cbs[k].parentNode;
+            var span = host ? host.querySelector(".vms-count") : null;
+            if (span) span.textContent = "(n: " + fmtNum(acc[cbs[k].getAttribute("data-val")] || 0) + ")";
+          }
         }
       }
 
-      // --- Synchronize master checkbox states after filtering ---
+      // --- Synchronize the "Toggle ALL" master of every CL ---
       function syncMasters() {
-        ["ctrl-vms-state", "ctrl-vms-vessel-id", "ctrl-vms-time"].forEach(function(id) {
-          var master = document.querySelector("#" + id + " .vms-cb-master");
-          if (!master) return;
-          var cbs = document.querySelectorAll("#" + id + " input[type=checkbox].vms-cb, " +
-                                               "#" + id + " input[type=checkbox].vms-cb-state");
+        for (var c = 0; c < vmsCLs.length; c++) {
+          var root = document.getElementById(vmsCLs[c].id);
+          if (!root) continue;
+          var master = root.querySelector(".vms-cb-master");
+          if (!master) continue;
+          var cbs = root.querySelectorAll("input[type=checkbox]:not(.vms-cb-master):not(:disabled)");
           var all = true, any = false;
           for (var i = 0; i < cbs.length; i++) {
             if (cbs[i].checked) any = true; else all = false;
           }
-          master.checked = all;
+          master.checked = cbs.length > 0 && all;
           master.indeterminate = any && !all;
-        });
+        }
       }
 
       // --- Event delegation: master toggle + individual checkboxes (click) ---
@@ -801,20 +1027,9 @@
             for (var i = 0; i < children.length; i++) children[i].checked = checked;
           }
         }
-        // TIME→Vessel-ID sync: when a TIME checkbox is toggled, update Vessel-ID checkboxes
-        if (t.closest("#ctrl-vms-time")) {
-          var selYears = [];
-          var yChecked = document.querySelectorAll("#ctrl-vms-time .vms-cb:checked");
-          for (var i = 0; i < yChecked.length; i++) selYears.push(yChecked[i].getAttribute("data-val"));
-          var activeVessels = {};
-          for (var j = 0; j < vmsData.length; j++) {
-            if (selYears.indexOf(vmsData[j].y) >= 0) activeVessels[vmsData[j].v] = true;
-          }
-          var vCbsAll = document.querySelectorAll("#ctrl-vms-vessel-id .vms-cb");
-          for (var i = 0; i < vCbsAll.length; i++) {
-            vCbsAll[i].checked = !!activeVessels[vCbsAll[i].getAttribute("data-val")];
-          }
-        }
+        // MASTER LINK: any change in the Year CL re-ticks the Month / Flag / Vessel-ID
+        // CLs so that only the values actually recorded in those years stay active.
+        if (t.closest("#ctrl-vms-time")) relinkToMaster();
         if (t.classList.contains("vms-cb") || t.classList.contains("vms-cb-state") || t.classList.contains("vms-cb-master")) {
           if (timer) clearTimeout(timer);
           timer = setTimeout(applyFilters, 50);
@@ -825,7 +1040,8 @@
       setTimeout(function() {
         applyFilters();
         var mapHeight = map.getContainer().offsetHeight;
-        var ctrlIds = ["ctrl-vms-time", "ctrl-vms-state", "ctrl-vms-vessel-id"];
+        var ctrlIds = ["ctrl-vms-time", "ctrl-vms-month", "ctrl-vms-state",
+                       "ctrl-vms-flag", "ctrl-vms-vessel-id"];
         for (var i = 0; i < ctrlIds.length; i++) {
           var ctrl = document.getElementById(ctrlIds[i]);
           if (!ctrl) continue;
@@ -879,7 +1095,7 @@
           var cursorPoint = map.mouseEventToContainerPoint(e);
           var gx = Math.floor(cursorLatLng.lng / cellSize);
           var gy = Math.floor(cursorLatLng.lat / cellSize);
-          var fV = vmsLayer._filterVessels, fY = vmsLayer._filterYears,
+          var sels = vmsLayer._sel,
               fSt = vmsLayer._filterSteaming, fSg = vmsLayer._filterStationary;
           var bestIdx = -1, bestPx2 = tipThreshPx * tipThreshPx + 1;
 
@@ -889,10 +1105,8 @@
               if (!cell) continue;
               for (var k = 0; k < cell.length; k++) {
                 var idx = cell[k], d = vmsData[idx];
-                if (fV && fV.indexOf(d.v) < 0) continue;
-                if (fY && fY.indexOf(d.y) < 0) continue;
+                if (!passesLayers(d, sels)) continue;
                 var isSteaming = getIsSteaming(d);
-                if (sbPlotOnlyFishingVMS && isSteaming) continue;
                 if (isSteaming && !fSt) continue;
                 if (!isSteaming && !fSg) continue;
                 var pt = map.latLngToContainerPoint(L.latLng(d.lat, d.lng));

@@ -4,14 +4,14 @@
 
 
 ###   R Project Development <Run-Time Mode> Trackers   ###
-RCT_IS_DEBUG_RT_MODE_   <- T;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
+RCT_IS_DEBUG_RT_MODE_   <- F;   # <- The `DEBUG` <dev> Run-Time Mode Tracker ...
 RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker ...
 
 
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
   sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
-  sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
+  sbIsProdRel = T    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
 
@@ -277,11 +277,12 @@ coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(
 
 
 
-dfSEAFO_VMS_ <- utils::read.csv("./data/dfSEAFO_GPS_VMS.csv");
-base::names(dfSEAFO_VMS_);
+### dfSEAFO_VMS_ <- utils::read.csv("./data/dfSEAFO_GPS_VMS.csv");
+### base::names(dfSEAFO_VMS_);
 coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
-  lmMapObj = coBaseMapLM_, snSpeedSplit = 1.25, sbPlotOnlyFishingVMS = T,
-  ## vsShipColors = base::c("black", "red", "magenta", "orange", "yellow")
+  lmMapObj = coBaseMapLM_, snSpeedSplit = 1.25,
+  sbPlotOnlyFishingVMS = F, sbShowToggleMonth = T, sbShowShipFlag = T,
+  vsShipColors = base::c("orange", "red", "magenta", "black", "yellow")
 ); coBaseMapLM_VMS_
 
 
