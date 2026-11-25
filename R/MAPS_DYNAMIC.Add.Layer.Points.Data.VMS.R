@@ -1,145 +1,236 @@
 #? ### ### ### ### ### ### ###
-#' @title Compile the SEAFO Dynamic BaseMap (Leaflet)
+#' @title Add a VMS Points Layer to a SEAFO Leaflet BaseMap
 #' @name maps_dynamic.add.layer.points.data.vms
 #' @family MAPS Functions (SEAFO)
 #'
 #'
 #' @description
-#' A Helper Function that compiles an interactive `leaflet` BaseMap of the South East Atlantic
-#' Fisheries Organisation (SEAFO) Convention Area (CA) and its surrounding geographic context.
-#' The BaseMap combines a selected ESRI tile provider with the SEAFO spatial layers that ship
-#' with this package (i.e. the SEAFO Convention Area, the SEAFO Exclusive Economic Zones and the
-#' SEAFO VME Closures) and equips the resulting map widget with a measuring tool, a map scale bar
-#' and a non-collapsed Layer Control box. This function was created to support the routine
-#' data-analysis work conducted by the Scientific Committee (SC) of the SEAFO, but may also be
-#' used as a quick "situational awareness" BaseMap in other (3rd Party) R libraries and custom R
-#' functions - as long as the `SEAFO` library is linked (i.e. previously installed and/or
-#' specified as a library dependency).
+#' A Helper Function that overlays the South East Atlantic Fisheries Organisation (SEAFO) Vessel
+#' Monitoring System (VMS) records on an <already compiled> interactive `leaflet` BaseMap (i.e.
+#' one returned by [SEAFO::maps_dynamic.compile.basemap()]). The position fixes are painted by a
+#' single HTML `<canvas>` overlay rather than by one Leaflet layer per record, so very large
+#' tracks (i.e. hundreds of thousands of fixes) render smoothly. Three purpose-built controls are
+#' attached to the map so that the user can show/hide the points by Time (i.e. VMS Year), by
+#' Vessel State (i.e. steaming versus stationary) and by Vessel ID, each annotated with a live
+#' record count. This function was created to support the routine data-analysis work conducted by
+#' the Scientific Committee (SC) of the SEAFO, but may also be used as a quick "situational
+#' awareness" overlay in other (3rd Party) R libraries and custom R functions - as long as the
+#' `SEAFO` library is linked (i.e. previously installed and/or specified as a library dependency).
 #'
 #'
-#' @param snMapSRC ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
-#'                BaseMap tile source <selector>. A value of `1` selects the "ESRI Ocean
-#'                BaseMap" provider; any other value (i.e. the default `2`) selects the "ESRI
-#'                NatGeo World Map" provider.
-#' @param ssHeaderWCL ([character]) a String or Text (i.e. [character]) value that
-#'                    specifies the caption (i.e. header title) prepended to the Layer Control
-#'                    box (WCL) of the compiled BaseMap (default: "SEAFO Convention Area (CA)").
-#'                    The caption is applied with an `htmlwidgets::onRender()` JavaScript
-#'                    callback, so it is only visible in the rendered map.
-#' @param snZoomMin ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
-#'                minimum zoom level allowed for the BaseMap tiles (default: `2`).
-#' @param snZoomMax ([numeric]) a Numeric (i.e. [numeric]) value that specifies the
-#'                maximum zoom level allowed for the BaseMap tiles (default: `10`).
-#' @param sbShowEEZs ([logical]) a Boolean value that specifies whether the SEAFO Exclusive
-#'                  Economic Zones (EEZs) layer must be added to the BaseMap (default: `TRUE`).
-#'                  The layer is sourced from `./data/dfSEAFO_EEZv11.rda` (v11, 2019).
-#' @param sbShowCA ([logical]) a Boolean value that specifies whether the SEAFO Convention Area
-#'                (CA) layer must be added to the BaseMap (default: `TRUE`). The layer is
-#'                sourced from `./data/dfSEAFO_CA.rda` and is a pre-requisite for both the SEAFO
-#'                area labels (`sbShowLabels`) and the SEAFO Closed Areas (`sbShowClosedAreas`).
-#' @param sbShowClosedAreas ([logical]) a Boolean value that specifies whether the SEAFO VME
-#'                          Closures (VMECs) layer must be added to the BaseMap (default:
-#'                          `TRUE`). The layer is sourced from
-#'                          `./data/dfSEAFO_ClosedAreas.rda` and is only compiled when
-#'                          `sbShowCA = TRUE`.
-#' @param sbShowFishFootPrint ([logical]) a Boolean value that is reserved for the forthcoming
-#'                            fishing-footprint (VMS) overlay. The argument is currently
-#'                            internalized only and does NOT yet add a layer to the BaseMap
-#'                            (default: `TRUE`).
-#' @param sbShowLabels ([logical]) a Boolean value that specifies whether the SEAFO area labels
-#'                    (i.e. "A", "A1", "B", "B1", "C", "C1", "D" and "D1") must be added to the
-#'                    BaseMap (default: `TRUE`). The labels are only compiled when
-#'                    `sbShowCA = TRUE`, and are always-on (i.e. `noHide = TRUE`, text only).
-#' @param sbHideWCL ([logical]) a Boolean value that specifies whether the Layer Control box
-#'                 (WCL) must be compiled for the BaseMap (default: `TRUE`). NB: when set to
-#'                 `FALSE` the Layer Control box is omitted altogether, so the overlay layers
-#'                 can no longer be toggled by the user.
-#' @param sbNotifyRunTimeF ([logical]) a Boolean value that specifies whether the function must
-#'                         notify the user of its run-time START and STOP with an audible cue
-#'                         (i.e. `beepr::beep()`; default: `FALSE`).
-#' @param ... ([list]) a List of R Objects function argument to catch all "Fall-Through" or
-#'            "DotsArgs" values used by the nested functions within this main function.
-#'            Applicable DotsArgs are collated in the [SEAFO::RENV_FSID] immutable list (i.e.
-#'            all `F_ARGS_*` list items) and here pertain to the following nested R functions:
-#'            <br>
-#'               1. [SEAFO::info.post.func.self.id()] (i.e. `sbPrintPretty`, `sbRunSelfID` and
-#'                  `ssFuncCallerID`), and <br>
-#'               2. [SEAFO::info.post.note()] .
+#' @param lmMapObj ([leaflet]) a `leaflet` map object (i.e. an `htmlwidget`) to which the VMS
+#'                points layer must be added. The map is modified in place and handed back, so
+#'                the argument may NOT be `NULL` (the function stops with an informative error
+#'                when it is). Typically this is the widget returned by
+#'                [SEAFO::maps_dynamic.compile.basemap()].
+#' @param dfVMS ([data.frame]) a Data Frame holding the VMS records (i.e. one row per position
+#'              fix). When `NULL` (the default) the demonstration data set that ships with the
+#'              package is read from `./data/dfSEAFO_GPS_VMS.csv`. NB: that path is RELATIVE, so
+#'              the function expects to be run from the R Project (i.e. package source) root -
+#'              i.e. the directory that holds the `data/` folder. The frame must carry the
+#'              coordinate, date-time, year and vessel-identifier columns, plus (optionally) the
+#'              speed, the heading and an explicit steaming/stationary state (see the `ssVar*`
+#'              arguments).
+#' @param snSpeedSplit ([numeric]) a Numeric (i.e. [numeric]) value that specifies the speed
+#'                threshold (in knots) that separates the two Vessel States (default: `1.15`).
+#'                A record at or above the threshold is treated as "steaming" and is drawn as a
+#'                triangle pointing along its heading; a record below it is treated as
+#'                "stationary" and is drawn as a dot. The threshold is bypassed when the speed
+#'                column carries an explicit state (i.e. text such as "steaming" or
+#'                "stationary", or a column name containing "state", "status" or "condition").
+#' @param ssVarShipCourse ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the VMS column holding the vessel heading (i.e. course over ground in degrees;
+#'                default: `"CO"`). The heading orients the "steaming" triangles and is reported
+#'                in the hover tooltip. Resolution falls back to `"Ships_CRS"`, `"Ship_Crs"` and
+#'                `"Course (degrees)"`; the column is optional, so when it cannot be found every
+#'                triangle simply points due North.
+#' @param ssVarYear ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column used as the Time selector (i.e. the per-year check-boxes; default:
+#'                `"VMS_Year"`). The column is REQUIRED. Resolution falls back to
+#'                `"Year_Parsed"`, `"Year"` and `"YEAR"`, and the function stops when no such
+#'                column exists. Each distinct (i.e. non-`NA`) value becomes one toggleable item
+#'                in the Time control.
+#' @param ssLabelVarYear ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the caption prepended to the Time control box (default: `"VMS Years"`). A
+#'                trailing colon is appended automatically when the label does not already end
+#'                in one.
+#' @param sbShowToggleYear ([logical]) a Boolean value that is RESERVED for a forthcoming
+#'                per-year toggle switch (default: `TRUE`). The argument is currently
+#'                internalized only: the Time control is always compiled with its check-boxes,
+#'                so changing this value does NOT alter the map.
+#' @param ssVarMonth ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column that would drive a per-month selector (default: `"VMS_Month"`). The
+#'                month selector is NOT yet implemented, so the argument is currently
+#'                internalized only and does NOT alter the map.
+#' @param ssLabelVarMonth ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the caption that would be prepended to the month control box (default:
+#'                `"VMS Month"`). The month selector is NOT yet implemented, so the argument is
+#'                currently internalized only and does NOT alter the map.
+#' @param sbShowToggleMonth ([logical]) a Boolean value that is RESERVED for a forthcoming
+#'                per-month toggle switch (default: `FALSE`). The month selector is NOT yet
+#'                implemented, so the argument is currently internalized only and does NOT alter
+#'                the map.
+#' @param ssVarShipIDs ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the VMS column holding the vessel identifier (default: `"Ship_Name_Anon"`).
+#'                The column is REQUIRED. Resolution falls back to `"Vessel_Name"`, `"Name"` and
+#'                `"Registry_number_IR"`, and the function stops when no such column exists.
+#'                Each distinct (i.e. non-`NA`) value becomes one toggleable item in the Vessel
+#'                ID control, and the same values drive the per-vessel colour palette.
+#' @param ssLabelVarShipIDs ([character]) a String or Text (i.e. [character]) value that
+#'                specifies the caption prepended to the Vessel ID control box (default:
+#'                `"Vessel ID"`). A trailing colon is appended automatically when the label does
+#'                not already end in one.
+#' @param vsShipColors ([character]) a Character (i.e. [character]) vector of R colour
+#'                specifications used for the per-vessel palette. When `NULL` (the default) a
+#'                palette is generated internally by interpolating
+#'                `RColorBrewer::brewer.pal(9, "Set1")` over the number of distinct vessels.
+#'                When supplied, the vector is used as-is and is matched POSITIONALLY to the
+#'                sorted vessel identifiers, so it must be at least as long as the number of
+#'                distinct vessels. Any record whose vessel cannot be matched is drawn in grey
+#'                (i.e. `"#333333"`).
+#' @param ssVarShipSpeed ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the VMS column carrying the speed over ground (default: `"Speed_Corr_kt"`).
+#'                Resolution falls back to `"Speed_Num"`, `"Speed_kt"`, `"Speed (kt)"` and
+#'                `"Speed"`; the column is optional. When it cannot be found (and no explicit
+#'                state column exists) every record is treated as "stationary".
+#' @param ssLabelVarSpeed ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the caption prepended to the Vessel State control box (default:
+#'                `"Vessel State (speed in knots)"`). A trailing colon is appended automatically
+#'                when the label does not already end in one.
+#' @param ssVarShipFlag ([character]) a String or Text (i.e. [character]) value that specifies
+#'                the VMS column holding the vessel flag or nationality (default: `"Flag_Anon"`).
+#'                The flag overlay is NOT yet implemented, so the argument is currently
+#'                internalized only and does NOT alter the map.
+#' @param ssLabelVarShipFlag ([character]) a String or Text (i.e. [character]) value that
+#'                specifies the caption that would be prepended to the flag control box
+#'                (default: `"Vessel Flag"`). The flag overlay is NOT yet implemented, so the
+#'                argument is currently internalized only and does NOT alter the map.
+#' @param sbShowShipFlag ([logical]) a Boolean value that is RESERVED for a forthcoming vessel
+#'                flag overlay (default: `FALSE`). The overlay is NOT yet implemented, so the
+#'                argument is currently internalized only and does NOT alter the map.
+#' @param ssVarLATs ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column holding the latitudes (default: `"LAT_DeciDegree"`). The column is
+#'                REQUIRED. Resolution falls back to `"Lat_DD"`, `"LATs"`, `"LAT"`, `"LATS"` and
+#'                `"Latitudes"`, and the function stops when no such column exists. Records with
+#'                a missing latitude are discarded before plotting.
+#' @param ssVarLONs ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column holding the longitudes (default: `"LON_DeciDegree"`). The column is
+#'                REQUIRED. Resolution falls back to `"Lon_DD"`, `"LONs"`, `"LON"`, `"LONS"` and
+#'                `"Longitudes"`, and the function stops when no such column exists. Records with
+#'                a missing longitude are discarded before plotting.
+#' @param sbPlotOnlyFishingVMS ([logical]) a Boolean value that specifies whether ONLY the
+#'                stationary records must be drawn (default: `FALSE`). When `TRUE` the "steaming"
+#'                records are excluded by a static (i.e. un-toggleable) filter: the Steaming
+#'                check-box of the Vessel State control is rendered disabled, dimmed and struck
+#'                through with a cross. When `FALSE` all records are drawn and the user may
+#'                toggle either state.
+#' @param ssVarTime ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column holding the time of each fix (default: `"VMS_Time"`). The column is
+#'                REQUIRED. Resolution falls back to `"Time_Parsed"`, `"Time"`, `"TIME"` and
+#'                `"TM"`, and the function stops when no such column exists. The value is only
+#'                reported in the hover tooltip.
+#' @param ssLabelVarTime ([character]) a String or Text (i.e. [character]) value that is RESERVED
+#'                for a future time caption (default: `"VMS Time"`). The Time control box is
+#'                currently captioned with `ssLabelVarYear`, so the argument is internalized only
+#'                and does NOT alter the map.
+#' @param ssVarDate ([character]) a String or Text (i.e. [character]) value that specifies the
+#'                VMS column holding the date of each fix (default: `"VMS_Date"`). The column is
+#'                REQUIRED. Resolution falls back to `"Date_Parsed"`, `"Date"`, `"DATE"` and
+#'                `"DT"`, and the function stops when no such column exists. The value is only
+#'                reported in the hover tooltip.
+#' @param ssLabelVarDate ([character]) a String or Text (i.e. [character]) value that is RESERVED
+#'                for a future date caption (default: `"VMS Date"`). The date is currently
+#'                reported in the hover tooltip as a raw column value, so the argument is
+#'                internalized only and does NOT alter the map.
 #'
 #'
 #' @returns
-#' A `leaflet` `htmlwidget` object - i.e. the fully compiled and interactive SEAFO BaseMap. The
-#' widget is handed back to the calling R function (or to the console), where it is auto-printed
-#' when not assigned, so it may either be inspected on the spot or stored in an R object for
-#' later use (e.g. `coMap <- maps_dynamic.compile.basemap.seafo()`).
+#' A `leaflet` `htmlwidget` object - i.e. the supplied map (`lmMapObj`) with the VMS `<canvas>`
+#' overlay and its three controls attached through `htmlwidgets::onRender()`. Because the map is
+#' handed back, the call may be chained onto the BaseMap builder (i.e.
+#' `maps_dynamic.compile.basemap() |> maps_dynamic.add.layer.points.data.vms()`), or the result
+#' may be stored in an R object for later use (e.g.
+#' `coMap <- maps_dynamic.add.layer.points.data.vms(coMap)`).
 #'
 #'
 #' @details
-#' ### BaseMap source
-#' The tile provider is selected with `snMapSRC`: a value of `1` maps to the "ESRI Ocean
-#' BaseMap" provider, and any other value (i.e. the default `2`) maps to the "ESRI NatGeo World
-#' Map" provider. Both provider definitions are pulled from the `leaflet.providers` package, and
-#' the selected provider name is written to the console via [SEAFO::info.post.note()] as the
-#' BaseMap is compiled.
+#' ### VMS data & column resolution
+#' Every column is addressed by NAME. Each `ssVar*` argument is resolved in three passes: an exact
+#' match, then a case-insensitive match, then a fixed list of common aliases. A 1-based column
+#' index supplied as text (i.e. `"3"`) is also accepted. Latitude, longitude, date, time, year and
+#' vessel identifier are mandatory; speed and heading are optional and degrade gracefully when
+#' absent. Rows with a missing latitude or longitude are discarded, and the function stops with an
+#' informative error when no usable row remains.
 #'
-#' ### Spatial layers
-#' The SEAFO spatial layers are read at run-time (i.e. with `base::load()`) from the package's
-#' `./data/` folder, which is resolved with `here::here()`. The function therefore expects to be
-#' run from the R Project (i.e. package source) root - i.e. the directory that holds the `data/`
-#' folder. The layers, in the order they are added, are:
+#' ### Rendering model
+#' The fixes are NOT created as individual Leaflet layers. Instead the whole frame is serialised
+#' to JSON (i.e. `jsonlite::toJSON()`) and embedded in a JavaScript closure that is attached to
+#' the widget with `htmlwidgets::onRender()`. A single `<canvas>` element (i.e. a custom `L.Layer`
+#' subclass) then paints every visible record, culled to the current viewport and redrawn on
+#' `moveend`, `zoomend` and `resize`. This keeps the widget responsive for tracks of hundreds of
+#' thousands of fixes.
 #'
-#' * **EEZs** - the SEAFO Exclusive Economic Zones (`dfSEAFO_EEZv11.rda`), added when
-#'   `sbShowEEZs = TRUE`;
-#' * **SEAFO CA** - the SEAFO Convention Area (`dfSEAFO_CA.rda`), added when
-#'   `sbShowCA = TRUE`;
-#' * **SEAFO Labels** - the eight SEAFO area tags (`A`, `A1`, `B`, `B1`, `C`, `C1`, `D` and
-#'   `D1`), added when both `sbShowCA = TRUE` and `sbShowLabels = TRUE`;
-#' * **SEAFO Closed Areas** - the SEAFO VME Closures (`dfSEAFO_ClosedAreas.rda`), added when
-#'   both `sbShowCA = TRUE` and `sbShowClosedAreas = TRUE`.
+#' ### Vessel States
+#' Each record is classified as either "steaming" or "stationary". An explicit state carried in
+#' the speed column (i.e. text such as "steaming", "moving", "stationary" or "fishing") takes
+#' precedence; otherwise the numeric speed is compared with `snSpeedSplit`. "Steaming" records are
+#' drawn as triangles oriented along `ssVarShipCourse`, while "stationary" records are drawn as
+#' filled circles.
 #'
-#' ### Map controls
-#' The BaseMap is compiled with a measuring tool (top-left), a map scale bar (bottom-left) and,
-#' when `sbHideWCL = TRUE`, a non-collapsed Layer Control box (top-left) whose caption is
-#' supplied via `ssHeaderWCL`. The measuring tool is localised with `localization = "en"`,
-#' because the underlying `leaflet-measure` plugin falls back to English SILENTLY for an
-#' unrecognised locale key (i.e. only valid keys such as `"fr"`, `"pt_PT"` or `"es"` are safe).
-#' The initial map view is fitted to the SEAFO Convention Area bounding box (i.e. longitudes
-#' `-25.25` to `31.25` and latitudes `2.75` to `-52.05`).
+#' ### Controls
+#' Three check-box controls are appended to the map, each with a live `(n: ...)` count. The Time
+#' and Vessel ID controls also carry a "Toggle ALL" master switch:
 #'
-#' ### Self-identification
-#' The function also brackets its own execution with "Function Self-ID" console notifications
-#' (i.e. via [SEAFO::info.post.func.self.id()]), reported against its START and STOP Code Editor
-#' Line Numbers (CELN). These notifications are only printed when `sbRunSelfID = TRUE` is passed
-#' through the `...` argument.
+#' * **Time** (i.e. `ssVarYear`) - top-left, a master switch plus one check-box per year;
+#' * **Vessel State** (i.e. `ssVarShipSpeed`) - top-right, one check-box for "Steaming" and one
+#'   for "Stationary" (no master switch), together with the `snSpeedSplit` legend;
+#' * **Vessel ID** (i.e. `ssVarShipIDs`) - top-right, a master switch plus one check-box per
+#'   vessel, prefixed with that vessel's colour swatch.
+#'
+#' The controls are rendered as native DOM elements and do NOT overwrite any existing Leaflet
+#' layer control, so the map returned by [SEAFO::maps_dynamic.compile.basemap()] keeps its own
+#' control box. Toggling a year re-synchronises the Vessel ID check-boxes to the vessels that were
+#' actually recorded in the selected years.
+#'
+#' ### Tooltip
+#' Hovering near a record (i.e. within 15 pixels) pops up a custom DOM tooltip reporting the
+#' Vessel ID, the Date-Time, the Speed (in knots) and the Heading (in degrees). A 0.05-degree
+#' spatial grid index keeps the proximity search cheap, and Leaflet's own tooltip pane is hidden
+#' while the custom tooltip is visible so that the two never overlap.
+#'
+#' ### Console feedback
+#' The function prints a START banner, the number of records it is about to plot (i.e.
+#' "Plotting N VMS points (records) ...") and a STOP banner carrying the elapsed run-time, then
+#' plays an audible completion cue (i.e. `beepr::beep(2)`). The console banners are colourised
+#' with `crayon`, and the per-vessel palette is generated with `RColorBrewer`; both packages are
+#' used internally and must therefore be installed (i.e. they are not exposed as arguments).
 #'
 #'
 #' @examples
 #' \dontrun{
-#' ### Compile the DEFAULT SEAFO BaseMap (ESRI NatGeo World Map tiles) ...
+#' ### Add the demonstration VMS tracks to the DEFAULT SEAFO BaseMap ...
 #' library(SEAFO)   # <- Ensures the `SEAFO` library is <already> installed locally.
 #'
-#' coMap <- SEAFO::maps_dynamic.compile.basemap.seafo()
-#' coMap            # <- Renders the interactive BaseMap in the RStudio Viewer pane !!!
+#' coMap <- SEAFO::maps_dynamic.compile.basemap()
+#' coMap <- SEAFO::maps_dynamic.add.layer.points.data.vms(lmMapObj = coMap)
+#' coMap            # <- Renders the BaseMap + the VMS overlay in the Viewer pane !!!
 #'
 #'
-#' ### Compile the ESRI Ocean BaseMap without the EEZ & Closed Areas layers ...
-#' SEAFO::maps_dynamic.compile.basemap.seafo(
-#'   snMapSRC          = 1,               # <- Select the ESRI Ocean BaseMap tiles ...
-#'   sbShowEEZs        = FALSE,           # <- Skip the SEAFO EEZ layer ...
-#'   sbShowClosedAreas = FALSE,           # <- Skip the SEAFO VME Closures layer ...
-#'   ssHeaderWCL       = "SEAFO Layers",  # <- Custom Layer Control box caption ...
-#'   sbNotifyRunTimeF  = TRUE             # <- Audible START & STOP notification ...
-#' )
+#' ### Compile & overlay in one go, showing ONLY the stationary (fishing) records ...
+#' SEAFO::maps_dynamic.compile.basemap() |>
+#'   SEAFO::maps_dynamic.add.layer.points.data.vms(sbPlotOnlyFishingVMS = TRUE)
 #'
 #'
-#' ### Compile a "clean" CA BaseMap (no overlays, no labels) with Self-ID notes ...
-#' SEAFO::maps_dynamic.compile.basemap.seafo(
-#'   sbShowEEZs     = FALSE,
-#'   sbShowLabels   = FALSE,
-#'   snZoomMin      = 3,
-#'   snZoomMax      = 8,
-#'   sbRunSelfID    = TRUE,                # <- <DotsArg> prints the Self-ID notifications ...
-#'   ssFuncCallerID = "my.custom.r.func"   # <- <DotsArg> tags the calling function ...
+#' ### Plot your own VMS frame, with custom vessel colours & column names ...
+#' SEAFO::maps_dynamic.add.layer.points.data.vms(
+#'   lmMapObj       = SEAFO::maps_dynamic.compile.basemap(snMapSRC = 1),
+#'   dfVMS          = myVMS,                      # <- Your own VMS data frame ...
+#'   ssVarLATs      = "Lat_DD",                   # <- Column holding the latitudes ...
+#'   ssVarLONs      = "Lon_DD",                   # <- Column holding the longitudes ...
+#'   ssVarShipIDs   = "Vessel_Name",              # <- Column holding the vessel IDs ...
+#'   ssVarShipSpeed = "Speed_Num",                # <- Column holding the speed (knots) ...
+#'   snSpeedSplit   = 3.0,                        # <- Fishing / steaming threshold ...
+#'   vsShipColors   = c("#1B9E77", "#D95F02", "#7570B3")
 #' )
 #' }
 #'
@@ -157,29 +248,6 @@
   ssVarLATs="LAT_DeciDegree", ssVarLONs="LON_DeciDegree", sbPlotOnlyFishingVMS=FALSE,
   ssVarTime="VMS_Time", ssLabelVarTime="VMS Time", ssVarDate="VMS_Date", ssLabelVarDate="VMS Date"
 ) {
-
-  # ========================================================================================================= #
-  #   FUNCTION ARGUMENTS:                                                                                  ####
-  #    - lmMapObj      : [leaflet] a Leaflet map object to which VMS data will be added as the top layer.      #
-  #    - dfVMS_        : [data.frame] VMS data with coordinate columns: Lat_DD, Lon_DD.                        #
-  #    - snSpeedSplit : [numeric] speed threshold (knots). Points >= cutoff are drawn as heading arrows;      #
-  #                                points < cutoff are drawn as dots. Default 3.0.                                      #
-  #    - sbPlotOnlyFishingVMS  : [logical] TRUE = plot only stationary records (speed < cutoff). FALSE = plot all records. Default TRUE.
-  #                                Default TRUE.                                                                        #
-  #    - ssVarYear     : [character] column used for the VMS Years control. Default 'Year_Parsed'.             #
-  #    - ssVarShipSpeed   : [character] column used for Vessel State filtering. Default 'Speed_Num'.              #
-  #    - ssVarShipIDs     : [character] column used for the Vessel ID control. Default 'Vessel_Name'.             #
-  #    - ssLabelVarYear   : [character] header label for the VMS Years control. Default 'VMS Years'.              #
-  #    - ssLabelVarSpeed  : [character] header label for the Vessel State control. Default 'Vessel State'.        #
-  #    - ssLabelVarShipIDs: [character] header label for the Vessel ID control. Default 'Vessel ID'.              #
-  #                                                                                                           #
-  #   CONTROLS ADDED (native Leaflet look, does NOT overwrite existing layers control):                     ####
-  #    - VMS Years (left side)  : check box toggles to show/hide individual vsLevelsYears_ (SHAPE via radius).          #
-  #    - Vessel State (top right): check box toggles to show/hide steaming and stationary records.             #
-  #    - Vessel ID (top right)  : check box toggles to show/hide individual vsLevelsShipIDs_ (COLOR).                   #
-  #                                                                                                           #
-  #   RENDERING: Uses a single <canvas> overlay (not individual Leaflet layers) for high performance.       ####
-  # ========================================================================================================= #
 
   ####--- STEP 1 - Run Initialization Processes ---####
   ####--- 1.1 - Define the Identifier TAGs for Custom Function ---####
