@@ -271,6 +271,7 @@ hexSticker::sticker(
 
 
 coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(); coBaseMapLM_
+coBaseMapSM_ <- SEAFO::maps_static.compile.basemap(); coBaseMapSM_
 
 ### lmMapObj=NULL; dfVMS=NULL; snSpeedCutOff=1.00
 ### ssVarShipIDs="Ship_Name_Anon"; ssLabelVarShipIDs="Vessel ID"
