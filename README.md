@@ -19,7 +19,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 <br/>
 
-**Current Release (STABLE <alpha>): `0.0.4`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.4.12`**
+**Current Release (STABLE [alpha]): `0.0.4`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.4.12`**
 
 </div>
 
@@ -82,7 +82,7 @@ remotes::install_github("ErichM182/SEAFO")
 # 3) Verify that the 'SEAFO' R Package installed properly ...
 library(SEAFO)
 packageVersion("SEAFO")
-#> [1] '0.0.4' (Stable <alpha> Release)
+#> [1] '0.0.4'   # <- Stable <alpha> Release !!!
 ```
 
 <details>
