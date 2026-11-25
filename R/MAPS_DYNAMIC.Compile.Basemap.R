@@ -445,13 +445,52 @@
   }
 
 
-  ###  5.5 - Compile the SEAFO Controls Layer   ####
+
+  ###  5.5 - Compile the SEAFO Fishing Footprint Layer   ####
+  if (sbShowCA_ && sbShowFishFootPrint_) {
+
+    ### 5.5a - Import the SEAFO Fishing Footprint Layer Data ...
+    rasBaseLOAD(
+      file = rasHereHERE(
+        "data", "dfSEAFO_FF_All_Gears.rda"   # <- Read into R as "dfSEAFO_FF_All_Gears.rda" !!!
+      )
+    );
+    dfSEAFO_FF_All_Gears_ <- dfSEAFO_FF_All_Gears;   # <- Assign to local <func-intern> R Object ...
+
+    ### 5.5b - Convert SEAFO Convention Area (CA) layer into correct format ...
+    sfLyrSEAFO_FF_ALL_ <- rasBaseSuppressWARNINGS(
+      rasSfHeadersSF_POLYGON(
+        obj = dfSEAFO_ClosedAreas_, x = "long", y = "lat",
+        polygon_id = 'group', # "id",
+        keep = TRUE                     # <- Preserves ALL columns from original input data frame
+      )                                 #    (into the output 'sf' data object) !!!
+    );
+
+    ### 5.5c - Plot <add> Spatial <data> Layer to Leaflet BaseMap ...
+    ssLyrId_FF_ALL_ <- "SEAFO Fishing Footprint (2025)";
+    vsCntrlLayers_ <- rasBaseAPPEND(vsCntrlLayers_, ssLyrId_FF_ALL_);
+    coBaseMapLM_ <- rasLeafletAddPOLYGONS(
+      map = coBaseMapLM_, data = sfLyrSEAFO_FF_ALL_, weight = 1.5, color = ~ColorAsText,
+      opacity = 0.5, fillColor = ~ColorAsText, fillOpacity = 0.21, label = ~Name,
+      popup = ~Name, group = ssLyrId_FF_ALL_
+    );
+
+    rasSeafoInfoPostNOTE(                       # <- Notify user on <selected> BaseMap Source ...
+      sbPostAlways = TRUE, ssHead = RCT_TAG_FUNC_ID_SHORT_, sbShowTail = FALSE,
+      ssBody = rasBasePASTE0("SEAFO Fishing Footprint Layer Added !!!")
+    );
+
+  }
+
+
+  ###  5.6 - Compile the SEAFO Controls Layer   ####
   if (sbHideWCL_ == FALSE) {   # <- Displays the Leaflet Controls Widget (on map) if 'FALSE' !!!
 
     ## Re-order the Control Layers <logically> ...
-    if (sbShowCA_ && sbShowLabels_ && sbShowClosedAreas_ && sbShowEEZs_) {
+    if (sbShowCA_ && sbShowLabels_ && sbShowClosedAreas_ && sbShowEEZs_ && sbShowFishFootPrint_) {
       vsCntrlLayers_ <- rasBaseC(
-        vsCntrlLayers_[2], vsCntrlLayers_[3], vsCntrlLayers_[4], vsCntrlLayers_[1]
+        vsCntrlLayers_[2], vsCntrlLayers_[3],
+        vsCntrlLayers_[4], vsCntrlLayers_[5], vsCntrlLayers_[1]
       );
     }
 

@@ -290,6 +290,62 @@ coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
 
 
 
+"rcf_convert.shape.file.seafo" <- function(
+  ssPathToShape=base::file.path(
+    "WIP", "00_Helpers", "data", "SEAFO_Shapes",
+    "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
+  ), ssNotesGears="ALL Fishing Gear Types Allowed", sbSaveAsRDA=FALSE,
+  ssSaveFilePath="./data/dfSEAFO_FF_All_Gears.rda"
+) {
+
+  ### STEP 01 - Read Shapefile Data into the active R Session memory ...
+  dfShapeData_ <- sf::st_read(   # <- Read GIS Shapefile into R ...
+    dsn = ssPathToShape
+  );
+
+  ### STEP 02 - Transform the Spatial Data projection (default: WGS84 [EPSG:4326]) ...
+  dfShapeData_WGS84_ <- sf::st_transform(   # <- Transform projection to WGS84 (EPSG:4326) ...
+    x = dfShapeData_, crs = 4326
+  );
+
+  ### STEP 03 - Add new Variables (as needed) ...
+  dfShapeData_WGS84_[["NotesGears"]]  <- ssNotesGears;
+  dfShapeData_WGS84_[["ColorAsText"]] <- base::ifelse(
+    dfShapeData_WGS84_[["Color"]] == 1, "green", "yellow"
+  );
+
+  ### STEP 04 - Save output Spatial File (if requested) ...
+  if (sbSaveAsRDA) {
+    base::save(
+      dfShapeData_WGS84_,
+      file = ssSaveFilePath
+    );
+  }
+
+  ### STEP 05 - Return output Spatial File (to function call) ...
+  base::return(dfShapeData_WGS84_);
+
+}
+
+
+dfSEAFO_FF_ALL_ <- rcf_convert.shape.file.seafo(
+  ssPathToShape = base::file.path(
+    "WIP", "00_Helpers", "data", "SEAFO_Shapes",
+    "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
+  ), ssNotesGears = "ALL Fishing Gear Types Allowed", sbSaveAsRDA = TRUE,
+  ssSaveFilePath = "./data/dfSEAFO_FF_All_Gears.rda"
+)
+
+
+dfSEAFO_FF_ALL_ <- rcf_convert.shape.file.seafo(
+  ssPathToShape=base::file.path(
+    "WIP", "00_Helpers", "data", "SEAFO_Shapes",
+    "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
+  ), ssNotesGears="ALL Fishing Gear Types Allowed"
+)
+
+
+
 
 
 

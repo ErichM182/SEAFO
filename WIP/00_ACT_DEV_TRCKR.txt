@@ -7,10 +7,10 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  25 Nov 2026 @ 06:07:34.170 CAT
+> Code Push TIME  ==>  25 Nov 2026 @ 11:49:32.943 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.4     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.4.19  (devs-release)
-> Code Base FINGERPRINT  ==>  526e428a8550a6aa0099c29dd4ddab74   (md5: pkg assets + docs assets)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.4.20  (devs-release)
+> Code Base FINGERPRINT  ==>  2bcfe2644b382db6f495376336e8bf80   (md5: pkg assets + docs assets)
 
 
 
@@ -27,11 +27,11 @@
 
 
 -> LAST CHANGES: The last updated files from the `SEAFO` R-Library Project [ n: 7 ] ...
+> 2026.11.25 @ 11:49:05  ==>  SEAFO::MAPS_DYNAMIC.Compile.Basemap.R
 > 2026.11.25 @ 02:50:45  ==>  SEAFO::MAPS_DYNAMIC.Add.Layer.Points.Data.VMS.R
 > 2026.11.25 @ 02:15:28  ==>  SEAFO::INFO.Post.Func.Self.ID.R
 > 2026.11.25 @ 02:15:19  ==>  SEAFO::DEVS.Check.Code.Specs.R
 > 2026.11.25 @ 02:15:00  ==>  SEAFO::MAPS_STATIC.Compile.Basemap.R
-> 2026.11.24 @ 18:33:10  ==>  SEAFO::MAPS_DYNAMIC.Compile.Basemap.R
 > 2026.11.23 @ 07:54:29  ==>  SEAFO::DEVS.Patch.Code.Dev.Trckr.File.R
 > 2026.11.23 @ 00:35:43  ==>  SEAFO::CODE.Tiny.Helpers.EXPORTED.R
 
