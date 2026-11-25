@@ -4,7 +4,7 @@
 
 # SEAFO
 
-**The SEAFO Scientific Committee Data-Analysis & Mapping R Library**
+**The SEAFO Scientific Committee Data-Analysis & Mapping R Package**
 
 <sub>Convention-Area base maps, spatial layers and developer tooling for the Scientific Committee (SC) of the
 South East Atlantic Fisheries Organisation (SEAFO)</sub>
@@ -19,7 +19,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 <br/>
 
-**Current Release (STABLE): `0.0.4`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.4.12`**
+**Current Release (STABLE <alpha>): `0.0.4`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.4.12`**
 
 </div>
 
@@ -35,7 +35,7 @@ It ships three main tool sets in one library:
 |:--|:--|:--|
 | 🗺️ | **Mapping** | A one-call interactive Leaflet base map of the SEAFO Convention Area, with EEZ, VME-closure and area-label overlays |
 | 🧰 | **Utilities** | Code/file helpers, null-coalescing operators, immutable constant lists and standardised console notifications |
-| 🔁 | **Release tooling** | A self-tracking development workflow that ties `R CMD check`, package versioning and an md5 code-base fingerprint together |
+| 🔁 | **DevTools** | A self-tracking development workflow that ties `R CMD check`, package versioning and an md5 code-base fingerprint together |
 
 Everything is `roxygen2`-documented, and the package currently passes `R CMD check --as-cran` with
 **0 ERRORs, 0 WARNINGs and 0 NOTEs**.
@@ -44,10 +44,10 @@ Everything is `roxygen2`-documented, and the package currently passes `R CMD che
 
 ## ✨ Highlights
 
-- **`maps_dynamic.compile.basemap.seafo()`** — one call returns a fully assembled Leaflet widget:
+- **`maps_dynamic.compile.basemap()`** — one call returns a fully assembled Leaflet widget:
   ESRI Ocean or ESRI NatGeo tiles, SEAFO Convention Area (CA), African EEZ v11, SEAFO VME closures,
   CA area labels, a measuring tool, a scale bar and a layer-control box.
-- **`maps_static.compile.basemap.seafo()`** — the same base map as a publication-ready static
+- **`maps_static.compile.basemap()`** — the same base map as a publication-ready static
   figure: identical arguments, layers, extent and labels, drawn with base R `graphics` over a
   `maps` coastline, with a graticule, labelled axes, a 500 km scale bar and an optional legend
   (no tiles, no `leaflet`, no `sf`).
@@ -56,7 +56,7 @@ Everything is `roxygen2`-documented, and the package currently passes `R CMD che
   and `RENV_DEVS` are immutable once loaded, so they cannot be clobbered mid-session.
 - **Self-describing output** — `SEAFO` functions can report their own function ID, caller and source
   line number (`code_editor.fetch.celn()` + `info.post.func.self.id()`).
-- **Delta-gated versioning** — the version only moves when something actually changed.
+- **Delta-gated versioning** — the version only moves when something in the codebase and/or project tree changed.
 
 ---
 
@@ -73,16 +73,16 @@ Everything is `roxygen2`-documented, and the package currently passes `R CMD che
 ### 2. Install the package
 
 ```r
-# 1) a GitHub installer (skip if you already have remotes or devtools)
+# 1) Get a GitHub installer (skip if you already have remotes or devtools) ...
 install.packages("remotes")
 
-# 2) install SEAFO together with all of its CRAN dependencies
+# 2) Install the SEAFO R Package (together with its CRAN dependencies) ...
 remotes::install_github("ErichM182/SEAFO")
 
-# 3) verify
+# 3) Verify that the 'SEAFO' R Package installed properly ...
 library(SEAFO)
 packageVersion("SEAFO")
-#> [1] '0.0.4'
+#> [1] '0.0.4' (Stable <alpha> Release)
 ```
 
 <details>
@@ -141,12 +141,12 @@ install.packages("SEAFO_0.0.4.tar.gz", repos = NULL, type = "source")
 ```r
 library(SEAFO)
 
-### 1. Null-coalescing operator ------------------------------------------------
+### 1. Null-Coalescing Operator ------------------------------------------------
 NULL      %??% "fallback"      #> "fallback"
 "actual"  %??% "fallback"      #> "actual"
 NA        %??% "fallback"      #> "fallback"   (NA counts as missing too)
 
-### 2. Poll the project run-time mode -----------------------------------------
+### 2. Poll the Project Run-Time Mode -----------------------------------------
 SEAFO::code.poll.r.runtime.mode()
 #> $IS_DEBUG
 #> [1] FALSE
@@ -154,13 +154,13 @@ SEAFO::code.poll.r.runtime.mode()
 #> $IS_VERBOSE
 #> [1] FALSE
 
-### 3. Environment-locked constants -------------------------------------------
+### 3. Environment-Locked <safe> Constants -------------------------------------------
 SEAFO::RENV_DEVS$PATH_TO_FOLDER_WIP_PROD
 #> [1] "./WIP/01_NextForPROD"
 
 SEAFO::RENV_FORMATS$ANSI_BOLD       #> "\033[1m"   (bold text; see ?RENV_FORMATS)
 
-### 4. SEAFO Convention Area base map -----------------------------------------
+### 4. SEAFO Convention Area (CA) Base Map -----------------------------------------
 coMap <- SEAFO::maps_dynamic.compile.basemap.seafo(
   snMapSRC          = 1,       # 1 = ESRI Ocean, anything else = ESRI NatGeo World Map
   sbShowEEZs        = TRUE,    # African EEZ v11 overlay

@@ -7,10 +7,10 @@
 -> LAST CODE PUSH (Code-Check and/or Code-Commit) INFORMATION (NB Stats) ...
 > R-Library (Project ID): `SEAFO` 
 > Code Push TYPE  ==>  DEVELOPMENT (act-dev) Release
-> Code Push TIME  ==>  25 Nov 2026 @ 01:24:36.222 CAT
+> Code Push TIME  ==>  25 Nov 2026 @ 02:00:21.261 CAT
 > Code Push PRODUCTION VERSION #  ==>  0.0.4     (prod-release)
-> Code Push ACTIVE-DEV VERSION #  ==>  0.0.4.12  (devs-release)
-> Code Base FINGERPRINT  ==>  a3ac1459a3abb90c39e48019c120bfa1   (md5: pkg assets + docs assets)
+> Code Push ACTIVE-DEV VERSION #  ==>  0.0.4.13  (devs-release)
+> Code Base FINGERPRINT  ==>  ad61c283cac46b895b1dd3e1bda8bcde   (md5: pkg assets + docs assets)
 
 
 
