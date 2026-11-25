@@ -270,15 +270,11 @@ hexSticker::sticker(
 
 
 
-coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(); coBaseMapLM_
-coBaseMapSM_ <- SEAFO::maps_static.compile.basemap(); coBaseMapSM_
+coBaseMapLM_ <- SEAFO::maps_dynamic.compile.basemap(
+  sbHideWCL = FALSE
+); coBaseMapLM_
+### coBaseMapSM_ <- SEAFO::maps_static.compile.basemap(); coBaseMapSM_
 
-### lmMapObj=NULL; dfVMS=NULL; snSpeedCutOff=1.00
-### ssVarShipIDs="Ship_Name_Anon"; ssLabelVarShipIDs="Vessel ID"
-### ssVarYear="VMS_Year"; ssLabelVarYear="VMS Years"; ssVarShipCourse="CO"
-### ssVarLATs="LAT_DeciDegree"; ssVarLONs="LON_DeciDegree"; sbPlotKeyVMS=FALSE
-### ssVarShipSpeed="Speed_Corr_kt"; ssLabelVarSpeed="Vessel State (speed in knots)"
-### ssVarTime="VMS_Time"; ssLabelVarTime="VMS Time"; ssVarDate="VMS_Date"; ssLabelVarDate="VMS Date"
 
 
 dfSEAFO_VMS_ <- utils::read.csv("./data/dfSEAFO_GPS_VMS.csv");
@@ -295,7 +291,7 @@ coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
     "WIP", "00_Helpers", "data", "SEAFO_Shapes",
     "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
   ), ssNotesGears="ALL Fishing Gear Types Allowed", sbSaveAsRDA=FALSE,
-  ssSaveFilePath="./data/dfSEAFO_FF_All_Gears.rda"
+  ssSaveFilePath="./data/dfSEAFO_FF_All_Gears.rda", ssSaveFileID="dfSEAFO_FF_All_Gears"
 ) {
 
   ### STEP 01 - Read Shapefile Data into the active R Session memory ...
@@ -303,46 +299,106 @@ coBaseMapLM_VMS_ <- SEAFO::maps_dynamic.add.layer.points.data.vms(
     dsn = ssPathToShape
   );
 
-  ### STEP 02 - Transform the Spatial Data projection (default: WGS84 [EPSG:4326]) ...
-  dfShapeData_WGS84_ <- sf::st_transform(   # <- Transform projection to WGS84 (EPSG:4326) ...
-    x = dfShapeData_, crs = 4326
-  );
+  ### base::names(dfShapeData_);
+  ### base::attributes(dfShapeData_);
+  ### base::attributes(dfShapeData_)["Geodetic CRS"];
+
+  ### ### STEP 02 - Transform the Spatial Data projection (default: WGS84 [EPSG:4326]) ...
+  ### dfShapeData_WGS84_ <- sf::st_transform(   # <- Transform projection to WGS84 (EPSG:4326) ...
+  ###   x = dfShapeData_, crs = 4326
+  ### );
 
   ### STEP 03 - Add new Variables (as needed) ...
-  dfShapeData_WGS84_[["NotesGears"]]  <- ssNotesGears;
-  dfShapeData_WGS84_[["ColorAsText"]] <- base::ifelse(
-    dfShapeData_WGS84_[["Color"]] == 1, "green", "yellow"
+  dfShapeData_[["NotesGears"]]  <- ssNotesGears;
+  dfShapeData_[["ColorAsText"]] <- base::ifelse(
+    dfShapeData_[["Color"]] == 1, "green", "yellow"
   );
+  dfShapeData_[["Projection"]]  <- sf::st_crs(dfShapeData_)$Name;
 
-  ### STEP 04 - Save output Spatial File (if requested) ...
+  dfShapeData_ <- sfheaders::sf_to_df(
+    sf = dfShapeData_, fill = TRUE
+  )
+
   if (sbSaveAsRDA) {
-    base::save(
-      dfShapeData_WGS84_,
-      file = ssSaveFilePath
+    base::assign(
+      x = ssSaveFileID, value = dfShapeData_
     );
+
+    ### STEP 04 - Save output Spatial File (if requested) ...
+    if (sbSaveAsRDA) {
+      base::save(
+        ssSaveFileID,
+        file = ssSaveFilePath
+      );
+    }
   }
 
   ### STEP 05 - Return output Spatial File (to function call) ...
-  base::return(dfShapeData_WGS84_);
+  base::return(dfShapeData_);
 
 }
 
 
-dfSEAFO_FF_ALL_ <- rcf_convert.shape.file.seafo(
+vsVarsToKeep_ <- base::c(
+  "OBJECTID", "Id", "File_ID", "Color", "Shape_Leng", "Shape_Area",
+  "NotesGears", "ColorAsText", "Projection", "sfg_id", "polygon_id", "linestring_id", "x", "y"
+);
+
+dfSEAFO_FF_All_Gears_ <- rcf_convert.shape.file.seafo(
   ssPathToShape = base::file.path(
     "WIP", "00_Helpers", "data", "SEAFO_Shapes",
     "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
-  ), ssNotesGears = "ALL Fishing Gear Types Allowed", sbSaveAsRDA = TRUE,
-  ssSaveFilePath = "./data/dfSEAFO_FF_All_Gears.rda"
-)
+  ), ssNotesGears = "ALL Fishing GEAR Types ALLOWED"
+);
+base::names(dfSEAFO_FF_All_Gears_);
+dfSEAFO_FF_All_Gears_$sfg_id == dfSEAFO_FF_All_Gears_$multipolygon_id;
+dfSEAFO_FF_All_Gears_v02_ <- dfSEAFO_FF_All_Gears_[ , vsVarsToKeep_];
+base::names(dfSEAFO_FF_All_Gears_v02_);
 
 
-dfSEAFO_FF_ALL_ <- rcf_convert.shape.file.seafo(
-  ssPathToShape=base::file.path(
+dfSEAFO_FF_Pots_Gear_ <- rcf_convert.shape.file.seafo(
+  ssPathToShape = base::file.path(
     "WIP", "00_Helpers", "data", "SEAFO_Shapes",
-    "Fishing_Footprint_(all_gears)", "bottom_fishing_areas_all_gears.shp"
-  ), ssNotesGears="ALL Fishing Gear Types Allowed"
+    "Fishing_Footprint_(only_longline_gear)", "bottom_fishing_areas_longlines.shp"
+  ), ssNotesGears = "ONLY Longline & POT GEAR ALLOWED"
+);
+base::names(dfSEAFO_FF_Pots_Gear_);
+dfSEAFO_FF_Pots_Gear_$sfg_id == dfSEAFO_FF_Pots_Gear_$polygon_id;
+dfSEAFO_FF_Pots_Gear_v02_ <- dfSEAFO_FF_Pots_Gear_[ , vsVarsToKeep_];
+base::names(dfSEAFO_FF_Pots_Gear_v02_);
+dfSEAFO_FF_Pots_Gear_v03_ <- dfSEAFO_FF_Pots_Gear_v02_;
+dfSEAFO_FF_Pots_Gear_v03_$sfg_id <- base::ifelse(
+  dfSEAFO_FF_Pots_Gear_v03_$sfg_id %in% base::c(1, 2),
+  base::max(dfSEAFO_FF_All_Gears_v02_$sfg_id) + dfSEAFO_FF_Pots_Gear_v03_$sfg_id,
+  dfSEAFO_FF_Pots_Gear_v03_$sfg_id
+);
+base::summary(dfSEAFO_FF_Pots_Gear_v03_$sfg_id)
+
+
+base::names(dfSEAFO_FF_All_Gears_v02_) == base::names(dfSEAFO_FF_Pots_Gear_v03_);
+dfSEAFO_Fish_Foot_Print_Latest <- base::rbind(
+  dfSEAFO_FF_All_Gears_v02_, dfSEAFO_FF_Pots_Gear_v03_
 )
+
+
+base::save(
+  dfSEAFO_Fish_Foot_Print_Latest,
+  file = base::file.path("./data/dfSEAFO_Fish_Foot_Print_Latest.rda")
+)
+
+base::load(
+  file = base::file.path("./data/dfSEAFO_Fish_Foot_Print_Latest.rda")
+)
+base::names(dfSEAFO_Fish_Foot_Print_Latest)
+base::table(dfSEAFO_Fish_Foot_Print_Latest$OBJECTID)
+
+
+dfSEAFO_Fish_Foot_Print_Latest_v02_ <- dfSEAFO_Fish_Foot_Print_Latest[
+  base::order(dfSEAFO_Fish_Foot_Print_Latest$sfg_id),
+];
+
+
+
 
 
 
