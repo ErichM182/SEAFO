@@ -19,7 +19,7 @@ South East Atlantic Fisheries Organisation (SEAFO)</sub>
 
 <br/>
 
-**Latest Release (Production [alpha]): ``** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.6.00`**
+**Latest Release (Production [alpha]): `0.0.7`** &nbsp;•&nbsp; **Active Development (ActDev): `0.0.7.00`**
 
 </div>
 
@@ -82,7 +82,7 @@ remotes::install_github("ErichM182/SEAFO")
 # 3) Verify that the 'SEAFO' R Package installed properly ...
 library(SEAFO)
 packageVersion("SEAFO")
-#> [1] '0.0.6'   # <- Production <alpha> Release !!!
+#> [1] '0.0.7'   # <- Production <alpha> Release !!!
 ```
 
 <details>
@@ -114,7 +114,7 @@ devtools::load_all("path/to/SEAFO")
 devtools::install("path/to/SEAFO")
 
 # From a built source tarball
-install.packages("SEAFO_0.0.6.tar.gz", repos = NULL, type = "source")
+install.packages("SEAFO_0.0.7.tar.gz", repos = NULL, type = "source")
 ```
 
 ### 4. Dependencies
@@ -177,7 +177,7 @@ coMap                          # renders in the RStudio Viewer pane
 
 ---
 
-## 🆕 What's new in `0.0.6`
+## 🆕 What's new in `0.0.7`
 
 | | Change | Detail |
 |:--|:--|:--|
@@ -207,8 +207,8 @@ coMap                          # renders in the RStudio Viewer pane
 
 | Level | Format | Example | Meaning |
 |:--|:--|:--|:--|
-| **Production** | `0.0.X` | `0.0.6` | public release cut |
-| **Active development** | `0.0.X.YY` | `0.0.6.00` | increments `.01`, `.02`, … per accepted change |
+| **Production** | `0.0.X` | `0.0.7` | public release cut |
+| **Active development** | `0.0.X.YY` | `0.0.7.00` | increments `.01`, `.02`, … per accepted change |
 
 Both `DESCRIPTION` and the tracker are only written **when something actually changed**:
 
@@ -350,7 +350,7 @@ Conventions used throughout the source:
   title  = {SEAFO: SEAFO Scientific Committee R Package},
   author = {MALETZKY, Erich},
   year   = {2026},
-  note   = {R package version 0.0.6},
+  note   = {R package version 0.0.7},
   url    = {https://github.com/ErichM182/SEAFO}
 }
 ```
