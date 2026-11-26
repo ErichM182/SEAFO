@@ -355,6 +355,7 @@ SEAFO::maps_dynamic.add.layer.points.data.vms(
 }
 \seealso{
 Other MAPS Functions (SEAFO):
+\code{\link[=maps_dynamic.add.layer.points.cpue]{maps_dynamic.add.layer.points.cpue()}},
 \code{\link[=maps_dynamic.compile.basemap]{maps_dynamic.compile.basemap()}},
 \code{\link[=maps_static.compile.basemap]{maps_static.compile.basemap()}}
 }

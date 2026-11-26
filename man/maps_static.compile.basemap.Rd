@@ -231,6 +231,7 @@ grDevices::dev.off();
 }
 \seealso{
 Other MAPS Functions (SEAFO):
+\code{\link[=maps_dynamic.add.layer.points.cpue]{maps_dynamic.add.layer.points.cpue()}},
 \code{\link[=maps_dynamic.add.layer.points.data.vms]{maps_dynamic.add.layer.points.data.vms()}},
 \code{\link[=maps_dynamic.compile.basemap]{maps_dynamic.compile.basemap()}}
 }

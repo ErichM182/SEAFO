@@ -11,7 +11,7 @@ RCT_IS_VERBOSE_RT_MODE_ <- F;   # <- The `VERBOSE` <dev> Run-Time Mode Tracker .
 ### R Library CRAN Code and Documentation Checking Function ...
 SEAFO::devs.check.code.specs(
   sbCheckCRAN = F,   # <- Set this to `FALSE` if you only want to update the documentation !!!
-  sbIsProdRel = T    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
+  sbIsProdRel = F    # <- Set this to `TRUE` if you are running a PRODUCTION Release <test> !!!
 );
 
 
