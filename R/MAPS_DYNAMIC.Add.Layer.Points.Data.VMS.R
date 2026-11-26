@@ -218,7 +218,11 @@
 #'   flags and vessels actually recorded in the selected years remain active;
 #' * **Statistics (cross-filtering)** - every control reports each item's `(n: ...)` count against
 #'   the current selection of all the OTHER controls, so switching a year re-computes the Month,
-#'   Flag, State and Vessel ID counts at once.
+#'   Flag, State and Vessel ID counts at once. The single exception is the Time control itself,
+#'   which ignores the Month, Flag and Vessel ID controls because those merely mirror its own year
+#'   selection; counting through them would be circular and would drive an unticked year's count
+#'   to zero. The Time counts therefore stay meaningful (i.e. they show what re-ticking that year
+#'   would reveal), and they still respond to the Vessel State control.
 #'
 #' A control whose items are ALL checked imposes no constraint, and a control with NO item checked
 #' hides every record. When `sbShowToggleYear = FALSE` the MCL is absent: the Year filter is not
@@ -1155,7 +1159,7 @@
     base::message(base::cat(crayon::yellow(base::paste0(' --> ', TAG_FUNC_ID, ' 671 | FUNCTION EXECUTION DURATION: ', base::round(funcExeDur, 3), ' seconds.'))))
     base::message(base::cat(crayon::cyan(base::paste0(' --> ', TAG_FUNC_ID, ' 672 | ', 'EXECUTION of CUSTOM FUNCTION [ ', TAG_FUNC_ID_FULL, ' ] ', ' STOPPED on ', base::format(endDateTime, formatDateTime),' .'))))
 
-    beepr::beep(2)   # Notify user of FUNCTION CODE EXECUTION COMPLETION with an audio cue...
+    ### beepr::beep(2)   # Notify user of FUNCTION CODE EXECUTION COMPLETION with an audio cue...
     base::return(lmMap_);
 
   })   # The 'suppressWarnings({})' closure bracket or brace !!

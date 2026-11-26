@@ -278,7 +278,11 @@ changes, the Month, Flag and Vessel ID check-boxes are re-ticked so that only th
 flags and vessels actually recorded in the selected years remain active;
 \item \strong{Statistics (cross-filtering)} - every control reports each item's \code{(n: ...)} count against
 the current selection of all the OTHER controls, so switching a year re-computes the Month,
-Flag, State and Vessel ID counts at once.
+Flag, State and Vessel ID counts at once. The single exception is the Time control itself,
+which ignores the Month, Flag and Vessel ID controls because those merely mirror its own year
+selection; counting through them would be circular and would drive an unticked year's count
+to zero. The Time counts therefore stay meaningful (i.e. they show what re-ticking that year
+would reveal), and they still respond to the Vessel State control.
 }
 
 A control whose items are ALL checked imposes no constraint, and a control with NO item checked
